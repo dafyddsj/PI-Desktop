@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Working notes for AI coding agents in Explore Agent, a new product built from
+Working notes for AI coding agents in EXplore Agent, a new product built from
 a fork of PI-Desktop. There are no existing users yet: backward compatibility,
 data migrations, and upstream process rules do not apply unless a task says so.
 
@@ -75,7 +75,7 @@ rather than the central Zustand store.
 
 ## Explore config directories
 
-Explore Agent uses `.explore` where pi uses `.pi`: `~/.explore/agent` globally
+EXplore Agent uses `.explore` where pi uses `.pi`: `~/.explore/agent` globally
 and `<workspace>/.explore/` per project. The name is defined in
 `packages/agent-runtime/src/agent-dir.ts`, and the bundled pi SDK's
 `CONFIG_DIR_NAME` is patched to match in

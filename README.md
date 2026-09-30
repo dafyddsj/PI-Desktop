@@ -1,4 +1,4 @@
-# Explore Agent
+# EXplore Agent
 
 A local-first desktop workspace for AI agents, built on a fork of
 [PI-Desktop](https://github.com/vastsa/PI-Desktop).
@@ -7,7 +7,7 @@ A local-first desktop workspace for AI agents, built on a fork of
 > distribution still carry PI-Desktop defaults and will change as the product
 > is rebranded.
 
-Explore Agent keeps its agent configuration apart from a separately installed
+EXplore Agent keeps its agent configuration apart from a separately installed
 pi CLI: global config lives in `~/.explore/agent` and per-project config in
 `<workspace>/.explore/`.
 
@@ -49,5 +49,5 @@ Agent working notes are in [`AGENTS.md`](AGENTS.md).
 
 ## License
 
-Explore Agent is a derivative of PI-Desktop and is distributed under the
+EXplore Agent is a derivative of PI-Desktop and is distributed under the
 GNU Lesser General Public License v3.0. See [`LICENSE`](LICENSE).

@@ -1,8 +1,8 @@
-# Explore Agent Spec
+# EXplore Agent Spec
 
 > Stack: Electron + **Rust host core** + pi Agent Harness + user-installable plugins
 
-Explore Agent is a new product built from a fork of PI-Desktop. These specs
+EXplore Agent is a new product built from a fork of PI-Desktop. These specs
 were inherited from PI-Desktop and describe the current implementation; they
 are a design reference, not a change-control process. PI-Desktop product names
 remain where the code still uses them.

@@ -1,4 +1,4 @@
-# Explore Agent Spec Navigation
+# EXplore Agent Spec Navigation
 
 ## Overview
 - [README.md](README.md)
