@@ -61,7 +61,7 @@ function isolatedEnv(extra) {
     XDG_CONFIG_HOME: join(homeDir, ".config"),
     XDG_CACHE_HOME: join(homeDir, ".cache"),
     PI_DESKTOP_DATA_DIR: dataDir,
-    PI_CODING_AGENT_DIR: join(homeDir, ".pi", "agent"),
+    PI_CODING_AGENT_DIR: join(homeDir, ".explore", "agent"),
   };
 }
 

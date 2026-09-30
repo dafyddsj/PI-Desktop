@@ -164,7 +164,7 @@ export function discoverManualPath(target: string): TrustedExtensionSpec[] {
 }
 
 export type DiscoverTrustedExtensionsInput = {
-  /** `~/.pi/agent` or a test override. */
+  /** `~/.explore/agent` or a test override. */
   agentDir: string;
   /** Workspace root; project extensions live under `<workspace>/.pi/extensions`. */
   projectPath?: string;

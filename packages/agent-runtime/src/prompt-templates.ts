@@ -4,7 +4,7 @@
  * `.pi/prompts` assets behave identically in pi CLI and PI-Desktop.
  *
  * Discovery: `<workspace>/.pi/prompts/*.md` (project) and
- * `~/.pi/agent/prompts/*.md` (user-global); project wins name conflicts.
+ * `~/.explore/agent/prompts/*.md` (user-global); project wins name conflicts.
  */
 
 import { readFile } from "node:fs/promises";
@@ -18,6 +18,7 @@ import {
   type PromptTemplate,
 } from "@earendil-works/pi-agent-core";
 import { NodeExecutionEnv } from "@earendil-works/pi-agent-core/node";
+import { agentDir } from "./agent-dir.js";
 
 /**
  * Prompt-enhancement templates live in `@pi-desktop/shared` so the runtime,
@@ -50,7 +51,7 @@ export function composerTemplateDirs(
 ): ComposerTemplateDirs {
   return {
     ...(workspaceRoot ? { project: join(workspaceRoot, ".pi", "prompts") } : {}),
-    user: join(homedir(), ".pi", "agent", "prompts"),
+    user: join(agentDir(), "prompts"),
   };
 }
 

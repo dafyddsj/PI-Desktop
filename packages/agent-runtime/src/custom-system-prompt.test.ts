@@ -1,5 +1,5 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
@@ -111,5 +111,9 @@ describe("customSystemPromptDirs", () => {
 
   it("points the project dir at <workspace>/.pi", () => {
     expect(customSystemPromptDirs("/w").project).toBe(join("/w", ".pi"));
+  });
+
+  it("points the global dir at ~/.explore/agent, not the pi CLI's ~/.pi/agent", () => {
+    expect(customSystemPromptDirs(null).global).toBe(join(homedir(), ".explore", "agent"));
   });
 });

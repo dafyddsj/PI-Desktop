@@ -505,7 +505,14 @@ pub(crate) fn capture_instructions(
 }
 
 fn global_instruction_path() -> Option<PathBuf> {
-    dirs::home_dir().map(|home| home.join(".pi").join("agent").join("AGENTS.md"))
+    dirs::home_dir().map(|home| global_instruction_path_in(&home))
+}
+
+/// PI-Desktop's global agent directory is `~/.explore/agent`, kept apart from
+/// a separately installed pi CLI's `~/.pi/agent` (mirrors
+/// `packages/agent-runtime/src/agent-dir.ts`).
+fn global_instruction_path_in(home: &Path) -> PathBuf {
+    home.join(".explore").join("agent").join("AGENTS.md")
 }
 
 fn read_instruction_file(path: &Path) -> Result<Option<String>> {
@@ -817,4 +824,18 @@ pub(crate) fn capture(
     });
     snapshot.manifest.resource_ids = snapshot.resources.keys().cloned().collect();
     Ok(snapshot)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn global_instructions_live_under_explore_agent_dir() {
+        let home = Path::new("/home/u");
+        assert_eq!(
+            global_instruction_path_in(home),
+            home.join(".explore").join("agent").join("AGENTS.md")
+        );
+    }
 }

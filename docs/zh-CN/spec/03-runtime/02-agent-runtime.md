@@ -1055,7 +1055,7 @@ Bash 以及会话具有临时目录时的临时目录规则
 ### 7. 3 项目指令链
 
 Electron主流程首先解析全局
-`~/.pi/agent/AGENTS.md`，然后将指令文件投影到
+`~/.explore/agent/AGENTS.md`（D637），然后将指令文件投影到
 运行时启动时的会话绑定项目根。对于每个项目目录
 按以下顺序最多使用一个非空文件：`AGENTS.override.md`、`AGENTS.md`、
 `CLAUDE.md`，然后是 `.claude/CLAUDE.md`。条目由项目串联而成

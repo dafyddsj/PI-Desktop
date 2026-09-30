@@ -2023,7 +2023,7 @@ type ComposerCommand = {
 ```
 
 Templates load from `<workspace>/.pi/prompts/*.md` and
-`~/.pi/agent/prompts/*.md` (project wins name conflicts; short TTL cache).
+`~/.explore/agent/prompts/*.md` (project wins name conflicts; short TTL cache).
 Without a workspace only user-global templates, builtins, and plugin
 commands return.
 

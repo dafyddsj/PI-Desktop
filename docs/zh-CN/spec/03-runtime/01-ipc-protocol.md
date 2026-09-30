@@ -1589,7 +1589,7 @@ type ComposerCommand = {
 ```
 
 模板从 `<workspace>/.pi/prompts/*.md` 加载并
-`~/.pi/agent/prompts/*.md`（项目赢得名称冲突；短 TTL 缓存）。
+`~/.explore/agent/prompts/*.md`（项目赢得名称冲突；短 TTL 缓存）。
 没有工作区，只有用户全局模板、内置函数和插件
 命令返回。
 

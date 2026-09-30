@@ -1556,7 +1556,8 @@ migration is required.
 
 ## 12. Native Pi session authority (ADR 0254)
 
-Native Pi v3 sessions under the Pi agent session root are a second, explicitly
+Native Pi v3 sessions under PI-Desktop's agent session root
+(`~/.explore/agent/sessions`, §13) are a second, explicitly
 source-discriminated transcript authority owned by the Node agent sidecar. They
 are never inserted into SQLite and never copied to the Desktop transcript
 directory. `session.list` merges their projections with Rust-owned
@@ -1620,3 +1621,20 @@ Hourly rows retain their fields but require explicit calendar confirmation
 when converted. Known intent survives cadence changes and database reopen.
 This additive JSON key needs no table or schema-version migration. Older
 versions ignore the key and cannot enforce the new conversion guard.
+
+## 13. PI-Desktop agent directory (D637, ADR 0312)
+
+The bundled pi SDK's global agent directory is `~/.explore/agent`, not the pi
+CLI's `~/.pi/agent`. It holds the SDK-owned files PI-Desktop reads or writes
+through the sidecar: `auth.json`, `models.json`, `settings.json`, the project
+trust store, `prompts/`, `AGENTS.md`, `SYSTEM.md` / `APPEND_SYSTEM.md`,
+native `sessions/`, and the SDK's `bin/` tool cache. The sidecar pins
+`PI_CODING_AGENT_DIR` to this directory before any pi module loads and
+overwrites an inherited value, so a pi CLI installation's credentials and
+models are never shared. `~/.pi` is still read only by the explicit one-shot
+importers (Pi sessions and Pi `models.json`). Nothing is migrated from
+`~/.pi/agent`; the directory starts empty.
+
+This directory is separate from the Desktop data directory (`~/.pi-desktop`),
+which host-core owns for SQLite, Desktop transcripts, and Desktop provider
+secrets. Workspace-level `<workspace>/.pi/` folders are unchanged.

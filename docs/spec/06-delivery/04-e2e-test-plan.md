@@ -6029,7 +6029,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   3. Open the Projects view and use a project's more menu to edit and save its
      displayed `AGENTS.md`.
   4. Submit a prompt in a new or idle session.
-- **Expected**: The global editor targets only `~/.pi/agent/AGENTS.md`. The
+- **Expected**: The global editor targets only `~/.explore/agent/AGENTS.md`. The
   project editor is available only from a known project's Projects-view more
   menu and targets only that project's root `AGENTS.md`. Both editors show
   their resolved paths, preserve the typed text, and save through the dedicated

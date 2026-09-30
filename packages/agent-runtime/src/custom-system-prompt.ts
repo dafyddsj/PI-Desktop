@@ -6,7 +6,7 @@
  * independently and each picked as a single winner — project before global:
  *
  * - `<workspace>/.pi/SYSTEM.md` / `.pi/APPEND_SYSTEM.md` (project)
- * - `~/.pi/agent/SYSTEM.md` / `~/.pi/agent/APPEND_SYSTEM.md` (global)
+ * - `~/.explore/agent/SYSTEM.md` / `~/.explore/agent/APPEND_SYSTEM.md` (global)
  *
  * PI-Desktop follows the same discovery and precedence. One deliberate
  * deviation, recorded in spec 03-runtime/02-agent-runtime.md §7: replacing
@@ -20,8 +20,8 @@
  */
 
 import { readFile } from "node:fs/promises";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { agentDir } from "./agent-dir.js";
 
 const MAX_PROMPT_BYTES = 64 * 1024;
 
@@ -42,7 +42,7 @@ export function customSystemPromptDirs(
 ): CustomSystemPromptDirs {
   return {
     ...(workspaceRoot?.trim() ? { project: join(workspaceRoot.trim(), ".pi") } : {}),
-    global: join(homedir(), ".pi", "agent"),
+    global: agentDir(),
   };
 }
 

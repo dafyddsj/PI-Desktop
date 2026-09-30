@@ -14,7 +14,6 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { homedir } from "node:os";
 import { isAbsolute, join, relative, resolve, dirname } from "node:path";
 import {
   CURRENT_SESSION_VERSION,
@@ -45,6 +44,7 @@ import {
   nativePiSnapshot,
   type NativePiSnapshot,
 } from "./native-pi-session-lease.js";
+import { agentDir } from "./agent-dir.js";
 
 export const NATIVE_PI_SESSION_PREFIX = "native-pi:";
 
@@ -307,12 +307,12 @@ const NATIVE_FORK_ERROR_CODES = new Set([
 const nativeServices = new Map<string, NativePiSessionService>();
 
 export function nativePiService(options: { agentDir?: string; sessionRoot?: string } = {}): NativePiSessionService {
-  const agentDir = resolve(options.agentDir ?? join(homedir(), ".pi", "agent"));
-  const sessionRoot = resolve(options.sessionRoot ?? join(agentDir, "sessions"));
-  const key = `${agentDir}\0${sessionRoot}`;
+  const dir = resolve(options.agentDir ?? agentDir());
+  const sessionRoot = resolve(options.sessionRoot ?? join(dir, "sessions"));
+  const key = `${dir}\0${sessionRoot}`;
   let service = nativeServices.get(key);
   if (!service) {
-    service = new NativePiSessionService({ agentDir, sessionRoot });
+    service = new NativePiSessionService({ agentDir: dir, sessionRoot });
     nativeServices.set(key, service);
   }
   return service;
@@ -465,7 +465,7 @@ export class NativePiSessionService {
     sessionRoot?: string;
     modelRuntimeFactory?: () => Promise<ModelRuntime>;
   } = {}) {
-    this.agentDir = resolve(options.agentDir ?? join(homedir(), ".pi", "agent"));
+    this.agentDir = resolve(options.agentDir ?? agentDir());
     this.root = resolve(options.sessionRoot ?? join(this.agentDir, "sessions"));
     this.modelRuntimeFactory =
       options.modelRuntimeFactory ??

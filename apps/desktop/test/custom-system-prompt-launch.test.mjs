@@ -8,9 +8,9 @@ register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
 const { createSessionLaunchRuntime } = await import("../electron/main/runtime/session-launch.ts");
 
 // Issue #542: pi CLI's SYSTEM.md / APPEND_SYSTEM.md must be discovered at
-// launch with pi's precedence (project .pi/ over ~/.pi/agent/) and reach the
+// launch with pi's precedence (project .pi/ over ~/.explore/agent/) and reach the
 // sidecar params that compose the system prompt. The global directory is the
-// developer's real ~/.pi/agent — the assertions are therefore relative to a
+// developer's real ~/.explore/agent — the assertions are therefore relative to a
 // recorded baseline, never to an empty home, so leftover files on a dev
 // machine do not fail the suite.
 const workspace = mkdtempSync(join(tmpdir(), "pi-csp-ws-"));
@@ -59,7 +59,7 @@ async function launchParams(runtime) {
   return launch.sidecarParams;
 }
 
-// The global (~/.pi/agent) precedence and per-kind independence are covered
+// The global (~/.explore/agent) precedence and per-kind independence are covered
 // against injectable directories in packages/agent-runtime/src/custom-system-prompt.test.ts;
 // this suite covers the real user path through the launch: files on disk in
 // <workspace>/.pi reach sidecarParams and win per kind, and removing them

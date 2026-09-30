@@ -1282,7 +1282,7 @@ payload hook keeps its own object and its return value still wins.
 
 The `[optional user custom instructions]` layer is the pi-compatible file pair
 `SYSTEM.md` / `APPEND_SYSTEM.md`, discovered per session launch from
-`<workspace>/.pi/` (project) and `~/.pi/agent/` (global), each kind picking a
+`<workspace>/.pi/` (project) and `~/.explore/agent/` (global, D637), each kind picking a
 single winner with project over global, exactly like pi CLI. A change to the
 resolved content retires the runtime through the reuse match, so the next
 prompt recomposes; the files are not re-read per tool call like the project
@@ -1461,7 +1461,7 @@ same project rules as its session.
 ### 7.3 Project instruction chain
 
 The Electron main process first resolves the global
-`~/.pi/agent/AGENTS.md`, then project instruction files inside the
+`~/.explore/agent/AGENTS.md` (D637), then project instruction files inside the
 session-bound project root when a runtime starts. For each project directory it
 uses at most one non-empty file in this order: `AGENTS.override.md`, `AGENTS.md`,
 `CLAUDE.md`, then `.claude/CLAUDE.md`. Entries are concatenated from project
