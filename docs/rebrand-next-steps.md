@@ -63,7 +63,7 @@ shim, or support for the old names.
   Keep `crates/host-core/src/main.rs`, `crates/host-core/src/tools/ignore_rules.rs`,
   and `apps/pi-host/src/config.ts` in step (they also default to
   `.pi-desktop`).
-- Host binary name `pi-desktop-host-core` (`crates/host-core/Cargo.toml`, the
+- Host binary name `explore-host-core` (`crates/host-core/Cargo.toml`, the
   electron-builder `extraResources`, and the host resolvers).
 
 ### 2. User-visible strings

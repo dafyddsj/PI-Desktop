@@ -6,30 +6,30 @@ import { APP_NAME } from "@pi-desktop/shared";
  * The two directories that define an installation, and the development split
  * between them.
  *
- * A packaged PI-Desktop and a `pnpm dev` host used to share both: the
+ * A packaged EXplore Agent and a `pnpm dev` host used to share both: the
  * name-derived `userData` — where Electron keeps the single-instance lock,
  * renderer `localStorage`, and the plugin panel partitions — and
- * `~/.pi-desktop`, where host-core keeps `pi.sqlite` beside the persistence
+ * `~/.explore/app`, where host-core keeps `pi.sqlite` beside the persistence
  * outbox and the log tree. Sharing them meant a shipped app that was already
  * running held the lock, so the development launch quit on arrival; a
  * development host that won the race instead put a second host-core over the
  * same single-writer database, which is the divergence D236 exists to
  * prevent. Neither is workable while someone debugs against the app they use.
  *
- * Only the development side moves, and only these two names differ. A shipped
- * installation keeps `PI-Desktop` and `~/.pi-desktop`, so no upgrade relocates
- * a user's database, secrets, plugins, or renderer-local state, and
- * `PI_DESKTOP_DATA_DIR` still overrides either profile outright.
+ * Only these two names differ between the profiles: a shipped installation
+ * uses `EXplore Agent` and `~/.explore/app`, a development build
+ * `EXplore Agent Dev` and `~/.explore/app-dev`. `PI_DESKTOP_DATA_DIR` still
+ * overrides either profile outright.
  */
 
 /** `userData` directory of a development installation, beside the shipped one. */
 export const DEVELOPMENT_INSTALLATION_NAME = `${APP_NAME} Dev`;
 
 /** Data directory of a shipped installation, below the user's home. */
-export const INSTALLATION_DATA_DIR_NAME = ".pi-desktop";
+export const INSTALLATION_DATA_DIR_NAME = join(".explore", "app");
 
 /** Data directory of a development installation, below the user's home. */
-export const DEVELOPMENT_DATA_DIR_NAME = ".pi-desktop-dev";
+export const DEVELOPMENT_DATA_DIR_NAME = join(".explore", "app-dev");
 
 export type DataDirInput = {
   /** `PI_DESKTOP_DATA_DIR`; an explicit directory wins over either profile. */

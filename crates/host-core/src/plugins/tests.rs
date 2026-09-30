@@ -180,7 +180,7 @@ fn marketplace_uses_highest_semver_when_catalog_versions_are_unsorted() {
             id: "pi.todo".into(),
             name: "Fresh Todo".into(),
             description: "Todo plugin".into(),
-            author: "PI-Desktop".into(),
+            author: "EXplore Agent".into(),
             icon_url: None,
             categories: vec![],
             verified: true,
@@ -264,7 +264,7 @@ fn market_entry_offers_an_update_only_when_the_catalog_is_newer() {
             id: "pi.todo".into(),
             name: "Todo".into(),
             description: "Todo plugin".into(),
-            author: "PI-Desktop".into(),
+            author: "EXplore Agent".into(),
             versions: vec![MarketVersion {
                 version: latest.into(),
                 published_at: "2026-08-12T00:00:00Z".into(),

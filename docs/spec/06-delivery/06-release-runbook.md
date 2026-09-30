@@ -70,8 +70,8 @@ when macOS `iconutil` is available, without overwriting the canonical source.
   agent sidecar — without it, LAN provider requests from the sidecar fail with
   `EHOSTUNREACH` even though the main process's Test Provider fetch succeeds
   (issue #573).
-- `Resources/bin/pi-desktop-host-core` — Rust host binary (release build).
-- Windows NSIS builds include an x64 `pi-desktop-host-core.exe` statically
+- `Resources/bin/explore-host-core` — Rust host binary (release build).
+- Windows NSIS builds include an x64 `explore-host-core.exe` statically
   linked to the MSVC CRT, so a clean Windows x64 or Windows 11 ARM64
   (x64-emulated) installation does not need a separate Visual C++
   Redistributable before the local service can start.
@@ -222,7 +222,7 @@ stays unsigned without a configured certificate (D078).
 
 The macOS matrix uses `macos-15` for arm64 and `macos-15-intel` for Intel x64.
 Each job verifies `uname -m`, passes the matching `--arm64` or `--x64` flag to
-electron-builder, and builds `pi-desktop-host-core` on that same native
+electron-builder, and builds `explore-host-core` on that same native
 runner. Tag builds and `sign_macos: true` (the dispatch default) receive
 `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, and
 `APPLE_TEAM_ID` only from GitHub Actions secrets, pin the certificate through
@@ -232,7 +232,7 @@ the `Developer ID Application:` prefix), force code signing and
 same service on its own (`scripts/notarize-and-staple-macos-release-dmg.sh`),
 and only an `Accepted` status allows the ticket to be stapled. Verification
 then checks the identity, code-signing integrity (including
-`pi-desktop-host-core`), Gatekeeper `Notarized Developer ID`, and both stapled
+`explore-host-core`), Gatekeeper `Notarized Developer ID`, and both stapled
 tickets before any artifact upload. The per-architecture `latest-mac.yml` files
 are renamed before upload; the publish job merges them into one feed after
 downloading both artifacts.
@@ -548,9 +548,9 @@ The Windows `dist:win` command runs `scripts/build-desktop-release.mjs`,
 which invokes electron-builder once for NSIS and once for ZIP so each package
 gets the correct updater distribution marker.
 
-The macOS packages include `bin/pi-desktop-host-core` built for their runner
-architecture; Windows includes `bin/pi-desktop-host-core.exe`; Linux includes
-`bin/pi-desktop-host-core`. Signing, rollback, and installer upgrade
+The macOS packages include `bin/explore-host-core` built for their runner
+architecture; Windows includes `bin/explore-host-core.exe`; Linux includes
+`bin/explore-host-core`. Signing, rollback, and installer upgrade
 qualification remain release hardening work; publication is active under
 D126/D285/D603.
 

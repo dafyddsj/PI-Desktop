@@ -8,7 +8,7 @@
  * - `<workspace>/.explore/SYSTEM.md` / `.explore/APPEND_SYSTEM.md` (project)
  * - `~/.explore/agent/SYSTEM.md` / `~/.explore/agent/APPEND_SYSTEM.md` (global)
  *
- * PI-Desktop follows the same discovery and precedence from its own
+ * EXplore Agent follows the same discovery and precedence from its own
  * `.explore` folders instead of pi's `.pi`. One deliberate
  * deviation, recorded in spec 03-runtime/02-agent-runtime.md §7: replacing
  * the default prompt here means replacing only the product persona block;

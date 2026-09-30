@@ -9,7 +9,7 @@
 # Builds installers for every platform defined in the electron-builder config
 # (macOS dmg/zip arm64 and x64, Windows NSIS and portable ZIP x64, Linux
 # AppImage/deb/rpm x64), each
-# with its native pi-desktop-host-core Rust sidecar. The Linux app.asar is also
+# with its native explore-host-core Rust sidecar. The Linux app.asar is also
 # exported as a system-Electron repackaging asset, and all outputs — with their
 # electron-updater latest*.yml feeds — are published to the GitHub Release
 # (D126/D285/D364/D603). macOS tag artifacts are Developer ID-signed, notarized, and
@@ -254,7 +254,7 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          # electron-builder prints one "signing PI-Desktop.app" line and then
+          # electron-builder prints one "signing EXplore Agent.app" line and then
           # goes quiet: @electron/osx-sign walks Contents and codesigns every
           # Mach-O serially, builder-util silently retries a failing pass up to
           # three times, and @electron/notarize zips, uploads, and waits for
@@ -319,7 +319,7 @@ jobs:
 
       - name: Verify Linux host-core glibc floor
         if: matrix.platform == 'linux'
-        run: node scripts/check-linux-host-glibc.mjs target/release/pi-desktop-host-core
+        run: node scripts/check-linux-host-glibc.mjs target/release/explore-host-core
 
       - name: Export Linux ASAR release asset
         if: matrix.platform == 'linux'
@@ -330,16 +330,16 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          expected_dmg=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}.dmg)
-          expected_dmg_blockmap=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}.dmg.blockmap)
-          expected_zip=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}-mac.zip)
-          expected_zip_blockmap=(apps/desktop/release/PI-Desktop-*-${{ matrix.arch }}-mac.zip.blockmap)
+          expected_dmg=(apps/desktop/release/EXplore-Agent-*-${{ matrix.arch }}.dmg)
+          expected_dmg_blockmap=(apps/desktop/release/EXplore-Agent-*-${{ matrix.arch }}.dmg.blockmap)
+          expected_zip=(apps/desktop/release/EXplore-Agent-*-${{ matrix.arch }}-mac.zip)
+          expected_zip_blockmap=(apps/desktop/release/EXplore-Agent-*-${{ matrix.arch }}-mac.zip.blockmap)
           if [[ "${#expected_dmg[@]}" -ne 1 || "${#expected_dmg_blockmap[@]}" -ne 1 || "${#expected_zip[@]}" -ne 1 || "${#expected_zip_blockmap[@]}" -ne 1 ]]; then
             echo "::error::Expected exactly one ${{ matrix.arch }} DMG, DMG blockmap, ZIP, and ZIP blockmap."
             printf '%s\n' apps/desktop/release/* || true
             exit 1
           fi
-          for artifact in apps/desktop/release/PI-Desktop-*; do
+          for artifact in apps/desktop/release/EXplore-Agent-*; do
             case "$artifact" in
               *-${{ matrix.arch }}.dmg|*-${{ matrix.arch }}.dmg.blockmap|*-${{ matrix.arch }}-mac.zip|*-${{ matrix.arch }}-mac.zip.blockmap) ;;
               *)
@@ -429,7 +429,7 @@ jobs:
           trap - EXIT
 
       - name: Verify host-core glibc floor
-        run: node scripts/check-linux-host-glibc.mjs target/release/pi-desktop-host-core
+        run: node scripts/check-linux-host-glibc.mjs target/release/explore-host-core
 
       - name: Assemble pi-host bundle
         run: node apps/pi-host/scripts/bundle.mjs --platform linux --arch ${{ matrix.arch }}

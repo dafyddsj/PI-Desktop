@@ -1,7 +1,7 @@
 /**
  * Bridge to pi's prompt-template ("slash command") system for the composer
  * (D123, ADR 0024). Loading and expansion reuse pi-agent-core verbatim so
- * prompt-template assets behave as in pi CLI, but from PI-Desktop's own
+ * prompt-template assets behave as in pi CLI, but from EXplore Agent's own
  * `.explore` folders.
  *
  * Discovery: `<workspace>/.explore/prompts/*.md` (project) and

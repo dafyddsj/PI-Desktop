@@ -2,12 +2,12 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 /**
- * PI-Desktop's pi config directory name: `.explore`, for both the global
+ * EXplore Agent's pi config directory name: `.explore`, for both the global
  * agent directory (`~/.explore/agent`) and project folders
  * (`<workspace>/.explore/`).
  *
  * The bundled pi SDK defaults to `.pi`, which a separately installed pi CLI
- * also owns. PI-Desktop keeps its own config (auth, models, settings, prompts,
+ * also owns. EXplore Agent keeps its own config (auth, models, settings, prompts,
  * instructions, extensions, native sessions, plan/goal artifacts) apart from
  * that installation so the two never share state. The SDK's own
  * `CONFIG_DIR_NAME` is patched to the same value
@@ -33,7 +33,7 @@ export function projectConfigDir(workspaceRoot: string): string {
 /**
  * Point the pi SDK's own `getAgentDir()` at {@link agentDir}. An inherited
  * value is overwritten on purpose: it belongs to the user's pi CLI, and
- * honoring it would share that installation's credentials with PI-Desktop.
+ * honoring it would share that installation's credentials with EXplore Agent.
  */
 export function pinPiAgentDir(env: NodeJS.ProcessEnv = process.env, home: string = homedir()): string {
   const dir = agentDir(home);

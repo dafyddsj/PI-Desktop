@@ -33,9 +33,9 @@ test("a development build owns a different data directory than the shipped app",
 
   // A shipped installation must keep the directory its users already have, so
   // the split can only have moved the development side.
-  assert.equal(INSTALLATION_DATA_DIR_NAME, ".pi-desktop");
-  assert.equal(DEVELOPMENT_DATA_DIR_NAME, ".pi-desktop-dev");
-  assert.equal(DEVELOPMENT_INSTALLATION_NAME, "PI-Desktop Dev");
+  assert.equal(INSTALLATION_DATA_DIR_NAME, join(".explore", "app"));
+  assert.equal(DEVELOPMENT_DATA_DIR_NAME, join(".explore", "app-dev"));
+  assert.equal(DEVELOPMENT_INSTALLATION_NAME, "EXplore Agent Dev");
 });
 
 test("PI_DESKTOP_DATA_DIR still overrides either profile", () => {
@@ -132,7 +132,7 @@ test("main resolves one data directory and publishes it to everything below", ()
   // The plugin runtime resolves this root from the environment rather than
   // taking it as a parameter, so the resolved value has to be the one it reads.
   assert.match(indexSource, /process\.env\.PI_DESKTOP_DATA_DIR = dataDir;/);
-  assert.doesNotMatch(indexSource, /join\(homedir\(\), "\.pi-desktop"\)/);
+  assert.doesNotMatch(indexSource, /join\(homedir\(\), "\.explore", "app"\)/);
 
   // Publishing happens after the lock verdict, which reads the same variable:
   // moving the write above `singleInstanceRequired` would make every launch
@@ -149,11 +149,11 @@ test("main resolves one data directory and publishes it to everything below", ()
 test("downstream data directories follow the profile instead of the shipped default", async () => {
   const runtimeSource = await readMainModule("plugin-runtime.ts");
   assert.match(runtimeSource, /const root = desktopDataDir\(\);/);
-  assert.doesNotMatch(runtimeSource, /join\(homedir\(\), "\.pi-desktop"\)/);
+  assert.doesNotMatch(runtimeSource, /join\(homedir\(\), "\.explore", "app"\)/);
 
   // The plugin services already receive the resolved directory; the scratch
   // root was the one place that re-derived it.
   const servicesSource = await readMainModule("services/plugin-services.ts");
   assert.match(servicesSource, /return join\(dataDir, "scratch", sessionId\);/);
-  assert.doesNotMatch(servicesSource, /join\(homedir\(\), "\.pi-desktop"\)/);
+  assert.doesNotMatch(servicesSource, /join\(homedir\(\), "\.explore", "app"\)/);
 });

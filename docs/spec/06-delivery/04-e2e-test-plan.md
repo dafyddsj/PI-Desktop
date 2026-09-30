@@ -622,7 +622,7 @@ identify the platform validation still needed.
   `Developer ID Application: XingYu Liu (DUV63RKYTW)`. 3) Run
   `codesign --verify --deep --strict --verbose=2`,
   `spctl --assess --type execute --verbose=4`, and `xcrun stapler validate`
-  against the app, including `Contents/Resources/bin/pi-desktop-host-core`.
+  against the app, including `Contents/Resources/bin/explore-host-core`.
   4) Confirm the workflow's DMG step reported an Apple notary status of
   `Accepted` and then run `xcrun stapler validate` against the matching DMG.
   5) Download the DMG on a clean macOS profile, move the app to
@@ -6096,7 +6096,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
      modules, source maps, tests/examples/declarations, Chromium locales, and
      native prebuild targets.
   3. On each macOS package, run `file` (or `lipo -info`) against the app
-     executable and `Resources/bin/pi-desktop-host-core`; confirm arm64 and
+     executable and `Resources/bin/explore-host-core`; confirm arm64 and
      x86_64 packages contain only their declared architecture and that the
      Rust host matches the Electron app. Confirm the shared
      `apps/desktop/package.json` macOS configuration produces arm64 assets named
@@ -12807,7 +12807,7 @@ are withdrawn with ADR 0165.
 - **Steps**: 1) Install PI-Desktop. 2) Launch it for the first time. 3) Wait
   for the startup splash to yield to the main shell. 4) Inspect the runtime
   logs, then open Settings → Info.
-- **Expected**: The bundled x64 `pi-desktop-host-core.exe` starts and completes
+- **Expected**: The bundled x64 `explore-host-core.exe` starts and completes
   `app.handshake` without `0xC0000135` (`STATUS_DLL_NOT_FOUND`), the shell does
   not remain on “Can't reach the local service”, host status is healthy, and
   Settings → Info reports the host version instead of `host unknown`. The

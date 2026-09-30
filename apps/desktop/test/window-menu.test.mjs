@@ -330,8 +330,8 @@ test("Windows/Linux explicit minimize paths use the native taskbar", () => {
   });
   assert.deepEqual(packageJson.build.mac.extraResources, [
     {
-      from: "../../target/release/pi-desktop-host-core",
-      to: "bin/pi-desktop-host-core",
+      from: "../../target/release/explore-host-core",
+      to: "bin/explore-host-core",
     },
     {
       from: "build/tray-icon-mac.png",
@@ -397,9 +397,9 @@ test("desktop packaging builds the native host before every local target", () =>
       `${name} must build the native host before the packaging command`,
     );
   }
-  assert.equal(packageJson.build.win.extraResources[0].to, "bin/pi-desktop-host-core.exe");
-  assert.equal(packageJson.build.linux.extraResources[0].to, "bin/pi-desktop-host-core");
-  assert.equal(packageJson.build.mac.extraResources[0].to, "bin/pi-desktop-host-core");
+  assert.equal(packageJson.build.win.extraResources[0].to, "bin/explore-host-core.exe");
+  assert.equal(packageJson.build.linux.extraResources[0].to, "bin/explore-host-core");
+  assert.equal(packageJson.build.mac.extraResources[0].to, "bin/explore-host-core");
   assert.match(iconScriptSource, /package_icon = BUILD \/ "icon\.png"/);
   assert.match(iconScriptSource, /shutil\.which\("iconutil"\)/);
 });

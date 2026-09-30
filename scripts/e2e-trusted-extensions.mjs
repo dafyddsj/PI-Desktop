@@ -65,7 +65,7 @@ function candidatesFor(configured, names) {
 }
 
 function findHostBinary() {
-  const name = `pi-desktop-host-core${process.platform === "win32" ? ".exe" : ""}`;
+  const name = `explore-host-core${process.platform === "win32" ? ".exe" : ""}`;
   return candidatesFor(process.env.PI_DESKTOP_HOST_BIN?.trim(), [name]).find(existsSync);
 }
 
@@ -234,7 +234,7 @@ async function main() {
   const hostBin = findHostBinary();
   const electronBin = findElectron();
   if (!hostBin) {
-    throw new Error(`host binary missing; tried ${candidatesFor(process.env.PI_DESKTOP_HOST_BIN?.trim(), [`pi-desktop-host-core${process.platform === "win32" ? ".exe" : ""}`]).join(", ")}`);
+    throw new Error(`host binary missing; tried ${candidatesFor(process.env.PI_DESKTOP_HOST_BIN?.trim(), [`explore-host-core${process.platform === "win32" ? ".exe" : ""}`]).join(", ")}`);
   }
   if (!electronBin) throw new Error("Electron binary missing; install desktop dependencies first");
   assertDesktopBuild(root);

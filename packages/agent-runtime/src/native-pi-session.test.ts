@@ -198,7 +198,7 @@ describe("NativePiSessionService", () => {
   it("reclaims a stale dead-owner lease only when the file stayed append-only", () => {
     const f = fixture();
     const first = acquireNativePiSessionLease(f.file);
-    const lockPath = `${f.file}.pi-desktop.lock`;
+    const lockPath = `${f.file}.explore.lock`;
     const record = JSON.parse(readFileSync(lockPath, "utf8"));
     first.release();
     writeFileSync(lockPath, `${JSON.stringify({ ...record, pid: 2_147_483_647 })}\n`);
@@ -306,15 +306,15 @@ describe("native continuation review regressions", () => {
       const foreign = new NativePiSessionService(f);
       expect((await foreign.list())[0].readOnlyReason).toBe("busy");
     } finally { release(); service.disposeAll(); }
-    expect(existsSync(`${f.file}.pi-desktop.lock`)).toBe(false);
+    expect(existsSync(`${f.file}.explore.lock`)).toBe(false);
   });
 
   it("makes reclaimable dead-owner leases reachable via list/detail without stealing live leases", async () => {
     const f = await configuredFixture();
     const lease = acquireNativePiSessionLease(f.file);
-    const record = JSON.parse(readFileSync(`${f.file}.pi-desktop.lock`, "utf8"));
+    const record = JSON.parse(readFileSync(`${f.file}.explore.lock`, "utf8"));
     lease.release();
-    writeFileSync(`${f.file}.pi-desktop.lock`, JSON.stringify({ ...record, pid: 2147483647 }));
+    writeFileSync(`${f.file}.explore.lock`, JSON.stringify({ ...record, pid: 2147483647 }));
     const service = new NativePiSessionService(f);
     const [summary] = await service.list();
     expect(summary.capabilities?.canPrompt).toBe(true);
@@ -377,7 +377,7 @@ describe("native continuation review regressions", () => {
     await expect(service.prompt(summary.id, "test", () => {})).rejects.toThrow("binding failed");
     expect(bind).toHaveBeenCalledOnce();
     expect(dispose).toHaveBeenCalledOnce();
-    expect(existsSync(`${f.file}.pi-desktop.lock`)).toBe(false);
+    expect(existsSync(`${f.file}.explore.lock`)).toBe(false);
     expect(service.status(summary.id).status.isRunning).toBe(false);
   });
 
@@ -440,7 +440,7 @@ describe("native fork children", () => {
   }
 
   const groupEntries = (group: string) =>
-    readdirSync(group).filter((name) => !name.endsWith(".pi-desktop.lock")).sort();
+    readdirSync(group).filter((name) => !name.endsWith(".explore.lock")).sort();
 
   const errorCode = (fn: () => unknown) => {
     try { fn(); return undefined; } catch (error) { return (error as { errorCode?: string }).errorCode; }
@@ -702,7 +702,7 @@ describe("native fork children", () => {
       const before = groupEntries(f.group);
       const parentBytes = readFileSync(f.file, "utf8");
       const foreign = acquireNativePiSessionLease(f.file);
-      const lockPath = `${f.file}.pi-desktop.lock`;
+      const lockPath = `${f.file}.explore.lock`;
       const record = JSON.parse(readFileSync(lockPath, "utf8"));
       try {
         expect((await service.list()).find((row) => row.id === summary.id)?.readOnlyReason).toBe("busy");
@@ -1057,7 +1057,7 @@ describe("independent native ownership, identity and tool regressions", () => {
     const service = new NativePiSessionService(f);
     const [summary] = await service.list();
     await expect(service.prompt(summary.id, "bad startup", () => {})).rejects.toThrow("fixture startup failure");
-    expect(existsSync(`${f.file}.pi-desktop.lock`)).toBe(false);
+    expect(existsSync(`${f.file}.explore.lock`)).toBe(false);
     rmSync(extension);
     vi.spyOn(ModelRuntime.prototype, "streamSimple").mockImplementation(() => fauxStream());
     try {
@@ -1096,7 +1096,7 @@ describe("native settlement and reclaim boundaries", () => {
   it("permits only complete same-file append extensions for dead-local capability recovery", async () => {
     const f = await configuredFixture();
     const lease = acquireNativePiSessionLease(f.file);
-    const lockPath = `${f.file}.pi-desktop.lock`;
+    const lockPath = `${f.file}.explore.lock`;
     const record = JSON.parse(readFileSync(lockPath, "utf8"));
     lease.release();
     const service = new NativePiSessionService(f);

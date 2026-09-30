@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PI-Desktop e2e smoke tests (headless protocol-level).
+ * EXplore Agent e2e smoke tests (headless protocol-level).
  * Covers host-core RPC, tools, secrets, plugins, and optional live model chat.
  *
  * Env:
@@ -34,7 +34,7 @@ if (configuredHostBin) {
     hostBinCandidates.push(`${configured}.exe`);
   }
 }
-const hostBinaryName = `pi-desktop-host-core${process.platform === "win32" ? ".exe" : ""}`;
+const hostBinaryName = `explore-host-core${process.platform === "win32" ? ".exe" : ""}`;
 hostBinCandidates.push(join(root, "target", "debug", hostBinaryName));
 hostBinCandidates.push(join(root, "..", "..", "..", "target", "debug", hostBinaryName));
 const hostBin = hostBinCandidates.find((candidate) => existsSync(candidate));

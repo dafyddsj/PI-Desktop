@@ -11,7 +11,7 @@ describe("agentDir", () => {
 });
 
 describe("pinPiAgentDir", () => {
-  it("points the pi SDK's env override at the PI-Desktop agent dir", () => {
+  it("points the pi SDK's env override at the EXplore Agent dir", () => {
     const env: NodeJS.ProcessEnv = {};
     expect(pinPiAgentDir(env, "/home/u")).toBe(join("/home/u", ".explore", "agent"));
     expect(env[PI_AGENT_DIR_ENV]).toBe(join("/home/u", ".explore", "agent"));

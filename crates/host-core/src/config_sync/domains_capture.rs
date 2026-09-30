@@ -508,7 +508,7 @@ fn global_instruction_path() -> Option<PathBuf> {
     dirs::home_dir().map(|home| global_instruction_path_in(&home))
 }
 
-/// PI-Desktop's global agent directory is `~/.explore/agent`, kept apart from
+/// EXplore Agent's global agent directory is `~/.explore/agent`, kept apart from
 /// a separately installed pi CLI's `~/.pi/agent` (mirrors
 /// `packages/agent-runtime/src/agent-dir.ts`).
 fn global_instruction_path_in(home: &Path) -> PathBuf {

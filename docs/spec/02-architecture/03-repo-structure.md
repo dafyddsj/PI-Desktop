@@ -29,7 +29,7 @@ PI-Desktop/
 │   ├── electron.vite.config.ts
 │   └── package.json          # also holds the electron-builder config
 ├── crates/
-│ └── host-core/              # Rust privileged host (binary pi-desktop-host-core)
+│ └── host-core/              # Rust privileged host (binary explore-host-core)
 │   ├── Cargo.toml
 │   └── src/                  # rpc/, tools/, plus one module per domain
 ├── packages/
@@ -155,7 +155,7 @@ how `pnpm dev` runs beside the packaged app (D599).
 | Object | Convention |
 |---|---|
 | JS packages | `@pi-desktop/*` |
-| Rust crate | `pi-desktop-host-core` (or `host-core`) |
+| Rust crate | `explore-host-core` (or `host-core`) |
 | IPC channels | `pi-desktop/<domain>/<action>` |
 | i18n keys | `domain.section.key` |
 | Plugin IDs | reverse-domain style |
