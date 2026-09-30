@@ -4,7 +4,7 @@ import test from "node:test";
 register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
 const { convertSession } = await import("../electron/main/importers/index.ts");
 
-// D638: the pi CLI session importer was removed; a stale or forged "pi"
+// The pi CLI session importer was removed; a stale or forged "pi"
 // candidate must not reach any converter.
 test("session import rejects the removed pi CLI source", async () => {
   await assert.rejects(

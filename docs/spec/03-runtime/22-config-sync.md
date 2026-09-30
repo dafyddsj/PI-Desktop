@@ -37,7 +37,7 @@ instructions and projects, plugin installation intent, scheduled automations,
 and optional project memory. Credentials are opt-in. Provider API keys and MCP
 environment variables/headers are included only when the credential category
 is selected; OAuth access/refresh tokens and cookies are never exported.
-The instruction adapter reads only the fixed global `~/.explore/agent/AGENTS.md` (D637)
+The instruction adapter reads only the fixed global `~/.explore/agent/AGENTS.md`
 and each registered project's root `AGENTS.md`; it does not scan nested
 repositories or arbitrary files. Imported instruction files are written only
 after their scope is explicitly selected, mapped where required, and approved.

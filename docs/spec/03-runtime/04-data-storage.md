@@ -901,7 +901,7 @@ backslashes are literal text. Snippets surround the match, including short CJK
 queries, rather than always taking the start of the message. Context navigation
 resolves stable IDs against physical JSONL positions, and displays canonical
 JSONL text without modifying SQLite or the live transcript cache. See
-[ADR session-content-search](../../adr/session-content-search.md).
+ADR session-content-search.
 
 ```sql
 CREATE VIRTUAL TABLE messages_fts USING fts5(
@@ -1058,8 +1058,8 @@ optional task-owned `permissionMode` plus paired `providerId`/`modelId` values.
 These additive values stay in `config_json`; no physical migration is required.
 Missing model fields retain run-time app-default resolution. Missing permission
 keeps legacy behavior: Ask for automatic runs and inherited permission for Run now.
-See [the automation ADR](../../adr/scheduled-desktop-automations.md) and
-[ADR 0305](../../adr/0305-scheduled-task-execution-settings.md).
+See the automation ADR and
+ADR 0305.
 
 Tasks also persist optional `thinkingLevel` using the existing session values
 (including `off` and `omit`). The full Composer model/reasoning picker and
@@ -1622,7 +1622,7 @@ when converted. Known intent survives cadence changes and database reopen.
 This additive JSON key needs no table or schema-version migration. Older
 versions ignore the key and cannot enforce the new conversion guard.
 
-## 13. PI-Desktop config directories (D637, ADR 0312)
+## 13. Explore config directories
 
 PI-Desktop uses `.explore` where the pi SDK and pi CLI use `.pi`, so it never
 shares state with a separately installed pi CLI. The bundled SDK's

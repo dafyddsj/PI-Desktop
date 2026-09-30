@@ -155,6 +155,6 @@ requires the manual matrix in the delivery plan.
 ## Validation references
 
 The implementation and test evidence are tracked in
-[`../../implementation/live-work-evidence.md`](../../implementation/live-work-evidence.md).
+`../../implementation/live-work-evidence.md`.
 The representative user path and automated coverage status are listed in
 [`../06-delivery/04-e2e-test-plan.md`](../06-delivery/04-e2e-test-plan.md).

@@ -681,7 +681,7 @@ activation-scope filtering (`CAPABILITY_INVALID` for an unknown scope).
   at 64 Ki characters per message; the target is centered on the query. Tool
   bodies, thinking, and attachments are omitted. Missing/deleted targets return
   `NOT_FOUND`; invalid directions or identifiers return `INVALID_ARGUMENT`.
-  See [ADR session-content-search](../../adr/session-content-search.md).
+  See ADR session-content-search.
 - `artifacts.list` — Plan/Goal checkpoint artifacts for a session
 - `keyboard.setGlobalShortcut` — host-owned native fallback for the plugin
   launcher chord where Electron cannot register it

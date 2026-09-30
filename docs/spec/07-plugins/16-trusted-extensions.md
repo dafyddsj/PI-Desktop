@@ -21,7 +21,7 @@ Desktop adapter implements the explicit subset in §5–6; new upstream events d
 not become actionable here automatically. Native Pi continuation runs the
 coding-agent SDK's own extension lifecycle and can use its 0.87.1 boundary
 hooks, subject to the separate native-session lease and trust rules in
-[ADR 0254](../../adr/0254-native-pi-session-continuation.md).
+ADR 0254.
 
 Provider declarations are a separate manifest surface rather than part of this
 contract: `contributes.providers` materializes Host-owned provider rows
@@ -343,7 +343,7 @@ do not accumulate across turns. The same ordered handlers, base, and returned
 strings produce identical prompt bytes; this does not guarantee provider cache
 hits or stabilize content produced by plugins themselves. No append field or
 new plugin API is introduced, and other events retain their existing folding
-rules. See [ADR 0214](../../adr/0214-trusted-extensions.md).
+rules. See ADR 0214.
 
 Desktop event capabilities are maintained in
 `packages/agent-runtime/src/extensions/event-capabilities.ts`: result,

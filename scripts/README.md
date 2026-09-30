@@ -13,8 +13,7 @@ disagrees, so a green `check:release-docs` is a precondition, not a substitute.
 | Script | Alias | Purpose |
 |---|---|---|
 | `release.mjs` | `node scripts/release.mjs <version> [--tag]` | Bump every workspace version surface, commit, and optionally create the `vX.Y.Z` tag the Release workflow builds from |
-| `check-release-docs.mjs` | `pnpm check:release-docs` | Verify the changelog, its test list, `APP_VERSION`, workspace versions, Cargo versions, and both README release lines agree |
-| `check-agent-policy-sync.mjs` | `pnpm check:agent-policy` | Verify `AGENTS.md` and `CLAUDE.md` share the same `Policy-Sync` token, cross-references, and non-negotiable policy anchors |
+| `check-release-docs.mjs` | `pnpm check:release-docs` | Verify the changelog, its test list, `APP_VERSION`, workspace versions, Cargo versions, and the README release line agree |
 | `check-marketplace-catalog.mjs` | `pnpm check:marketplace -- --url <url> --plugin <id>` | Marketplace catalog preflight; rejects a version record missing a checksum, package URL, size, or permissions, and a catalog `author` that is not a string |
 | `check-style-tokens.mjs` | run by the desktop `lint` script | Fail renderer styles that hardcode values instead of design-system tokens |
 
@@ -32,7 +31,6 @@ disagrees, so a green `check:release-docs` is a precondition, not a substitute.
 | `build-desktop-release.mjs` | called by the desktop `dist` / `dist:win` scripts | Build the native runner target without publishing; Windows runs separate NSIS and ZIP passes and stamps their updater distribution metadata |
 | `check-linux-host-glibc.mjs` | `node scripts/check-linux-host-glibc.mjs [bin]` | Fail a Linux host-core binary whose needed glibc is above 2.35 |
 | `make-icon.py` | `python3 scripts/make-icon.py` | Derive the package PNG, the macOS tray template, and the iconset/ICNS from the canonical PNG |
-| `publish-screenshots.py` | `python3 scripts/publish-screenshots.py` | Publish documentation screenshots |
 
 ## Development
 
@@ -72,11 +70,8 @@ and on manual dispatch, skipping both when a change touches only `docs/**` or
   `pnpm -r --if-present test`
 - **Rust host-core test** — `cargo test -p host-core --locked`
 
-`.github/workflows/docs-check.yml` covers the paths `ci.yml` ignores: it runs
-`pnpm docs:check` (the docs locale pair check) when `docs/**`, the READMEs, the
-shared changelog sources, or the check scripts change. `check:release-docs` is
-deliberately not in CI because release branches must pass it with the stable
-version explicitly supplied for a prerelease preview.
+`check:release-docs` is deliberately not in CI because release branches must
+pass it with the stable version explicitly supplied for a prerelease preview.
 
 `.github/workflows/release.yml` builds on a `v*.*.*` tag. A `verify` job first
 repeats the `ci.yml` checks (a tag push does not trigger `ci.yml`), and the

@@ -15,7 +15,7 @@
  *   3. packages/shared/src/changelog*.ts has an entry for the version under
  *      every shipped locale, newest-first, with matching highlight counts.
  *   4. packages/shared/src/changelog.test.ts pins the version as newest.
- *   5. README.md and README.zh-CN.md declare the current release line
+ *   5. README.md declares the current release line
  *      (`<major>.<minor>.x`) in their status section.
  * For a prerelease preview, pass the stable version being previewed so the
  * changelog/README checks run against that catalog rather than x.y.z-beta.*.
@@ -56,7 +56,7 @@ if (requested && !isPrereleasePreview && currentVersion !== requested) {
 }
 
 // 1. Version surfaces.
-const packageFiles = ["package.json", "docs/package.json"];
+const packageFiles = ["package.json"];
 for (const group of ["apps", "packages"]) {
   for (const dir of readdirSync(path.join(root, group), { withFileTypes: true })) {
     const relPath = path.join(group, dir.name, "package.json");
@@ -194,8 +194,8 @@ if (!read("packages/shared/src/changelog.test.ts").includes(`"${documentVersion}
   );
 }
 
-// 4. READMEs declare the current release line.
-for (const relPath of ["README.md", "README.zh-CN.md"]) {
+// 4. The README declares the current release line.
+for (const relPath of ["README.md"]) {
   if (!read(relPath).includes(releaseLine)) {
     fail(relPath, `status section does not mention the ${releaseLine} release line`);
   }

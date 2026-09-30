@@ -1,9 +1,16 @@
-# PI-Desktop Spec
+# Explore Agent Spec
 
-> Frozen baseline: `0.4.16` · current app line: `0.14.x`
-> Updated: `2026-09-10`
-> Language: **English-first**
 > Stack: Electron + **Rust host core** + pi Agent Harness + user-installable plugins
+
+Explore Agent is a new product built from a fork of PI-Desktop. These specs
+were inherited from PI-Desktop and describe the current implementation; they
+are a design reference, not a change-control process. PI-Desktop product names
+remain where the code still uses them.
+
+References to ADR numbers (`ADR 0254`), decision IDs (`D637`), the decisions
+log, Chinese (`zh-CN`) mirrors, and delivery documents such as milestones or
+the AI development workflow point to PI-Desktop history that is not included
+in this repository.
 
 The baseline is a frozen decision artifact, not a complete list of every
 feature in the current app. The current implementation adds Goal contracts,
@@ -18,7 +25,6 @@ is v16 (see `00-baseline.md`).
 |---|---|
 | [NAV.md](NAV.md) | One-page full navigation |
 | [00-baseline.md](00-baseline.md) | Frozen baseline |
-| [08-meta/decisions-log.md](08-meta/decisions-log.md) | Frozen detail decisions |
 | [01-product/00-overview.md](01-product/00-overview.md) | Overview |
 | [01-product/01-product-scope.md](01-product/01-product-scope.md) | Current product scope and operating modes |
 | [02-architecture/01-architecture.md](02-architecture/01-architecture.md) | Architecture |
@@ -29,11 +35,8 @@ is v16 (see `00-baseline.md`).
 | [04-ux/02-i18n-english-first.md](04-ux/02-i18n-english-first.md) | i18n policy |
 | [04-ux/07-ui-design-system.md](04-ux/07-ui-design-system.md) | Design system (tokens, motion, density) |
 | [04-ux/01-ui-ia.md](04-ux/01-ui-ia.md) | Shipped shell and destination map |
-| [../project/plan-mode-implementation-plan.md](../project/plan-mode-implementation-plan.md) | Plan operating-state implementation plan |
 | [07-plugins/01-plugin-system.md](07-plugins/01-plugin-system.md) | Plugin system |
-| [06-delivery/03-ai-development-workflow.md](06-delivery/03-ai-development-workflow.md) | AI dev workflow rules |
 | [06-delivery/04-e2e-test-plan.md](06-delivery/04-e2e-test-plan.md) | E2E test plan & scenarios |
-| [06-delivery/05-change-checklist.md](06-delivery/05-change-checklist.md) | Change checklist |
 
 ## Directory map
 
@@ -46,8 +49,7 @@ docs/spec/
 ├── 04-ux/
 ├── 05-security/
 ├── 06-delivery/
-├── 07-plugins/
-└── 08-meta/
+└── 07-plugins/
 ```
 
 ## Reading paths
@@ -56,7 +58,6 @@ docs/spec/
 1. `00-baseline.md`
 2. `01-product/00-overview.md`
 3. `01-product/01-product-scope.md`
-4. `06-delivery/01-mvp-milestones.md`
 
 ### Implementation
 1. `00-baseline.md`

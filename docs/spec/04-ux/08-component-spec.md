@@ -8,7 +8,7 @@
 > Shell layout is Codex-aligned: left thread sidebar (240–520px, default 275px), main transcript, floating bottom composer with runtime mode/permission/model controls, and a compact action-only top bar. Prefer neutral charcoal surfaces over blue-slate chrome.
 >
 > **Precedence rule**: where a metric or copy string below disagrees with a
-> Codex parity decision in [decisions-log §D](../08-meta/decisions-log.md)
+> Codex parity decision in decisions-log §D
 > (D034+), the decision log wins — it tracks the live gold captures. Known
 > updated values: sidebar 240–520px (default 275px), toolbar 46px (not 44px),
 > composer placeholder per D094/D066, home empty stack and bottom composer per
@@ -218,7 +218,7 @@ truncation. View more expands session navigation;
 session rows enter their original conversation. The menu follows active locale
 changes and never marks a result read merely by opening. macOS single-click
 opens the attached menu; Open and double-click restore/focus the window.
-See [ADR tray-session-shortcuts](/adr/tray-session-shortcuts).
+See ADR tray-session-shortcuts.
 
 ## 2. Topbar
 
@@ -875,7 +875,7 @@ message, and applies each reveal request once. Item-level targeting is not part
 of this change. Compact reasoning stays hidden until
 the user selects Detailed. Permission, question, plan/goal approval and other
 pending action cards remain reachable outside a hidden process. See
-[ADR turn-process-and-thinking-display](../../adr/turn-process-and-thinking-display.md).
+ADR turn-process-and-thinking-display.
 
 ### 4.4 States
 

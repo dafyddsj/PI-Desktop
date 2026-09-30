@@ -658,7 +658,7 @@ handler retained across a mode change rechecks that mode before executing.
 The model receives an ordinary error tool result with the original call id;
 no editing, delegation, fake user message or transcript deletion occurs.
 Other deferred/plugin tools keep their existing visibility rules. See
-[the declaration/permission decision](../../adr/plan-tool-declarations-and-execution-denials.md).
+the declaration/permission decision.
 
 Approval has only `approve` and `reject`. Approval commits `mode = agent`, the
 explicit permission mode, an execution ID, and `execution_state = queued` on
@@ -864,7 +864,7 @@ core set rather than the on-demand catalog of §7.1:
   that definition's own pin key, even without an opt-in.
   The Task definition catalog displays each default model and treats omitting
   or repeating that key as keeping the default. See
-  [ADR subagent-model-opt-in](../../adr/subagent-model-opt-in.md).
+  ADR subagent-model-opt-in.
   When a model key is not pre-resolved, the runtime asks Electron main to resolve it
   on-demand via the `provider.resolveSubagentModel` RPC. The started `Task`
   result details record the effective `modelId` and resolved `thinkingLevel`
@@ -1073,7 +1073,7 @@ Failure diagnostics remain in the child transcript, bounded parent report,
 and additive `modelFailures` lifecycle detail. Lifecycle model/thinking fields
 track the effective alternative, including after settlement and reload. If all
 alternatives fail, the result remains `failed` with the final provider error.
-See [ADR subagent-model-fallback](../../adr/subagent-model-fallback.md).
+See ADR subagent-model-fallback.
 
 **Context budget and compaction (ADR 0299, D623).** A delegate has the same
 window protection the session has, derived the same way. The budget comes
@@ -1282,7 +1282,7 @@ payload hook keeps its own object and its return value still wins.
 
 The `[optional user custom instructions]` layer is the pi-compatible file pair
 `SYSTEM.md` / `APPEND_SYSTEM.md`, discovered per session launch from
-`<workspace>/.explore/` (project) and `~/.explore/agent/` (global, D637), each kind picking a
+`<workspace>/.explore/` (project) and `~/.explore/agent/` (global), each kind picking a
 single winner with project over global, exactly like pi CLI. A change to the
 resolved content retires the runtime through the reuse match, so the next
 prompt recomposes; the files are not re-read per tool call like the project
@@ -1461,7 +1461,7 @@ same project rules as its session.
 ### 7.3 Project instruction chain
 
 The Electron main process first resolves the global
-`~/.explore/agent/AGENTS.md` (D637), then project instruction files inside the
+`~/.explore/agent/AGENTS.md`, then project instruction files inside the
 session-bound project root when a runtime starts. For each project directory it
 uses at most one non-empty file in this order: `AGENTS.override.md`, `AGENTS.md`,
 `CLAUDE.md`, then `.claude/CLAUDE.md`. Entries are concatenated from project
@@ -1630,4 +1630,4 @@ stream recovery in main sessions and built-in delegates. Their structured
 cause survives adapter message flattening, remains on the final error row,
 and never triggers a provider transport rebuild. Protocol errors such as
 `EPROTO` keep their existing retry behavior. See
-[certificate trust ADR](../../adr/provider-system-certificates.md).
+certificate trust ADR.

@@ -258,7 +258,7 @@ Escape/outside dismissal, and exposes selected states. The footer clock and glob
 this route. Run now dispatches in the background and selects Run history; a
 conversation link opens the real transcript. The latest 100 runs show running,
 completed, failed or interrupted status. Automatic runs never steal foreground
-focus. See [desktop automations](../../adr/scheduled-desktop-automations.md).
+focus. See desktop automations.
 
 The application must remain running. The host polls every 30 seconds and skips
 occurrences more than 90 seconds late or overlapping a running task. Startup

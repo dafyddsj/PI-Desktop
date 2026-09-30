@@ -71,7 +71,7 @@ test("launch discovers project custom system prompt files (issue #542)", async (
   // global files — both are valid starting points for the assertions below.
   const baseline = (await launchParams(runtime)).customSystemPrompt;
 
-  // A pi CLI project's .pi/SYSTEM.md is not PI-Desktop's (D637) and is ignored.
+  // A pi CLI project's .pi/SYSTEM.md is not Explore Agent's and is ignored.
   mkdirSync(join(workspace, ".pi"), { recursive: true });
   writeFileSync(join(workspace, ".pi", "SYSTEM.md"), "MARKER-PI-CLI-PERSONA");
   assert.deepEqual((await launchParams(runtime)).customSystemPrompt, baseline);

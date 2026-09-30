@@ -16,7 +16,7 @@
  *   - packages/shared/src/changelog*.ts (one entry for <version> in every
  *     shipped locale, matching highlight counts) and its newest-first list in
  *     changelog.test.ts
- *   - the release line stated in README.md and README.zh-CN.md
+ *   - the release line stated in README.md
  * GitHub auto-generated release bodies are web-only and are not a substitute.
  *
  * This script runs `scripts/check-release-docs.mjs <version>` after bumping and
@@ -124,8 +124,6 @@ function bumpPackageJson(relPath) {
 }
 
 bumpPackageJson("package.json");
-// `docs` is a third workspace root (pnpm-workspace.yaml), not under apps/packages.
-bumpPackageJson("docs/package.json");
 for (const group of ["apps", "packages"]) {
   for (const dir of readdirSync(path.join(root, group), { withFileTypes: true })) {
     if (dir.isDirectory()) bumpPackageJson(path.join(group, dir.name, "package.json"));

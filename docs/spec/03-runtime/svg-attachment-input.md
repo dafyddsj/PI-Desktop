@@ -1,7 +1,7 @@
 # SVG attachment input
 
 This supplements [the agent runtime](02-agent-runtime.md) and
-[model-aware image transport](../../adr/0101-model-aware-image-attachments.md)
+model-aware image transport
 for issue #946. It does not change the model capability decision, protocol,
 storage schema, or attachment-root permissions.
 

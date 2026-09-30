@@ -360,4 +360,4 @@ shortcuts, and quitting prevents further publication. A closed window retains
 only the last organization copy, which is replaced after renderer bootstrap.
 Menu command readiness is acknowledged after bootstrap's initial navigation,
 so a tray click cannot be overwritten by the startup draft or pending-plan
-selection. See [ADR tray-session-shortcuts](/adr/tray-session-shortcuts).
+selection. See ADR tray-session-shortcuts.

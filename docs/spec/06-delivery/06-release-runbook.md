@@ -3,7 +3,7 @@
 > Scope: D126/D285/D603 tag artifacts for macOS arm64 and Intel x64, Windows x64,
 > and Linux x64, including the Linux system-Electron ASAR asset;
 > macOS signing/notarization remains the detailed qualification lane below.
-> Cross-references: [milestones](01-mvp-milestones.md) · [process model](../03-runtime/07-process-model.md) · [security](../05-security/01-security.md)
+> Cross-references: [process model](../03-runtime/07-process-model.md) · [security](../05-security/01-security.md)
 
 ## 1. Build lanes
 
@@ -115,7 +115,7 @@ Surfaces in scope:
 | `package.json`, `apps/*/package.json`, `packages/*/package.json`, `docs/package.json` | Same version (`docs` is a third workspace root, not under `apps`/`packages`) |
 | `Cargo.toml` `[workspace.package]`, `Cargo.lock` `host-core` | Same version |
 | `packages/shared/src/protocol.ts` `APP_VERSION` | Same version |
-| `README.md`, `README.zh-CN.md` | Status section states the current `<major>.<minor>.x` release line; toolchain, command, and roadmap claims still true |
+| `README.md` | Status section states the current `<major>.<minor>.x` release line; toolchain, command, and roadmap claims still true |
 
 Blocking steps:
 
@@ -144,11 +144,10 @@ Blocking steps:
    `packages/shared/src/changelog.test.ts` (add the new stable version at the
    top), then run `pnpm --filter @pi-desktop/shared test` and confirm catalog
    alignment (version sets + highlight counts) still passes.
-5. Update `README.md` and `README.zh-CN.md` when the release line changes
+5. Update `README.md` when the release line changes
    (`0.10.x` → `0.11.x`) and whenever the release ships user-visible behavior
    the Highlights, Download, Getting started, Status, or Development sections
-   now describe incorrectly. Both locales stay structurally in sync; English is
-   the source of truth and the zh-CN file links the `docs/zh-CN/` mirrors.
+   now describe incorrectly.
 6. Run the preflight and fix every reported surface:
    `pnpm check:release-docs [version]` (`node scripts/check-release-docs.mjs`).
    For a prerelease, run it against the **stable** version being previewed
@@ -174,7 +173,7 @@ Pre-tag checklist:
       match the English version set and highlight counts
 - [ ] Highlight counts match across locales
 - [ ] Shared changelog tests pass
-- [ ] `README.md` and `README.zh-CN.md` state the current release line and
+- [ ] `README.md` state the current release line and
       contain no claims the release invalidates
 - [ ] `node scripts/check-release-docs.mjs` passes on the release commit
       (use the stable version when tagging a prerelease preview)
@@ -274,32 +273,9 @@ Deployments are disabled in `docs/vercel.json`, so changes to documentation
 sources do not automatically update the production site. Deployments must be
 initiated manually in Vercel when required.
 
-### 4.5 CNB mirror trigger
-
-After `softprops/action-gh-release` publishes or updates a GitHub Release,
-`.github/workflows/mirror-to-cnb.yml` starts the CNB pipeline at
-`aixk/Pi-Desktop`. GitHub Release remains the canonical artifact source; CNB
-is a copy of the same tag for users who pull from
-https://cnb.cool/aixk/Pi-Desktop.
-
-The job:
-
-- runs only on `vastsa/PI-Desktop`
-- fires on `release` `published` / `edited`, and on `workflow_dispatch` with
-  an explicit tag such as `v0.14.6`
-- sends event `api_trigger_mirror` and `MIRROR_TAGS` set to that tag
-- uses repository secret `CNB_MIRROR_TOKEN` (already configured) and fails
-  closed if the secret is empty
-- builds the JSON body with `jq` so a missing tag cannot produce an empty
-  `MIRROR_TAGS` value on a manual run
-
-Re-running the workflow for the same tag is safe if the CNB pipeline is
-idempotent. It does not rebuild desktop artifacts and does not change
-electron-updater feeds.
-
 ### 4.6 GitHub Actions secrets for macOS signing
 
-Create these under GitHub → repository `vastsa/PI-Desktop` → Settings →
+Create these under GitHub → repository `dafyddsj/PI-Desktop` → Settings →
 Secrets and variables → Actions. Never commit the p12, password, Apple ID, or
 app-specific password. Never `echo` these values in CI.
 

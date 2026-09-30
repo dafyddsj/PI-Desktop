@@ -205,8 +205,6 @@
 
 - Spec index: `docs/spec/README.md`
 - Navigation: `docs/spec/NAV.md`
-- Decisions log: `docs/spec/08-meta/decisions-log.md`
-- ADRs: `docs/adr/`
 - Example plugin: `examples/plugins/hello`
 
 ## Delivery Status
