@@ -360,7 +360,7 @@ CREATE TABLE sessions (
                                           'high', 'xhigh', 'max', 'omit')),
   permission_mode TEXT NOT NULL DEFAULT 'inherit' -- D115: inherit follows settings
                 CHECK (permission_mode IN ('inherit', 'ask', 'accept-edits', 'auto')),
-  source      TEXT,                            -- import origin: claude-code | codex | opencode | pi
+  source      TEXT,                            -- import origin: claude-code | codex | opencode (pi: legacy rows, D638)
   deleted_at  INTEGER,                         -- plugin trash marker; null means active
   pinned      INTEGER NOT NULL DEFAULT 0,
   last_seq    INTEGER NOT NULL DEFAULT 0,      -- message ordinal allocator

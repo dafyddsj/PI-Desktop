@@ -45,7 +45,6 @@ const IMPORT_SOURCES = new Set<ExternalSource>([
   "claude-code",
   "opencode",
   "codex",
-  "pi",
 ]);
 
 function importSelectionKey(value: unknown): string | null {

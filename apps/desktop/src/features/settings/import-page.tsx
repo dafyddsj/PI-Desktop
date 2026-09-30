@@ -468,7 +468,6 @@ export function SessionImportPanel() {
         "claude-code": t("settings.importSourceClaudeCode"),
         opencode: t("settings.importSourceOpenCode"),
         codex: t("settings.importSourceCodex"),
-        pi: t("settings.importSourcePi"),
       } as Record<ImportCandidate["source"], string>,
     }),
     [t],
@@ -501,7 +500,6 @@ export function SessionImportPanel() {
             importLabels.sources["claude-code"],
             importLabels.sources.opencode,
             importLabels.sources.codex,
-            importLabels.sources.pi,
           ].join(" · ")}
           onScan={() => void scan()}
           scanning={scanning}

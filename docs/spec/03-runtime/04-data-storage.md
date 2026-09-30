@@ -446,7 +446,7 @@ CREATE TABLE sessions (
                                           'high', 'xhigh', 'max', 'omit')),
   permission_mode TEXT NOT NULL DEFAULT 'inherit' -- D115: inherit follows settings
                 CHECK (permission_mode IN ('inherit', 'ask', 'accept-edits', 'auto')),
-  source      TEXT,                            -- import origin: claude-code | codex | opencode | pi
+  source      TEXT,                            -- import origin: claude-code | codex | opencode (pi: legacy rows, D638)
   deleted_at  INTEGER,                         -- plugin trash marker; null means active
   pinned      INTEGER NOT NULL DEFAULT 0,
   last_seq    INTEGER NOT NULL DEFAULT 0,      -- current message count / ordinal allocator
@@ -1646,7 +1646,8 @@ modules resolve the same name through `packages/agent-runtime/src/agent-dir.ts`.
   only under `.explore/`.
 
 A pi CLI project's `.pi/` folder is otherwise ignored, and `~/.pi` is read only
-by the explicit one-shot Pi importers. Nothing is migrated.
+by the explicit Pi model-config importer (the Pi session importer was removed by
+D638). Nothing is migrated.
 
 This is separate from the Desktop data directory (`~/.pi-desktop`), which
 host-core owns for SQLite, Desktop transcripts, and Desktop provider secrets.
