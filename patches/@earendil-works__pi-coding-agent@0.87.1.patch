@@ -1,3 +1,19 @@
+diff --git a/dist/config.js b/dist/config.js
+index 872dd55..7b55b78 100644
+--- a/dist/config.js
++++ b/dist/config.js
+@@ -400,7 +400,10 @@ const piConfigName = pkg.piConfig?.name;
+ export const PACKAGE_NAME = pkg.name || "@earendil-works/pi-coding-agent";
+ export const APP_NAME = piConfigName || "pi";
+ export const APP_TITLE = piConfigName ? APP_NAME : "π";
+-export const CONFIG_DIR_NAME = pkg.piConfig?.configDir || ".pi";
++// PI-Desktop: keep project (`.explore/`) and global (`~/.explore/agent`) config
++// apart from a separately installed pi CLI's `.pi`. Fixed rather than read from
++// `piConfig`, because the bundled sidecar resolves a different package.json.
++export const CONFIG_DIR_NAME = ".explore";
+ export const VERSION = pkg.version || "0.0.0";
+ // e.g., PI_CODING_AGENT_DIR or TAU_CODING_AGENT_DIR
+ export const ENV_AGENT_DIR = `${APP_NAME.toUpperCase()}_CODING_AGENT_DIR`;
 diff --git a/dist/core/agent-session.js b/dist/core/agent-session.js
 index 36fdb31..322876f 100644
 --- a/dist/core/agent-session.js

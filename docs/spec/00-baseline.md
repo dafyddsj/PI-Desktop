@@ -56,7 +56,7 @@
 > host-owned approval transition. The host protocol is v7 and storage schema
 > v8; persisted Chat values migrate to Plan while Agent remains the default.
 > `0.4.14` replaces that proposal with immutable host-written Markdown
-> checkpoints under `<workspaceRoot>/.pi/plan/*.md` through D189 / ADR 0053.
+> checkpoints under `<workspaceRoot>/.explore/plan/*.md` through D189 / ADR 0053.
 > SubmitPlan accepts title, Markdown, and question; the Markdown bytes are
 > preserved exactly while title/question remain structured approval fields.
 > Approval is approve/reject only with explicit permission selection defaulting
@@ -184,7 +184,7 @@
     Plan is planning intent, not a strict read-only security profile.**
 45. Plan checkpoint: **`SubmitPlan(title, markdown, question)` causes host-core
     to preserve the exact Markdown bytes in a new unique
-    `<workspaceRoot>/.pi/plan/*.md` artifact, while title/question remain
+    `<workspaceRoot>/.explore/plan/*.md` artifact, while title/question remain
     structured fields in the existing `plan_approvals` row. The row records the
     artifact path/hash/size and execution fields. Approve/reject are the only
     actions; approval explicitly selects `ask`, `accept-edits`, or `auto` with

@@ -55,7 +55,7 @@
 > 主机拥有的批准过渡。主机协议为v7，存储架构
 > v8；保留的聊天值会迁移到 Plan，而 Agent 仍保留默认值。
 > `0.4.14` 用不可变的主机编写的 Markdown 替换该提案
-> `<workspaceRoot>/.pi/plan/*.md` 至 D189 / ADR 0053 下的检查点。
+> `<workspaceRoot>/.explore/plan/*.md` 至 D189 / ADR 0053 下的检查点。
 > SubmitPlan 接受标题、Markdown 和问题； Markdown 字节是
 > 完全保留，而 title/question 仍保留结构化审批字段。
 > 仅在默认显式权限选择的情况下才批准 approve/reject
@@ -158,7 +158,7 @@
     Plan 是计划意图，而不是严格的只读安全配置文件。**
 45. Plan 检查点：**`SubmitPlan(title, markdown, question)` 导致 host-core
     将确切的 Markdown 字节保留在新的唯一文件中
-    `<workspaceRoot>/.pi/plan/*.md` 工件，而 title/question 仍然存在
+    `<workspaceRoot>/.explore/plan/*.md` 工件，而 title/question 仍然存在
     现有 `plan_approvals` 行中的结构化字段。该行记录了
     工件 path/hash/size 和执行字段。 Approve/reject 是唯一
     行动；批准明确选择 `ask`、`accept-edits` 或 `auto`

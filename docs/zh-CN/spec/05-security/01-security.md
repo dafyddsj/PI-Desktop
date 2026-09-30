@@ -88,7 +88,7 @@ Plan 本身并不是工作区安全边界。主机核解决了
 CDP 插件工具在 Plan 中仍被拒绝）。 Bash 在 Plan 中仍然可用：询问并
 接受编辑提示，自动运行而无需确认，并且可能会改变
 工作区或临时目录。用户界面必须说明这种权衡。 `SubmitPlan`
-在新的唯一 `<workspaceRoot>/.pi/plan/*.md` 中保留精确的 Markdown 字节
+在新的唯一 `<workspaceRoot>/.explore/plan/*.md` 中保留精确的 Markdown 字节
 通过 host-core 文件，验证根内工件路径，计算 SHA-256
 和字节大小，然后才创建 `plan_approvals` 记录
 结构化 title/question 字段。 Renderer 和 sidecar 状态无法写入或

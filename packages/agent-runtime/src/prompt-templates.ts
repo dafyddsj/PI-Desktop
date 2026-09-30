@@ -1,9 +1,10 @@
 /**
  * Bridge to pi's prompt-template ("slash command") system for the composer
  * (D123, ADR 0024). Loading and expansion reuse pi-agent-core verbatim so
- * `.pi/prompts` assets behave identically in pi CLI and PI-Desktop.
+ * prompt-template assets behave as in pi CLI, but from PI-Desktop's own
+ * `.explore` folders (D637).
  *
- * Discovery: `<workspace>/.pi/prompts/*.md` (project) and
+ * Discovery: `<workspace>/.explore/prompts/*.md` (project) and
  * `~/.explore/agent/prompts/*.md` (user-global); project wins name conflicts.
  */
 
@@ -18,7 +19,7 @@ import {
   type PromptTemplate,
 } from "@earendil-works/pi-agent-core";
 import { NodeExecutionEnv } from "@earendil-works/pi-agent-core/node";
-import { agentDir } from "./agent-dir.js";
+import { agentDir, projectConfigDir } from "./agent-dir.js";
 
 /**
  * Prompt-enhancement templates live in `@pi-desktop/shared` so the runtime,
@@ -50,7 +51,7 @@ export function composerTemplateDirs(
   workspaceRoot: string | null | undefined,
 ): ComposerTemplateDirs {
   return {
-    ...(workspaceRoot ? { project: join(workspaceRoot, ".pi", "prompts") } : {}),
+    ...(workspaceRoot ? { project: join(projectConfigDir(workspaceRoot), "prompts") } : {}),
     user: join(agentDir(), "prompts"),
   };
 }

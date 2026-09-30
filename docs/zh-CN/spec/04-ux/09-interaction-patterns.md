@@ -772,7 +772,7 @@ Agent calls a permission-gated tool (including Plan/Goal Bash under Ask or Accep
    该回合处于实时 `planning` 时，Composer 模式芯片脉冲，紧凑的规划行占用与 Working 相同的预留底部位置，直到回合结束或等待用户操作。具体运行时阶段优先，工具和回答不会隐藏运行提示。
 3. Agent 在其工具批次中单独调用 `SubmitPlan` 或 `SubmitGoal`。
    Host-core 将准确的 Markdown 字节保留在新的不可变中
-   `.pi/plan/*.md` 或 `.pi/goal/*.md` 工件，记录其 path/hash/size 并结构化
+   `.explore/plan/*.md` 或 `.explore/goal/*.md` 工件，记录其 path/hash/size 并结构化
    title/question，渲染器显示共享合同审批卡
    只有标题和神器开启器；问题仍然是主机端合同数据。
    打开器在该视图可启动时把这一路径交给内置文件视图，否则交给宿主机文件标签，

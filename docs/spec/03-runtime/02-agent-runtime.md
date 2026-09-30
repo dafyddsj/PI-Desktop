@@ -646,7 +646,7 @@ while idle or when the Agent calls `EnterPlanMode`. In Plan, the Agent can
 inspect, use context controls, run Bash through the selected permission mode,
 and call `SubmitPlan(title, markdown, question)`. Host-core preserves the
 submitted Markdown bytes in a new immutable
-`.pi/plan/<unique-name>.md` artifact, records its relative path/hash/size and
+`.explore/plan/<unique-name>.md` artifact, records its relative path/hash/size and
 structured title/question in `plan_approvals`, and moves the live state to
 `awaiting_approval`.
 
@@ -684,7 +684,7 @@ configuration is submitted only after the session is idle.
 while idle or by the Agent calling `EnterGoalMode`. Goal has the identical tool
 surface as Plan, except that its submit tool is
 `SubmitGoal(title, markdown, question)` and its artifact is written to
-`.pi/goal/<unique-name>.md`. The submitted Markdown is a **goal contract** — the
+`.explore/goal/<unique-name>.md`. The submitted Markdown is a **goal contract** — the
 outcome to reach, the acceptance criteria that prove it was reached, and the
 boundaries that must not be crossed — not a list of implementation steps. A
 submit tool is rejected with `PLAN_KIND_MISMATCH` when the session's active kind
@@ -1282,7 +1282,7 @@ payload hook keeps its own object and its return value still wins.
 
 The `[optional user custom instructions]` layer is the pi-compatible file pair
 `SYSTEM.md` / `APPEND_SYSTEM.md`, discovered per session launch from
-`<workspace>/.pi/` (project) and `~/.explore/agent/` (global, D637), each kind picking a
+`<workspace>/.explore/` (project) and `~/.explore/agent/` (global, D637), each kind picking a
 single winner with project over global, exactly like pi CLI. A change to the
 resolved content retires the runtime through the reuse match, so the next
 prompt recomposes; the files are not re-read per tool call like the project
@@ -1409,7 +1409,7 @@ Markdown snapshot. An accepted new Plan prompt has no prior pending approval;
 earlier submissions in the transcript are historical immutable checkpoints.
 After reject, expiry, or interruption, the Agent may revise in the new turn and
 must follow the same one-SubmitPlan rule. It must not claim that changes were
-made. The host writes the immutable `.pi/plan/*.md` artifact; the Agent does
+made. The host writes the immutable `.explore/plan/*.md` artifact; the Agent does
 not write or edit it itself and does not receive a request-changes flow.
 
 The prompt may describe Bash as permission-gated and potentially mutating. It
@@ -1428,7 +1428,7 @@ once in the current turn with one complete Markdown snapshot.
 
 The one-submit rule, the historical-checkpoint rule, the revise-after-close rule,
 the no-chat-confirmation rule, and the host-writes-the-artifact rule are the same
-as Plan's, with `SubmitGoal` and `.pi/goal/*.md` in place of their Plan
+as Plan's, with `SubmitGoal` and `.explore/goal/*.md` in place of their Plan
 equivalents. The prompt additionally states that once approved, the contract is
 the standard the Agent works against: it pursues the goal autonomously, chooses
 its own approach, and stops only when every acceptance criterion is verified or a

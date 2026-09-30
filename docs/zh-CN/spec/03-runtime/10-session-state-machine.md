@@ -124,7 +124,7 @@ accept_prompt
 11. `EnterPlanMode`、`EnterGoalMode`、`SubmitPlan` 和 `SubmitGoal` 必须是
     他们中唯一的工具调用
     助理批次。提交工具在新的文件中保留精确的 Markdown 字节
-    主机拥有的 `.pi/<kind>/*.md` 工件并创建一个待处理的
+    主机拥有的 `.explore/<kind>/*.md` 工件并创建一个待处理的
     `plan_approvals` 行及其 `kind` 加上结构化的 title/question 和
     神器领域。针对另一种模式调用的提交工具失败
     与 `PLAN_KIND_MISMATCH` 并且什么也不写。
@@ -170,7 +170,7 @@ accept_prompt
   结构化输入框快照仅保留渲染器内存
 - mode/project 字段：更改时
 - Plan/Goal 提交：将精确的 Markdown 字节写入新的唯一值
-  `.pi/<kind>/*.md`，
+  `.explore/<kind>/*.md`，
   记录 path/hash/size 加上类型和结构 title/question，然后插入
   `pending`
   批准事件之前的 `plan_approvals` 行
@@ -207,7 +207,7 @@ accept_prompt
    和
    在 Goal 中拒绝 Write/Edit/plugins，无论 `auto` 或会话授权如何
    与 Plan 完全相同
-10. SubmitPlan/SubmitGoal 使用以下命令写入精确唯一的 `.pi/<kind>/*.md` 工件
+10. SubmitPlan/SubmitGoal 使用以下命令写入精确唯一的 `.explore/<kind>/*.md` 工件
     hash/size，
     保持 title/question 结构化，并且只有 approve/reject 可以解析其
     `plan_approvals` 行

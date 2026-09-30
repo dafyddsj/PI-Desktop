@@ -36,9 +36,9 @@
 | `Grep` | 低 | 内容搜索；本机有 `rg` 时优先用，否则进程内搜索；为每个文件生成 `tag` |
 | `BrowserPreview` | 低 | 在随应用打包的浏览器插件中打开与工作区相关的预览（若 `pi.browser` 被禁用则失败） |
 | `EnterPlanMode` | 低 | 主机验证后，将相同的 Agent 从 Agent 移动到 Plan |
-| `SubmitPlan` | 低 | 在新的 `.pi/plan/*.md` 工件中保留精确的 Markdown 字节并请求批准 |
+| `SubmitPlan` | 低 | 在新的 `.explore/plan/*.md` 工件中保留精确的 Markdown 字节并请求批准 |
 | `EnterGoalMode` | 低 | 主机验证后，将相同的 Agent 从 Agent 移动到 Goal |
-| `SubmitGoal` | 低 | 在新的 `.pi/goal/*.md` 工件中保留精确的 Markdown 字节并请求批准 |
+| `SubmitGoal` | 低 | 在新的 `.explore/goal/*.md` 工件中保留精确的 Markdown 字节并请求批准 |
 | `Write` | 高 | Create/overwrite 文件；返回写入后的 `tag` |
 | `Edit` | 高 | 通过针对已校验 `tag` 的行锚定操作修改文件（[18](18-line-anchored-edit-contract.md)） |
 | `Bash` | 高 | 执行命令 |
@@ -491,7 +491,7 @@ MVP 可以通过写入 SQLite 或日志文件来启动。
 [02-代理运行时](/zh-CN/spec/03-runtime/02-agent-runtime) §5.1)。提交
 工具仅在其自己的合同模式下可用，并且必须是其辅助批次中唯一的工具调用。它保留了
 类型目录下新的独特工件中的确切 Markdown 字节
-（`.pi/plan/*.md` 为 `SubmitPlan`，`.pi/goal/*.md` 为 `SubmitGoal`）
+（`.explore/plan/*.md` 为 `SubmitPlan`，`.explore/goal/*.md` 为 `SubmitGoal`）
 在创建一项待批准之前通过 host-core。 `EnterPlanMode` 和
 `EnterGoalMode` 仅在 Agent 中可用，并且每个工具调用必须是唯一的
 在其批次中。主机验证持久模式、提案类型和

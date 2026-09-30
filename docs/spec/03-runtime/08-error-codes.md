@@ -146,7 +146,7 @@ does not turn temporary thread pressure into a host process exit.
 | `PLAN_APPROVAL_TIMEOUT` | no | absolute 30-minute plan approval deadline expired |
 | `PLAN_APPROVAL_STALE` | no | response does not match the live proposal/session/turn/tool-call/version |
 | `PLAN_APPROVAL_INTERRUPTED` | no | pending approval closed during abort, crash, or persistence failure |
-| `PLAN_ARTIFACT_WRITE_FAILED` | no | host could not write exact bytes to a new `.pi/<kind>/*.md` artifact |
+| `PLAN_ARTIFACT_WRITE_FAILED` | no | host could not write exact bytes to a new `.explore/<kind>/*.md` artifact |
 | `PLAN_EXECUTION_INTERRUPTED` | no | approved queued/running Plan or Goal execution stopped without replay |
 | `PLAN_REQUIRES_INTERACTIVE_SESSION` | no | unattended/scheduled Plan or Goal run cannot request approval |
 | `PLAN_NOT_FOUND` | no | no approval row matches the proposal id |
@@ -166,7 +166,7 @@ does not turn temporary thread pressure into a host process exit.
 | `PLAN_CONFIGURATION_BLOCKED` | no | `session.configure` was refused while a proposal or execution is live |
 | `PLAN_ARTIFACT_INVALID` | no | the checkpoint artifact failed validation before execution |
 | `PLAN_ARTIFACT_NOT_READY` | no | execution was claimed before the artifact was durably written |
-| `PLAN_ARTIFACT_PATH_UNSAFE` | no | the artifact path escaped `<workspaceRoot>/.pi/<kind>/` |
+| `PLAN_ARTIFACT_PATH_UNSAFE` | no | the artifact path escaped `<workspaceRoot>/.explore/<kind>/` (or legacy `.pi/<kind>/`, D637) |
 | `PLAN_ARTIFACT_COLLISION_LIMIT` | no | the host ran out of unique artifact names |
 | `PLAN_ARTIFACT_HASH_MISMATCH` | no | artifact bytes no longer match the recorded hash at execution time |
 | `PLAN_EXECUTION_ACTIVE` | no | an approved execution is already running for the session |

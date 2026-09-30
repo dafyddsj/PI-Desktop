@@ -342,7 +342,7 @@ Each ADR includes:
 | 0309 | [Remove bundled macOS first-launch guidance](0309-remove-macos-first-launch-artifacts.md) | Accepted (D634; amends D457 / ADR 0296) |
 | 0310 | [Keep local permission approvals pending until resolved](0310-local-permission-approvals-without-deadline.md) | Accepted for implementation |
 | 0311 | [Recheck Live Work workspace identity at Host admission](0311-live-work-workspace-admission-guard.md) | Implemented candidate |
-| 0312 | [Keep the bundled pi agent directory apart from the pi CLI](0312-separate-agent-directory-from-pi-cli.md) | Accepted (D637; amends ADR 0254) |
+| 0312 | [Keep PI-Desktop's pi config directories apart from the pi CLI](0312-separate-agent-directory-from-pi-cli.md) | Accepted (D637; amends ADR 0254 / ADR 0053) |
 | turn-process-and-thinking-display | [Turn process and thinking presentation](turn-process-and-thinking-display.md) | Accepted |
 | provider-display-order | [Provider display order](provider-display-order.md) | Accepted |
 | registry-header-variable-spelling | [Remote header variables accept the registry's `{name}` spelling](registry-header-variable-spelling.md) | Proposed |

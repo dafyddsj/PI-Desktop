@@ -6449,10 +6449,10 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 #### E2E-106: SubmitPlan rejects into editable planning and resubmits a new artifact
 
 - **Preconditions**: A project-bound session is idle in Plan with a provider;
-  `.pi/plan/` is absent or empty and the workspace permits host artifact
+  `.explore/plan/` is absent or empty and the workspace permits host artifact
   creation.
 - **Steps**: 1) Let the Agent call `SubmitPlan` with fixed title, Markdown, and
-  question. 2) Inspect the new `.pi/plan/*.md` file byte-for-byte and the
+  question. 2) Inspect the new `.explore/plan/*.md` file byte-for-byte and the
   `plan_approvals` row. 3) Inspect the card's title and artifact opener; confirm
   the opener uses the bundled file view when it is launchable and the host
   file tab otherwise (D452), and that the question/description,
@@ -6475,7 +6475,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   approval.
   Rejection is terminal for the first row, leaves durable mode Plan, and returns
   live state to editable planning. The later prompt/resubmission creates a
-  second complete Markdown snapshot and a different `.pi/plan/*.md` artifact;
+  second complete Markdown snapshot and a different `.explore/plan/*.md` artifact;
   the first artifact bytes remain unchanged. Approving the second proposal with
   the remembered Auto mode still changes the same Agent to Agent and queues execution.
 - **Specs linked**: `03-runtime/01-ipc-protocol.md`,
@@ -6598,7 +6598,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 - **Preconditions**: A scheduled task is Plan and an unattended runner is
   available; provider, artifact, and queue writes can be observed.
 - **Steps**: 1) Trigger the task through the unattended path. 2) Inspect the
-  provider trace, `.pi/plan/`, and `plan_approvals` table. 3) Switch the
+  provider trace, `.explore/plan/`, and `plan_approvals` table. 3) Switch the
   task/session explicitly to Agent and run it again.
 - **Expected**: Plan is rejected before provider, artifact, approval, or queue
   work with `PLAN_REQUIRES_INTERACTIVE_SESSION`; no background auto-approval
@@ -8126,7 +8126,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   prior test goal artifact.
 - **Steps**: 1) Switch the session to Goal and let the Agent call
   `EnterGoalMode`, then `SubmitGoal(title, markdown, question)`. 2) Inspect the
-  exact Markdown bytes in the new `.pi/goal/*.md` artifact and the matching
+  exact Markdown bytes in the new `.explore/goal/*.md` artifact and the matching
   `plan_approvals` row. 3) Confirm the shared approval card exposes only
   Approve/Reject and that Goal denies Write/Edit/plugin tools while Bash follows
   the selected permission mode. 4) Approve with Ask and observe the same Agent

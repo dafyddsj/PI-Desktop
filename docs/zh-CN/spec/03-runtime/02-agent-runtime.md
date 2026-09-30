@@ -491,7 +491,7 @@ Plan 和 Goal 是两种 **合约模式** (D198)。他们共用一个耐用的
 检查、使用上下文控制、通过选定的权限模式运行 Bash，
 并调用 `SubmitPlan(title, markdown, question)`。主机核心保留
 在新的不可变中提交 Markdown 字节
-`.pi/plan/<unique-name>.md` 工件，记录其相对 path/hash/size 和
+`.explore/plan/<unique-name>.md` 工件，记录其相对 path/hash/size 和
 在 `plan_approvals` 中构造 title/question，并将活动状态移至
 `awaiting_approval`。
 
@@ -519,7 +519,7 @@ Plan 和 Goal 是两种 **合约模式** (D198)。他们共用一个耐用的
 空闲时或通过 Agent 调用 `EnterGoalMode`。 Goal 有相同的工具
 表面为 Plan，只不过其提交工具是
 `SubmitGoal(title, markdown, question)` 及其工件被写入
-`.pi/goal/<unique-name>.md`。提交的 Markdown 是一个**目标合约**——
+`.explore/goal/<unique-name>.md`。提交的 Markdown 是一个**目标合约**——
 要达到的结果、证明已达到的验收标准以及
 不得跨越的界限——不是实施步骤的列表。一个
 当会话处于活动状态时，提交工具会被拒绝并显示 `PLAN_KIND_MISMATCH`
@@ -1006,7 +1006,7 @@ Plan 提示告诉相同的 Agent 了解请求，检查
 记录中较早提交的内容是历史上不可变的检查点。
 拒绝、过期或中断后，Agent 可能会在新一轮中修改，并且
 必须遵循相同的 one-SubmitPlan 规则。它不得声称变更是
-做了。主机写入不可变的 `.pi/plan/*.md` 工件； Agent 确实
+做了。主机写入不可变的 `.explore/plan/*.md` 工件； Agent 确实
 本身不编写或编辑它，并且不接收请求更改流。
 
 该提示可能会将 Bash 描述为受权限限制且可能会发生变异。它
@@ -1025,7 +1025,7 @@ Goal 提示告诉同一个 Agent 在任何事情之前协商目标合同。
 
 一次提交规则、历史检查点规则、关闭后修改规则、
 no-chat-confirmation 规则和 host-writes-the-artifact 规则相同
-作为 Plan，用 `SubmitGoal` 和 `.pi/goal/*.md` 代替 Plan
+作为 Plan，用 `SubmitGoal` 和 `.explore/goal/*.md` 代替 Plan
 等价物。提示还指出，一旦获得批准，合同即为
 Agent 所遵循的标准：自主追求目标、选择
 它自己的方法，只有当每个验收标准都得到验证或一个

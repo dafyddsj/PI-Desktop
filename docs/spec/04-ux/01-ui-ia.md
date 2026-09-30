@@ -159,8 +159,8 @@ destination, chat as the home surface, tools and permissions inline.
   Its left-of-input operating-mode chip is the sole active-session control for
   **Agent**, **Plan**, and **Goal**. Plan shows the same Agent's planning state;
   Goal shows the same approval boundary for an outcome contract. Both keep the
-  permission-mode chip and expose their host-written immutable `.pi/plan/*.md`
-  or `.pi/goal/*.md` artifact opener after submission. The conversation top bar
+  permission-mode chip and expose their host-written immutable `.explore/plan/*.md`
+  or `.explore/goal/*.md` artifact opener after submission. The conversation top bar
   retains only the task title and window actions; the Composer owns model and
   reasoning selection as well as mode control.
 - **Backend status capsule**: appears under the titlebar while the backend
@@ -439,7 +439,7 @@ shared capability contract:
 - Backend degraded → status capsule (restarting) or fatal banner with Open
   logs (D080); composer submits are rejected with readable errors while down.
   - Plan/Goal checkpoint → the originating session shows only the structured title
-  and an opener for its immutable `.pi/plan/*.md` artifact. The renderer retains the latest
+  and an opener for its immutable `.explore/plan/*.md` artifact. The renderer retains the latest
   proposal/execution snapshot per session only for the current renderer
   lifetime, updated by live Host events; only a live `pending` row forms the
   approval gate. Reload through `plans.pending` while the same Host remains

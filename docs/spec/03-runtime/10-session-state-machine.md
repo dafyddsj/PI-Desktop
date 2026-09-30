@@ -135,7 +135,7 @@ turn that has ended.
 12. `EnterPlanMode`, `EnterGoalMode`, `SubmitPlan`, and `SubmitGoal` must be the
     only tool call in their
     assistant batch. A submit tool preserves exact Markdown bytes in a new
-    host-owned `.pi/<kind>/*.md` artifact and creates one pending
+    host-owned `.explore/<kind>/*.md` artifact and creates one pending
     `plan_approvals` row with its `kind` plus structured title/question and
     artifact fields. A submit tool called against the other kind's mode fails
     with `PLAN_KIND_MISMATCH` and writes nothing.
@@ -196,7 +196,7 @@ transcript-file line first, index transaction second.
   `<data_dir>/scratch/<sessionId>` root while keeping `projectPath` absent;
   Plan/Goal workspace validation continues to require a persisted project
 - Plan/Goal submission: write exact Markdown bytes to a new unique
-  `.pi/<kind>/*.md`,
+  `.explore/<kind>/*.md`,
   record path/hash/size plus the kind and structured title/question, and insert
   a `pending`
   `plan_approvals` row before the approval event
@@ -236,7 +236,7 @@ transcript-file line first, index transaction second.
    and
    denies Write/Edit/plugins regardless of `auto` or session grants, in Goal
    exactly as in Plan
-11. SubmitPlan/SubmitGoal writes an exact unique `.pi/<kind>/*.md` artifact with
+11. SubmitPlan/SubmitGoal writes an exact unique `.explore/<kind>/*.md` artifact with
     hash/size,
     keeps title/question structured, and only approve/reject can resolve its
     `plan_approvals` row

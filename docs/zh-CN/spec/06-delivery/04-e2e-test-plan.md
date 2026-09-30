@@ -3990,10 +3990,10 @@ eleven-tool-round desktop paths are verified by
 #### E2E-106：SubmitPlan 拒绝进入可编辑计划并重新提交新工件
 
 - **先决条件**：项目绑定会话在 Plan 中与提供商处于空闲状态；
-`.pi/plan/` 不存在或为空，并且工作区允许主机工件
+`.explore/plan/` 不存在或为空，并且工作区允许主机工件
   创造。
 - **步骤**： 1) 让 Agent 使用固定标题、Markdown 和
-  问题。 2) 逐字节检查新的 `.pi/plan/*.md` 文件和
+  问题。 2) 逐字节检查新的 `.explore/plan/*.md` 文件和
   `plan_approvals` 行。 3）检查卡牌的标题和神器开启者；确认开启者在内置文件
   视图中打开（该视图不可启动时回退到宿主机文件标签，D452），且
   question/description、validity/deadline 和状态不存在且仅提供批准和拒绝。
@@ -4014,7 +4014,7 @@ eleven-tool-round desktop paths are verified by
   批准。
   第一行的拒绝是终止的，离开持久模式 Plan，并返回
   实时状态到可编辑规划。后来的 prompt/resubmission 创建了一个
-  第二个完整的 Markdown 快照和不同的 `.pi/plan/*.md` 工件；
+  第二个完整的 Markdown 快照和不同的 `.explore/plan/*.md` 工件；
   第一个工件字节保持不变。批准第二项提案
 记住的自动模式仍然将相同的 Agent 更改为 Agent 并排队执行。
 - **链接规格**：`03-runtime/01-ipc-protocol.md`，
@@ -4133,7 +4133,7 @@ eleven-tool-round desktop paths are verified by
 - **先决条件**：计划任务是 Plan，无人值守运行程序是
   可用；可以观察提供商、工件和队列写入。
 - **步骤**： 1) 通过无人值守路径触发任务。 2) 检查
-  提供程序跟踪、`.pi/plan/` 和 `plan_approvals` 表。 3) 切换
+  提供程序跟踪、`.explore/plan/` 和 `plan_approvals` 表。 3) 切换
   task/session 显式更改为 Agent 并再次运行。
 - **预期**：Plan 在提供商、工件、批准或队列之前被拒绝
   与 `PLAN_REQUIRES_INTERACTIVE_SESSION` 合作；无后台自动批准
@@ -5130,7 +5130,7 @@ eleven-tool-round desktop paths are verified by
   先前的测试目标工件。
 - **步骤**： 1) 将会话切换到 Goal 并让 Agent 调用
   `EnterGoalMode`，然后是 `SubmitGoal(title, markdown, question)`。 2) 检查
-  新 `.pi/goal/*.md` 工件中的确切 Markdown 字节以及匹配的
+  新 `.explore/goal/*.md` 工件中的确切 Markdown 字节以及匹配的
   `plan_approvals` 行。 3) 确认共享审批卡仅公开
   Approve/Reject 和 Goal 否认 Write/Edit/plugin 工具，而 Bash 紧随其后
   所选的权限模式。 4) 通过询问进行批准并遵守相同的 Agent

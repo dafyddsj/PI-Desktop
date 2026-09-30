@@ -659,7 +659,7 @@ type PlanExecutionState =
   | "queued" | "running" | "completed" | "interrupted";
 
 type PlanArtifact = {
-  relativePath: string; // `.pi/plan/<unique-name>.md` or `.pi/goal/<unique-name>.md`
+  relativePath: string; // `.explore/plan/<unique-name>.md` or `.explore/goal/<unique-name>.md`
   sha256: string;
   sizeBytes: number;
 };
@@ -968,7 +968,7 @@ JSON-RPC 错误携带一个数字 `code` 以及 `data.errorCode`，后者是来�
     Plan 和 Goal 拒绝 Write/Edit/plugin/unknown 工具并申请权限
     根据 `requestedMode`/Write/Edit/plugin/unknown/Plan 提示 Bash
 11. SubmitPlan 和 SubmitGoal 将精确的 Markdown 字节写入唯一的
-    `.pi/plan/*.md` 或 `.pi/goal/*.md` 文件
+    `.explore/plan/*.md` 或 `.explore/goal/*.md` 文件
     hash/size 和结构化 title/question 字段；仅匹配
     approve/reject 响应可以解析实时 `plan_approvals` 行，并且
     针对其他类型运行的提交工具失败并显示 `PLAN_KIND_MISMATCH`

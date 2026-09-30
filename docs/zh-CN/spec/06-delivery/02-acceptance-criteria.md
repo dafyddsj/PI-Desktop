@@ -65,12 +65,12 @@ MVP 在以下情况下通过：
 - [x] 一个 pi Agent 拥有 Agent，规划、审批和审批后执行 —
   自动：代理运行时 + prompt/deny/allow/Plan
 - [x] Goal 重用相同的主机拥有的批准管道，写入不同的
-  `.pi/goal/*.md` 工件，并在 Agent 模式下恢复以验证接受情况
+  `.explore/goal/*.md` 工件，并在 Agent 模式下恢复以验证接受情况
   标准 — auto:agent-runtime + desktop/runtime 合约覆盖范围
 - [x] `EnterPlanMode` 和 UI/session Plan 选择收敛于同一状态 —
   自动：host-core CAS 测试 + `test:e2e:plan-ui`
 - [x] `SubmitPlan(title, markdown, question)` 保留精确的 Markdown 字节
-  独特的 `.pi/plan/*.md` 工件，使 title/question 保持结构化
+  独特的 `.explore/plan/*.md` 工件，使 title/question 保持结构化
   `plan_approvals`，并记录 path/hash/size — auto:`test:e2e:plan` E2E-106
 - [x] 批准仅提供 Approve/Reject；批准需要明确
   默认情况下选择“询问”的权限模式 — auto:`test:e2e:plan-ui`

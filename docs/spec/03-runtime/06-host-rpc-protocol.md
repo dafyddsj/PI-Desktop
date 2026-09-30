@@ -877,7 +877,7 @@ type PlanExecutionState =
   | "queued" | "running" | "completed" | "interrupted";
 
 type PlanArtifact = {
-  relativePath: string; // `.pi/plan/<unique-name>.md` or `.pi/goal/<unique-name>.md`
+  relativePath: string; // `.explore/plan/<unique-name>.md` or `.explore/goal/<unique-name>.md`
   sha256: string;
   sizeBytes: number;
 };
@@ -1191,7 +1191,7 @@ Tool outcomes (`TOOL_DENIED`, `TOOL_TIMEOUT`, `PATH_OUTSIDE_WORKSPACE`,
     Plan and Goal deny Write/Edit/plugin/unknown tools and apply permission
     prompts to Bash according to `ask`/`accept-edits`/`auto`
 11. SubmitPlan and SubmitGoal write exact Markdown bytes to a unique
-    `.pi/plan/*.md` or `.pi/goal/*.md` file with
+    `.explore/plan/*.md` or `.explore/goal/*.md` file with
     hash/size and structured title/question fields; only matching
     approve/reject responses can resolve the live `plan_approvals` row, and a
     submit tool run against the other kind fails with `PLAN_KIND_MISMATCH`

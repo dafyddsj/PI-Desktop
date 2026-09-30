@@ -63,12 +63,12 @@ MVP passes when:
 - [x] One pi Agent owns Agent, planning, approval, and post-approval execution —
   auto:agent-runtime + `test:e2e:plan`/`test:e2e:plan-ui`
 - [x] Goal reuses the same host-owned approval pipeline, writes a distinct
-  `.pi/goal/*.md` artifact, and resumes in Agent mode to verify acceptance
+  `.explore/goal/*.md` artifact, and resumes in Agent mode to verify acceptance
   criteria — auto:agent-runtime + desktop/runtime contract coverage
 - [x] `EnterPlanMode` and UI/session Plan selection converge on the same state —
   auto:host-core CAS tests + `test:e2e:plan-ui`
 - [x] `SubmitPlan(title, markdown, question)` preserves exact Markdown bytes in
-  a unique `.pi/plan/*.md` artifact, keeps title/question structured in
+  a unique `.explore/plan/*.md` artifact, keeps title/question structured in
   `plan_approvals`, and records path/hash/size — auto:`test:e2e:plan` E2E-106
 - [x] Approval offers only Approve/Reject; Approve requires an explicit
   permission mode with Ask selected by default — auto:`test:e2e:plan-ui`

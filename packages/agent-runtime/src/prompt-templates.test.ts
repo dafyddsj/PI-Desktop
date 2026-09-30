@@ -123,7 +123,7 @@ describe("loadComposerTemplates", () => {
 
   it("derives the project dir from the workspace root", () => {
     const dirs = composerTemplateDirs("/tmp/ws");
-    expect(dirs.project).toBe(join("/tmp/ws", ".pi", "prompts"));
+    expect(dirs.project).toBe(join("/tmp/ws", ".explore", "prompts"));
     expect(dirs.user).toBe(join(homedir(), ".explore", "agent", "prompts"));
     expect(composerTemplateDirs(null).project).toBeUndefined();
   });

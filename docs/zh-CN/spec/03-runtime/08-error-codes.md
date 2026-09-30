@@ -148,7 +148,7 @@ stdio 与 Tokio 的动态阻塞池隔离，因此后一种情况
 | `PLAN_APPROVAL_TIMEOUT` | 不 | 绝对 30 分钟计划批准期限已过 |
 | `PLAN_APPROVAL_STALE` | 不 | 响应与实时 proposal/session/turn/tool-call/version 不匹配 |
 | `PLAN_APPROVAL_INTERRUPTED` | 不 | 待批准在中止、崩溃或持久性失败期间关闭 |
-| `PLAN_ARTIFACT_WRITE_FAILED` | 不 | 主机无法将确切的字节写入新的 `.pi/<kind>/*.md` 工件 |
+| `PLAN_ARTIFACT_WRITE_FAILED` | 不 | 主机无法将确切的字节写入新的 `.explore/<kind>/*.md` 工件 |
 | `PLAN_EXECUTION_INTERRUPTED` | 不 | 已批准的 queued/running Plan 或 Goal 执行已停止且不重播 |
 | `PLAN_REQUIRES_INTERACTIVE_SESSION` | 不 | unattended/scheduled Plan 或 Goal 运行无法请求批准 |
 | `PLAN_NOT_FOUND` | 不 | 没有审批记录与该提案 id 匹配 |
@@ -168,7 +168,7 @@ stdio 与 Tokio 的动态阻塞池隔离，因此后一种情况
 | `PLAN_CONFIGURATION_BLOCKED` | 不 | 提案或执行进行中时 `session.configure` 被拒绝 |
 | `PLAN_ARTIFACT_INVALID` | 不 | 检查点工件在执行前未通过校验 |
 | `PLAN_ARTIFACT_NOT_READY` | 不 | 工件尚未持久写入就被认领执行 |
-| `PLAN_ARTIFACT_PATH_UNSAFE` | 不 | 工件路径逃逸了 `<workspaceRoot>/.pi/<kind>/` |
+| `PLAN_ARTIFACT_PATH_UNSAFE` | 不 | 工件路径逃逸了 `<workspaceRoot>/.explore/<kind>/`（或旧版 `.pi/<kind>/`，D637） |
 | `PLAN_ARTIFACT_COLLISION_LIMIT` | 不 | 主机用尽了唯一的工件名 |
 | `PLAN_ARTIFACT_HASH_MISMATCH` | 不 | 执行时工件字节与记录的哈希不再一致 |
 | `PLAN_EXECUTION_ACTIVE` | 不 | 该会话已有一个已批准的执行在运行 |

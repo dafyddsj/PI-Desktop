@@ -92,8 +92,8 @@ MCP 服务器、常驻服务和消息总线集成。
 | 产品选择器 | 行为 |
 |---|---|
 | Agent | pi Agent 在选定的权限策略下使用完整的执行工具集运行。 |
-| Plan | 相同的 pi Agent 在计划状态下运行。它可以使用 Read/Glob/Grep/BrowserPreview 进行检查，在选定的权限策略下运行 Bash，使用 plan/context 控件，并调用 `SubmitPlan(title, markdown, question)`。在单独批准之前，主机核心在新的不可变 `<workspaceRoot>/.pi/plan/*.md` 工件中保留确切的 Markdown 字节； title/question 保留结构化审批字段，并且卡打开工件。 Write/Edit/plugin 工具被拒绝。 |
-| Goal | 同一个 pi Agent 通过 `SubmitGoal(title, markdown, question)` 协商结果合约，在单独批准之前保留不可变的 `<workspaceRoot>/.pi/goal/*.md` 工件。批准后，它返回到 Agent 模式，并朝着规定的验收标准努力，报告其验证的标准或停止它的边界。 |
+| Plan | 相同的 pi Agent 在计划状态下运行。它可以使用 Read/Glob/Grep/BrowserPreview 进行检查，在选定的权限策略下运行 Bash，使用 plan/context 控件，并调用 `SubmitPlan(title, markdown, question)`。在单独批准之前，主机核心在新的不可变 `<workspaceRoot>/.explore/plan/*.md` 工件中保留确切的 Markdown 字节； title/question 保留结构化审批字段，并且卡打开工件。 Write/Edit/plugin 工具被拒绝。 |
+| Goal | 同一个 pi Agent 通过 `SubmitGoal(title, markdown, question)` 协商结果合约，在单独批准之前保留不可变的 `<workspaceRoot>/.explore/goal/*.md` 工件。批准后，它返回到 Agent 模式，并朝着规定的验收标准努力，报告其验证的标准或停止它的边界。 |
 
 Plan 和 Goal 是合约模式，而不是严格的只读安全配置文件：Bash
 在 `ask` 或 `accept-edits` 提示下运行，而 Bash 在 `auto` 下运行则无需
@@ -119,7 +119,7 @@ Plan 和 Goal 是合约模式，而不是严格的只读安全配置文件：Bas
 6. UI完全可用英文
 7. 提交的 Plan 或 Goal 不能在没有单独的情况下进入执行。
    配套审批；其确切的 Markdown 字节保存在一个独特的
-   `.pi/<kind>/*.md` 工件和批准行记录其路径、哈希值和
+   `.explore/<kind>/*.md` 工件和批准行记录其路径、哈希值和
    尺寸
 
 ## 8. 命名

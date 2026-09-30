@@ -20,7 +20,7 @@
 2. 内置工具执行（Read/Glob/Grep/Write/Edit/Bash）
 3. 权威的持久会话模式和工具策略评估
 4. 权限策略评估，包括Plan/Goal Bash提示
-5. 不可变的 `.pi/plan/*.md` 和 `.pi/goal/*.md` 工件编写器，
+5. 不可变的 `.explore/plan/*.md` 和 `.explore/goal/*.md` 工件编写器，
    `plan_approvals` 经纪人，以及
    启动中断栅栏
 6. 可选择的 shell 目录、身份验证、流式输出和进程
@@ -109,7 +109,7 @@ notification.list
 
 ## 6. 安全不变量
 
-1. 工作区工具或 `.pi/plan/*.md` 中没有未经检查的路径转义；一个
+1. 工作区工具或 `.explore/plan/*.md` 中没有未经检查的路径转义；一个
    仅在主机权限评估后才能解析显式外部路径
 2、Host解析持久会话模式；请求提供模式永远不会
    权威的
@@ -143,7 +143,7 @@ notification.list
 6. 持久 Plan 或 Goal 会话无法通过以下方式授权 Write/Edit/plugin 工具：
    冲突的请求模式，并且 Plan/Goal Bash 遵循已解析的权限
    模式
-7. SubmitPlan 将精确的 Markdown 字节写入新的 `.pi/plan/*.md` 工件并
+7. SubmitPlan 将精确的 Markdown 字节写入新的 `.explore/plan/*.md` 工件并
    将持久的 path/hash/size 和结构化的 title/question 存储在
    `plan_approvals`；批准为 approve/reject-only、session/turn/version
    范围内，并在 30 绝对分钟后到期

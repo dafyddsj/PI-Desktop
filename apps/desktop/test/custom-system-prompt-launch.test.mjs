@@ -8,7 +8,7 @@ register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
 const { createSessionLaunchRuntime } = await import("../electron/main/runtime/session-launch.ts");
 
 // Issue #542: pi CLI's SYSTEM.md / APPEND_SYSTEM.md must be discovered at
-// launch with pi's precedence (project .pi/ over ~/.explore/agent/) and reach the
+// launch with pi's precedence (project .explore/ over ~/.explore/agent/) and reach the
 // sidecar params that compose the system prompt. The global directory is the
 // developer's real ~/.explore/agent — the assertions are therefore relative to a
 // recorded baseline, never to an empty home, so leftover files on a dev
@@ -62,7 +62,7 @@ async function launchParams(runtime) {
 // The global (~/.explore/agent) precedence and per-kind independence are covered
 // against injectable directories in packages/agent-runtime/src/custom-system-prompt.test.ts;
 // this suite covers the real user path through the launch: files on disk in
-// <workspace>/.pi reach sidecarParams and win per kind, and removing them
+// <workspace>/.explore reach sidecarParams and win per kind, and removing them
 // reverts to whatever the global layer provides.
 test("launch discovers project custom system prompt files (issue #542)", async () => {
   const runtime = launchRuntime();
@@ -71,18 +71,24 @@ test("launch discovers project custom system prompt files (issue #542)", async (
   // global files — both are valid starting points for the assertions below.
   const baseline = (await launchParams(runtime)).customSystemPrompt;
 
-  // Project .pi/SYSTEM.md wins the replace kind over any global file.
+  // A pi CLI project's .pi/SYSTEM.md is not PI-Desktop's (D637) and is ignored.
   mkdirSync(join(workspace, ".pi"), { recursive: true });
-  writeFileSync(join(workspace, ".pi", "SYSTEM.md"), "MARKER-PROJECT-PERSONA");
+  writeFileSync(join(workspace, ".pi", "SYSTEM.md"), "MARKER-PI-CLI-PERSONA");
+  assert.deepEqual((await launchParams(runtime)).customSystemPrompt, baseline);
+
+  // Project .explore/SYSTEM.md wins the replace kind over any global file.
+  mkdirSync(join(workspace, ".explore"), { recursive: true });
+  writeFileSync(join(workspace, ".explore", "SYSTEM.md"), "MARKER-PROJECT-PERSONA");
   assert.equal((await launchParams(runtime)).customSystemPrompt?.replace, "MARKER-PROJECT-PERSONA");
 
-  // Project .pi/APPEND_SYSTEM.md wins the append kind independently.
-  writeFileSync(join(workspace, ".pi", "APPEND_SYSTEM.md"), "MARKER-PROJECT-APPEND");
+  // Project .explore/APPEND_SYSTEM.md wins the append kind independently.
+  writeFileSync(join(workspace, ".explore", "APPEND_SYSTEM.md"), "MARKER-PROJECT-APPEND");
   const both = (await launchParams(runtime)).customSystemPrompt;
   assert.equal(both?.replace, "MARKER-PROJECT-PERSONA");
   assert.equal(both?.append, "MARKER-PROJECT-APPEND");
 
   // Deleting the project files reverts the launch to the global-only state.
+  rmSync(join(workspace, ".explore"), { recursive: true, force: true });
   rmSync(join(workspace, ".pi"), { recursive: true, force: true });
   assert.deepEqual((await launchParams(runtime)).customSystemPrompt, baseline);
 });

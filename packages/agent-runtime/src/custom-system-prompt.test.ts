@@ -109,8 +109,8 @@ describe("customSystemPromptDirs", () => {
     expect(customSystemPromptDirs("  ").project).toBeUndefined();
   });
 
-  it("points the project dir at <workspace>/.pi", () => {
-    expect(customSystemPromptDirs("/w").project).toBe(join("/w", ".pi"));
+  it("points the project dir at <workspace>/.explore, not the pi CLI's .pi", () => {
+    expect(customSystemPromptDirs("/w").project).toBe(join("/w", ".explore"));
   });
 
   it("points the global dir at ~/.explore/agent, not the pi CLI's ~/.pi/agent", () => {

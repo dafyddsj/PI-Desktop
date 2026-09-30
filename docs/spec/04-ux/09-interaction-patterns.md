@@ -954,7 +954,7 @@ Agent calls a permission-gated tool (including Plan/Goal Bash under Ask or Accep
    and answer output do not hide the running status.
 3. The Agent calls `SubmitPlan` or `SubmitGoal` alone in its tool batch.
    Host-core preserves the exact Markdown bytes in a new immutable
-   `.pi/plan/*.md` or `.pi/goal/*.md` artifact, records its path/hash/size and structured
+   `.explore/plan/*.md` or `.explore/goal/*.md` artifact, records its path/hash/size and structured
    title/question, and the renderer displays the shared contract approval card with
    only the title and artifact opener; the question remains host-side contract data.
    The opener hands that path to the bundled file view when it is launchable and to

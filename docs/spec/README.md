@@ -89,7 +89,7 @@ docs/spec/
    are contract states of the same Agent and are not strict read-only security
    profiles because Bash follows the selected permission mode
 8. SubmitPlan writes exact Markdown bytes to a new host-owned
-   `.pi/plan/*.md` artifact; title/question stay structured in
+   `.explore/plan/*.md` artifact; title/question stay structured in
    `plan_approvals`, approval opens the artifact, is approve/reject only, and
    expires after 30 absolute minutes with `PLAN_APPROVAL_TIMEOUT`
 9. Protocol v11 and storage schema v16 are authoritative for Plan/Goal

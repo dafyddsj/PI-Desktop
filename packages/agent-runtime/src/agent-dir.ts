@@ -2,23 +2,32 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 /**
- * PI-Desktop's global agent directory: `~/.explore/agent`.
+ * PI-Desktop's pi config directory name: `.explore`, for both the global
+ * agent directory (`~/.explore/agent`) and project folders
+ * (`<workspace>/.explore/`).
  *
- * The bundled pi SDK defaults to `~/.pi/agent`, which a separately installed
- * pi CLI also owns. PI-Desktop keeps its own agent config (auth, models,
- * settings, prompts, global instructions, native sessions) apart from that
- * installation so logins and models never leak between the two.
+ * The bundled pi SDK defaults to `.pi`, which a separately installed pi CLI
+ * also owns. PI-Desktop keeps its own config (auth, models, settings, prompts,
+ * instructions, extensions, native sessions, plan/goal artifacts) apart from
+ * that installation so the two never share state. The SDK's own
+ * `CONFIG_DIR_NAME` is patched to the same value
+ * (`patches/@earendil-works__pi-coding-agent@0.87.1.patch`).
  */
-export const AGENT_CONFIG_DIR_NAME = ".explore";
+export const CONFIG_DIR_NAME = ".explore";
 
 /** Display form of {@link agentDir} for prompts and labels. */
-export const AGENT_DIR_DISPLAY = `~/${AGENT_CONFIG_DIR_NAME}/agent`;
+export const AGENT_DIR_DISPLAY = `~/${CONFIG_DIR_NAME}/agent`;
 
 /** The environment variable the pi SDK's `getAgentDir()` reads. */
 export const PI_AGENT_DIR_ENV = "PI_CODING_AGENT_DIR";
 
 export function agentDir(home: string = homedir()): string {
-  return join(home, AGENT_CONFIG_DIR_NAME, "agent");
+  return join(home, CONFIG_DIR_NAME, "agent");
+}
+
+/** A workspace's project config folder, e.g. `<workspace>/.explore`. */
+export function projectConfigDir(workspaceRoot: string): string {
+  return join(workspaceRoot, CONFIG_DIR_NAME);
 }
 
 /**

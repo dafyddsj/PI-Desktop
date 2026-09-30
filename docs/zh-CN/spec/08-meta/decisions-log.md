@@ -34,7 +34,7 @@
 | D634 | 移除 macOS 首次启动辅助文件 | **修订 D457 / ADR 0296 及 ADR 0232 / ADR 0204 中的 macOS 分发约定：macOS DMG 与 ZIP 均不再附带 `PI-Desktop-macOS-open.command`、`PI-Desktop-macOS-opening-help.txt`，或其他捆绑的 quarantine 清理助手/打开说明。ZIP 根目录只包含 `PI-Desktop.app`；DMG 仍为双图标安装。该规定适用于签名发布和本地或可选的未签名调试构建。见 ADR 0309 与 E2E-196b。** | 已签名发布通道不再需要未签名首次启动兜底；随调试包附带此类文件可能误导用户绕过 Gatekeeper。 |
 | D635 | 按工作区上限裁剪的 800×560 窗口最小尺寸 | **取代 D156 / D447 中的 1040×700 窗口最小尺寸（及 ADR 0029 / ADR 0238 的对应条款）和 `window/setWorkPanelChatWidth` 的 `1040..10000` 范围（ADR 0146）：Electron 强制 800×560 最小尺寸，并由 `clampMinimumSizeToWorkArea` 按维度裁剪到当前显示器工作区。聊天宽度 IPC 与渲染层接受 `800..10000`。窄窗口下沿用现有 `workPanelLayout` 预算：限制停靠面板宽度以保证 MainChat 的 450px 下限，并优先收起侧边栏。见 US-UI-19 与 E2E-167。** | Windows 150% 缩放下工作区约为 1280×672 DIP，固定最小尺寸可能超过屏幕，导致窗口无法适配。 |
 | D636 | 本地权限确认没有自动截止时间 | **修订 D005 / ADR 0011：需要权限的 `tools.execute` 请求会在 host-core、渲染层和传输中保持待处理，直到用户选择允许一次、允许会话或拒绝，或请求被取消/进程关闭。移除 120 秒倒计时以及本地权限契约中的超时字段。工具自身执行预算以及独立的 RACP/Plan 审批时限保持不变。见 ADR 0310、issue #1214 与 E2E-017。** | 用户可能在其他工作期间错过可见的权限请求；保持取消和执行预算即可保留控制与资源安全，又不会把“未注意”变成一个决定。 |
-| D637 | 智能体目录与 pi CLI 分离 | **修订 ADR 0254 / ADR 0037 / ADR 0024：内置 pi SDK 的全局智能体目录为 `~/.explore/agent`。sidecar 在任何 pi 模块加载前将 `PI_CODING_AGENT_DIR` 固定到该目录，并覆盖继承的值。原生 Pi 会话、auth、models、settings、信任记录、全局提示词、`AGENTS.md`、`SYSTEM.md` / `APPEND_SYSTEM.md` 以及配置同步的全局指令均使用该目录。显式的一次性 Pi 导入器仍读取 `~/.pi`；不做任何迁移。工作区 `.pi/` 目录不变。见 ADR 0312。** | 共用 `~/.pi/agent` 会让 PI-Desktop 的登录与模型绑定到另行安装的 pi CLI；独立目录让二者各自保留配置。 |
+| D637 | pi 配置目录与 pi CLI 分离 | **修订 ADR 0254 / ADR 0037 / ADR 0024 / ADR 0053（D189、D198）：PI-Desktop 在 pi 使用 `.pi` 的地方改用 `.explore`——全局为 `~/.explore/agent`，项目为 `<workspace>/.explore/`。内置 SDK 的 `CONFIG_DIR_NAME` 被补丁为 `.explore`，sidecar 在任何 pi 模块加载前固定 `PI_CODING_AGENT_DIR` 并覆盖继承的值。原生 Pi 会话、auth、models、settings、信任记录、提示词、`AGENTS.md`、`SYSTEM.md` / `APPEND_SYSTEM.md`、扩展、配置同步的全局指令以及新的 plan/goal 工件均使用该目录；已存储的 `.pi/<kind>/` 工件路径仍可校验。显式的一次性 Pi 导入器仍读取 `~/.pi`；不做任何迁移。见 ADR 0312。** | 共用 `.pi` 会让 PI-Desktop 的登录、模型与项目配置绑定到另行安装的 pi CLI；独立目录让二者各自保留配置。 |
 | D450 | 签名的 macOS GitHub Release | **修订 D078 / ADR 0022：GitHub tag 发布使用身份 `Developer ID Application: XingYu Liu (DUV63RKYTW)` / 团队 `DUV63RKYTW`，通过 Actions 密钥（`CSC_LINK`、`CSC_KEY_PASSWORD`、`APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`）对 macOS DMG/ZIP 做 Developer ID 签名、`notarytool` 公证、装订和 Gatekeeper 校验；缺少密钥则失败。无证书的本地未签名打包仍可用。`workflow_dispatch` 仅可把 `sign_macos: false` 用于未签名调试产物。打包的 macOS 走应用内 `electron-updater`（ZIP + 合并后的 `latest-mac.yml`）；Linux deb/rpm 与 Windows 便携版 ZIP 仍为通知并打开发布页。禁止 afterPack/afterSign adhoc 签名（ADR 0278）。** | 正式 DMG 应无需 Gatekeeper 警告即可打开，已签名 macOS 安装可下载并重启到新 tag。见 ADR 0289、E2E-196c、E2E-067A。 |
 
 ## B. 辅助实现默认值
@@ -5157,11 +5157,13 @@ Markdown 源码，不是 `text/html` 负载；对禁用行内 HTML 的外部编�
   `remainingMs`，UI 也不再显示倒计时。工具自身的命令/插件执行预算以及独立的
   Plan/Goal 和 RACP 审批时限保持不变。见 ADR 0310、issue #1214 与 E2E-017。
 
-## 2026-09-30 — 智能体目录与 pi CLI 分离（D637）
+## 2026-09-30 — pi 配置目录与 pi CLI 分离（D637）
 
-- D637 将内置 pi SDK 的全局智能体目录从 `~/.pi/agent` 移至
-  `~/.explore/agent`，使 PI-Desktop 与 pi CLI 安装各自保留凭据、模型、设置、
-  提示词和全局指令。
-- sidecar 在第一个 import 中固定 `PI_CODING_AGENT_DIR`；原生 Pi 会话
-  （ADR 0254）现位于 `~/.explore/agent/sessions`。显式的 Pi 会话与模型配置
-  导入器仍读取 `~/.pi`。不做自动迁移（D007）。见 ADR 0312 与数据存储 §13。
+- D637 将 PI-Desktop 的 pi 配置从 `.pi` 移至 `.explore`：全局智能体目录为
+  `~/.explore/agent`，项目目录为 `<workspace>/.explore/`，使 PI-Desktop 与
+  pi CLI 安装各自保留凭据、模型、设置、提示词、指令和项目配置。
+- 内置 SDK 的 `CONFIG_DIR_NAME` 被补丁为 `.explore`，sidecar 在第一个 import
+  中固定 `PI_CODING_AGENT_DIR`；原生 Pi 会话（ADR 0254）现位于
+  `~/.explore/agent/sessions`。host-core 将新的 plan/goal 工件写入
+  `.explore/<kind>/`，并仍校验已存储的 `.pi/<kind>/` 路径。显式 Pi 导入器仍读取
+  `~/.pi`。不做自动迁移（D007）。见 ADR 0312 与数据存储 §13。

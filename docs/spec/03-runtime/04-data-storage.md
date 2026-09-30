@@ -575,11 +575,13 @@ CREATE INDEX idx_turns_ended_at ON turns(ended_at DESC);
 ### 4.6a plan_approvals — immutable checkpoint and execution fields (schema v11)
 
 The host writes each submitted Markdown snapshot to a new unique file under the
-proposal kind's directory: `<workspaceRoot>/.pi/plan/` for a plan and
-`<workspaceRoot>/.pi/goal/` for a goal. The existing `plan_approvals` row stores
+proposal kind's directory: `<workspaceRoot>/.explore/plan/` for a plan and
+`<workspaceRoot>/.explore/goal/` for a goal. The existing `plan_approvals` row stores
 the kind, the structured title/question, artifact metadata, and post-approval
 execution descriptor. The file path is relative to the session workspace and
-always has the form `.pi/<kind>/<unique-name>.md`. One table serves both kinds
+always has the form `.explore/<kind>/<unique-name>.md`; rows written before D637
+keep their `.pi/<kind>/<unique-name>.md` path, which host-core still resolves
+and verifies from `<workspaceRoot>/.pi/<kind>/`. One table serves both kinds
 (D198), so the single-pending-approval invariant, the execution queue, and every
 index are shared rather than duplicated.
 
@@ -1074,7 +1076,7 @@ tasks default to `agent`, and create/update/import normalize the same values.
 The top-level wire `ScheduledTask.mode` is only a normalized projection of this
 JSON value.
 A scheduled or unattended run whose mode is a contract mode (Plan or Goal) is
-explicitly rejected before provider work, `.pi/<kind>/*.md` creation, approval,
+explicitly rejected before provider work, `.explore/<kind>/*.md` creation, approval,
 or queue insertion with `PLAN_REQUIRES_INTERACTIVE_SESSION` — one shared code
 for both kinds. It cannot display an approval card or auto-approve a proposal in
 the background. The user must explicitly switch the task/session to Agent before
@@ -1194,7 +1196,7 @@ is the source of truth, the index is derived and self-healing.
 | context checkpoint (`session.appendCompaction`) | append typed checkpoint line after its referenced message boundary | — (checkpoint is not searchable transcript content) |
 | tool succeeded (Write/Edit) | — | upsert `artifacts` + `audit_log` row, same tx as result persistence |
 | turn terminal via `session.endTurn` | `completed`/`error`: remove the in-flight checkpoint only when its id is already indexed; otherwise leave it for the outbox or boot (D327). `recoverInflight`: append the leftover as `complete` when the turn is `completed`, otherwise as `aborted`, when its final row never landed | update `turns`; for completed/error insert one notification and prune to 200 in the same tx; aborted inserts none; a promoted checkpoint gets an index row under the turn |
-| plan/goal submission | host writes the exact Markdown bytes to a new unique `<workspaceRoot>/.pi/<kind>/*.md` file | insert one `plan_approvals(pending)` row with the kind, structured title/question, artifact path/hash/size, and expiry before emitting the approval request |
+| plan/goal submission | host writes the exact Markdown bytes to a new unique `<workspaceRoot>/.explore/<kind>/*.md` file | insert one `plan_approvals(pending)` row with the kind, structured title/question, artifact path/hash/size, and expiry before emitting the approval request |
 | plan/goal approval | verify the immutable artifact path/hash/size | atomically resolve `plan_approvals`, update `sessions.mode` and explicit `permission_mode`, and set `execution_state = 'queued'`; reject/expiry stay in the contract mode |
 | transcript truncate / retry / edit (`session.truncateFrom`) | host-owned suffix cut: abort leftover running turn, archive discarded regenerate tail, atomic prefix rewrite (temp + rename); preserve only a checkpoint whose boundary remains | single tx via `replace_messages`: delete index rows, bulk reinsert carrying each surviving message's owning `turn_id`, reset `last_seq`; drop inflight checkpoint |
 | message delete / unanswered smart Stop (`session.replaceMessages`) | atomic transcript rewrite (temp + rename); preserve only a checkpoint whose boundary remains | single tx: delete index rows, bulk reinsert carrying each surviving message's owning `turn_id`, reset `last_seq`; smart Stop keeps its structured composer snapshot only in renderer memory |
@@ -1494,7 +1496,7 @@ columns for anything the host filters, joins, sums, or indexes.
     invalid modes, or invalid default shells fail closed with the pre-migration
     schema intact
 17. SubmitPlan and SubmitGoal write exact Markdown bytes to a unique
-    `.pi/plan/*.md` or `.pi/goal/*.md` file
+    `.explore/plan/*.md` or `.explore/goal/*.md` file
     with SHA-256 and size; title/question stay structured and renderer reload
     retains only the pending row and original absolute deadline
 18. Full process restart marks pending/queued/running approval rows interrupted,
@@ -1622,19 +1624,29 @@ when converted. Known intent survives cadence changes and database reopen.
 This additive JSON key needs no table or schema-version migration. Older
 versions ignore the key and cannot enforce the new conversion guard.
 
-## 13. PI-Desktop agent directory (D637, ADR 0312)
+## 13. PI-Desktop config directories (D637, ADR 0312)
 
-The bundled pi SDK's global agent directory is `~/.explore/agent`, not the pi
-CLI's `~/.pi/agent`. It holds the SDK-owned files PI-Desktop reads or writes
-through the sidecar: `auth.json`, `models.json`, `settings.json`, the project
-trust store, `prompts/`, `AGENTS.md`, `SYSTEM.md` / `APPEND_SYSTEM.md`,
-native `sessions/`, and the SDK's `bin/` tool cache. The sidecar pins
-`PI_CODING_AGENT_DIR` to this directory before any pi module loads and
-overwrites an inherited value, so a pi CLI installation's credentials and
-models are never shared. `~/.pi` is still read only by the explicit one-shot
-importers (Pi sessions and Pi `models.json`). Nothing is migrated from
-`~/.pi/agent`; the directory starts empty.
+PI-Desktop uses `.explore` where the pi SDK and pi CLI use `.pi`, so it never
+shares state with a separately installed pi CLI. The bundled SDK's
+`CONFIG_DIR_NAME` is patched to `.explore`
+(`patches/@earendil-works__pi-coding-agent@0.87.1.patch`), and PI-Desktop's own
+modules resolve the same name through `packages/agent-runtime/src/agent-dir.ts`.
 
-This directory is separate from the Desktop data directory (`~/.pi-desktop`),
-which host-core owns for SQLite, Desktop transcripts, and Desktop provider
-secrets. Workspace-level `<workspace>/.pi/` folders are unchanged.
+- **Global** `~/.explore/agent`: the SDK-owned files PI-Desktop reads or writes
+  through the sidecar: `auth.json`, `models.json`, `settings.json`, the
+  project trust store, `prompts/`, `AGENTS.md`, `SYSTEM.md` /
+  `APPEND_SYSTEM.md`, native `sessions/`, and the SDK's `bin/` tool cache. The
+  sidecar pins `PI_CODING_AGENT_DIR` to this directory before any pi module
+  loads and overwrites an inherited value.
+- **Project** `<workspace>/.explore/`: `prompts/`, `SYSTEM.md` /
+  `APPEND_SYSTEM.md`, `extensions/`, the SDK's project `settings.json`,
+  `skills/`, and `themes/` for native sessions, and host-written `plan/` and
+  `goal/` artifacts. Plan/goal rows written before D637 keep their
+  `.pi/<kind>/` paths and still verify from there; new artifacts are written
+  only under `.explore/`.
+
+A pi CLI project's `.pi/` folder is otherwise ignored, and `~/.pi` is read only
+by the explicit one-shot Pi importers. Nothing is migrated.
+
+This is separate from the Desktop data directory (`~/.pi-desktop`), which
+host-core owns for SQLite, Desktop transcripts, and Desktop provider secrets.

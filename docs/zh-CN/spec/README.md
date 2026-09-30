@@ -89,7 +89,7 @@ docs/spec/
    是相同 Agent 的合约状态，并且不是严格的只读安全性
    配置文件，因为 Bash 遵循所选的权限模式
 8. SubmitPlan 将精确的 Markdown 字节写入新的主机拥有的
-   `.pi/plan/*.md`神器； title/question 保持结构化
+   `.explore/plan/*.md`神器； title/question 保持结构化
    `plan_approvals`，批准打开工件，仅限 approve/reject，并且
    `PLAN_APPROVAL_TIMEOUT` 在 30 绝对分钟后过期
 9. 协议 v11 和存储架构 v15 对 Plan/Goal 检查点、

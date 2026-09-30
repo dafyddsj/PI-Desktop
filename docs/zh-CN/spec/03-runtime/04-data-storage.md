@@ -474,11 +474,11 @@ CREATE INDEX idx_turns_session ON turns(session_id, started_at DESC);
 ### 4.6a plan_approvals — 不可变的检查点和执行字段（模式 v11）
 
 主机将每个提交的 Markdown 快照写入到一个新的唯一文件中
-提案类型的目录：`<workspaceRoot>/.pi/plan/` 用于计划和
-`<workspaceRoot>/.pi/goal/` 实现目标。现有 `plan_approvals` 行存储
+提案类型的目录：`<workspaceRoot>/.explore/plan/` 用于计划和
+`<workspaceRoot>/.explore/goal/` 实现目标。现有 `plan_approvals` 行存储
 种类、结构化 title/question、工件元数据和批准后
 执行描述符。文件路径是相对于会话工作空间的
-始终采用 `.pi/<kind>/<unique-name>.md` 形式。一张桌子提供两种服务
+始终采用 `.explore/<kind>/<unique-name>.md` 形式。一张桌子提供两种服务
 (D198)，所以单待批准不变量、执行队列和每个
 索引是共享的而不是重复的。
 
@@ -910,7 +910,7 @@ v9/v10→v11 迁移路径将旧版 `chat` 值映射到 `plan`；新预定的
 顶级线 `ScheduledTask.mode` 只是该线的标准化投影
 JSON 值。
 模式为合同模式（Plan 或 Goal）的计划或无人值守运行是
-在提供商工作、`.pi/<kind>/*.md` 创建、批准之前明确拒绝，
+在提供商工作、`.explore/<kind>/*.md` 创建、批准之前明确拒绝，
 或使用 `PLAN_REQUIRES_INTERACTIVE_SESSION` 进行队列插入 — 一个共享代码
 对于这两种。它无法显示批准卡或自动批准提案
 背景。用户必须先将 task/session 显式切换为 Agent
@@ -1027,7 +1027,7 @@ CREATE INDEX idx_notifications_unread
 | 上下文检查点（`session.appendCompaction`） | 在其引用的消息边界之后附加类型化检查点行 | —（检查点是不可搜索的转录本内容） |
 | 工具成功（Write/Edit） | — | upsert `artifacts` + `audit_log` 行，与结果持久化相同的 tx |
 | 通过 `session.endTurn` 打开终端 | `completed`/`error`：仅当该 id 已索引时才移除进行中检查点，否则留给 outbox 或启动恢复（D327）。`recoverInflight`：最终行从未落盘时，回合已 `completed` 则追加为 `complete`，否则为 `aborted` | 更新 `turns`；对于 completed/error，在同一交易中插入一个通知并修剪至 200 个；中止插入 无；被提升的检查点在该回合下获得一个索引行 |
-| plan/goal 提交 | 主机将准确的 Markdown 字节写入新的唯一 `<workspaceRoot>/.pi/<kind>/*.md` 文件 | 在发出批准请求之前插入一个 `plan_approvals(pending)` 行，其中包含类型、结构化 title/question、工件 path/hash/size 和到期时间 |
+| plan/goal 提交 | 主机将准确的 Markdown 字节写入新的唯一 `<workspaceRoot>/.explore/<kind>/*.md` 文件 | 在发出批准请求之前插入一个 `plan_approvals(pending)` 行，其中包含类型、结构化 title/question、工件 path/hash/size 和到期时间 |
 | plan/goal 批准 | 验证不可变工件 path/hash/size | 原子地解析 `plan_approvals`，更新 `sessions.mode` 和显式 `permission_mode`，并设置 `execution_state = 'queued'`； reject/expiry 保持合约模式 |
 | 转录本截断/重试/编辑 (`session.truncateFrom`) | 主机拥有的后缀截断：中止残留 running 回合，归档被丢弃的重新生成尾巴，原子前缀重写（临时+重命名）；只保留边界仍然存在的检查点 | 经 `replace_messages` 的 single tx：删除索引行，批量重新插入携带每个幸存消息所属的 `turn_id`，重置 `last_seq`；删除进行中检查点 |
 | 删除消息/无应答智能停止 (`session.replaceMessages`) | 原子记录重写（临时+重命名）；只保留边界仍然存在的检查点 | single tx：删除索引行，批量重新插入携带每个幸存消息所属的 `turn_id`，重置 `last_seq`； smart Stop 仅将其结构化输入框快照保留在渲染器内存中 |
@@ -1286,7 +1286,7 @@ UI投影损失
     无效的模式或无效的默认 shell 无法通过预迁移关闭
     模式完好无损
 17. SubmitPlan 和 SubmitGoal 将精确的 Markdown 字节写入唯一的
-    `.pi/plan/*.md` 或 `.pi/goal/*.md` 文件
+    `.explore/plan/*.md` 或 `.explore/goal/*.md` 文件
     具有 SHA-256 和大小； title/question 保持结构化并重新加载渲染器
     仅保留待处理行和原始绝对截止日期
 18.全流程重启标志着pending/queued/running审批行中断，

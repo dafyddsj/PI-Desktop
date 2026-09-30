@@ -315,7 +315,7 @@ type SubmitPlanInput = {
 };
 
 type PlanArtifact = {
-  relativePath: string; // `.pi/plan/<unique-name>.md` or `.pi/goal/<unique-name>.md`
+  relativePath: string; // `.explore/plan/<unique-name>.md` or `.explore/goal/<unique-name>.md`
   sha256: string;
   sizeBytes: number;
 };
@@ -896,7 +896,7 @@ Electron拥有本地化并提供面向用户的分支名称；主机
 它的提供商缓存。
 
 协议版本 9 添加检查点 Plan 合约：`SubmitPlan`，唯一
-`.pi/plan/*.md` 工件元数据、approve/reject-only 响应、绝对
+`.explore/plan/*.md` 工件元数据、approve/reject-only 响应、绝对
 到期、`plan_approvals` 执行字段、shell catalog/identity 字段以及
 直播 stdout/stderr 事件。 v7 或更旧的主机，以及任何不兼容的 v8
 对等方，握手必须失败，以便桌面无法静默显示 Plan
@@ -1588,7 +1588,7 @@ type ComposerCommand = {
 };
 ```
 
-模板从 `<workspace>/.pi/prompts/*.md` 加载并
+模板从 `<workspace>/.explore/prompts/*.md` 加载并
 `~/.explore/agent/prompts/*.md`（项目赢得名称冲突；短 TTL 缓存）。
 没有工作区，只有用户全局模板、内置函数和插件
 命令返回。
