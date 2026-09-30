@@ -713,32 +713,20 @@ fn every_kind_publishes_into_its_own_artifact_directory() {
 }
 
 #[test]
-fn legacy_pi_artifacts_still_verify_but_other_roots_do_not() {
+fn artifacts_outside_the_explore_directory_are_rejected() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path().join("workspace");
-    let markdown = b"# Plan\n- legacy";
-    fs::create_dir_all(root.join(".pi").join(KIND_PLAN)).unwrap();
-    fs::write(root.join(".pi").join(KIND_PLAN).join("legacy.md"), markdown).unwrap();
-    let legacy = PlanArtifact {
-        relative_path: format!(".pi/{KIND_PLAN}/legacy.md"),
-        sha256: hex::encode(Sha256::digest(markdown)),
-        size_bytes: markdown.len() as u64,
-    };
-    verify_artifact(&root, KIND_PLAN, &legacy).unwrap();
-    assert_eq!(
-        safe_artifact_path(&root, KIND_GOAL, &legacy.relative_path)
-            .unwrap_err()
-            .to_string(),
-        "PLAN_ARTIFACT_PATH_UNSAFE"
-    );
-    fs::create_dir_all(root.join(".other").join(KIND_PLAN)).unwrap();
-    fs::write(root.join(".other").join(KIND_PLAN).join("x.md"), markdown).unwrap();
-    assert_eq!(
-        safe_artifact_path(&root, KIND_PLAN, &format!(".other/{KIND_PLAN}/x.md"))
-            .unwrap_err()
-            .to_string(),
-        "PLAN_ARTIFACT_PATH_UNSAFE"
-    );
+    fs::create_dir_all(root.join(".explore").join(KIND_PLAN)).unwrap();
+    for other_root in [".pi", ".other"] {
+        fs::create_dir_all(root.join(other_root).join(KIND_PLAN)).unwrap();
+        fs::write(root.join(other_root).join(KIND_PLAN).join("x.md"), "# Plan").unwrap();
+        assert_eq!(
+            safe_artifact_path(&root, KIND_PLAN, &format!("{other_root}/{KIND_PLAN}/x.md"))
+                .unwrap_err()
+                .to_string(),
+            "PLAN_ARTIFACT_PATH_UNSAFE"
+        );
+    }
 }
 
 #[test]

@@ -3315,7 +3315,7 @@ pub fn import_session(
             None => None,
         };
         let source = summary.id.strip_prefix("import-").map(|rest| {
-            for known in ["claude-code", "opencode", "codex", "pi"] {
+            for known in ["claude-code", "opencode", "codex"] {
                 if rest.starts_with(&format!("{known}-")) {
                     return known.to_string();
                 }

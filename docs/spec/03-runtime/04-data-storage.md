@@ -446,7 +446,7 @@ CREATE TABLE sessions (
                                           'high', 'xhigh', 'max', 'omit')),
   permission_mode TEXT NOT NULL DEFAULT 'inherit' -- D115: inherit follows settings
                 CHECK (permission_mode IN ('inherit', 'ask', 'accept-edits', 'auto')),
-  source      TEXT,                            -- import origin: claude-code | codex | opencode (pi: legacy rows, D638)
+  source      TEXT,                            -- import origin: claude-code | codex | opencode
   deleted_at  INTEGER,                         -- plugin trash marker; null means active
   pinned      INTEGER NOT NULL DEFAULT 0,
   last_seq    INTEGER NOT NULL DEFAULT 0,      -- current message count / ordinal allocator
@@ -579,9 +579,7 @@ proposal kind's directory: `<workspaceRoot>/.explore/plan/` for a plan and
 `<workspaceRoot>/.explore/goal/` for a goal. The existing `plan_approvals` row stores
 the kind, the structured title/question, artifact metadata, and post-approval
 execution descriptor. The file path is relative to the session workspace and
-always has the form `.explore/<kind>/<unique-name>.md`; rows written before D637
-keep their `.pi/<kind>/<unique-name>.md` path, which host-core still resolves
-and verifies from `<workspaceRoot>/.pi/<kind>/`. One table serves both kinds
+always has the form `.explore/<kind>/<unique-name>.md`. One table serves both kinds
 (D198), so the single-pending-approval invariant, the execution queue, and every
 index are shared rather than duplicated.
 
@@ -1641,13 +1639,10 @@ modules resolve the same name through `packages/agent-runtime/src/agent-dir.ts`.
 - **Project** `<workspace>/.explore/`: `prompts/`, `SYSTEM.md` /
   `APPEND_SYSTEM.md`, `extensions/`, the SDK's project `settings.json`,
   `skills/`, and `themes/` for native sessions, and host-written `plan/` and
-  `goal/` artifacts. Plan/goal rows written before D637 keep their
-  `.pi/<kind>/` paths and still verify from there; new artifacts are written
-  only under `.explore/`.
+  `goal/` artifacts.
 
 A pi CLI project's `.pi/` folder is otherwise ignored, and `~/.pi` is read only
-by the explicit Pi model-config importer (the Pi session importer was removed by
-D638). Nothing is migrated.
+by the explicit Pi model-config importer.
 
 This is separate from the Desktop data directory (`~/.pi-desktop`), which
 host-core owns for SQLite, Desktop transcripts, and Desktop provider secrets.

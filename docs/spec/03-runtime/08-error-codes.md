@@ -166,7 +166,7 @@ does not turn temporary thread pressure into a host process exit.
 | `PLAN_CONFIGURATION_BLOCKED` | no | `session.configure` was refused while a proposal or execution is live |
 | `PLAN_ARTIFACT_INVALID` | no | the checkpoint artifact failed validation before execution |
 | `PLAN_ARTIFACT_NOT_READY` | no | execution was claimed before the artifact was durably written |
-| `PLAN_ARTIFACT_PATH_UNSAFE` | no | the artifact path escaped `<workspaceRoot>/.explore/<kind>/` (or legacy `.pi/<kind>/`, D637) |
+| `PLAN_ARTIFACT_PATH_UNSAFE` | no | the artifact path escaped `<workspaceRoot>/.explore/<kind>/` |
 | `PLAN_ARTIFACT_COLLISION_LIMIT` | no | the host ran out of unique artifact names |
 | `PLAN_ARTIFACT_HASH_MISMATCH` | no | artifact bytes no longer match the recorded hash at execution time |
 | `PLAN_EXECUTION_ACTIVE` | no | an approved execution is already running for the session |

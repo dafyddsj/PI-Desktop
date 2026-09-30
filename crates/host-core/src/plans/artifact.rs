@@ -74,19 +74,14 @@ pub(crate) fn safe_directory(path: &Path, create: bool) -> Result<()> {
     Ok(())
 }
 
-/// New plan/goal artifacts live under `<workspace>/.explore/<kind>/` (D637),
-/// apart from a separately installed pi CLI's `.pi` folder.
-pub(crate) const ARTIFACT_CONFIG_DIR: &str = ".explore";
-/// Artifacts published before D637 were written under `.pi/<kind>/`; their
-/// stored relative paths keep resolving there so existing proposals verify.
-const LEGACY_ARTIFACT_CONFIG_DIR: &str = ".pi";
+/// Plan/goal artifacts live under `<workspace>/.explore/<kind>/`, apart from a
+/// separately installed pi CLI's `.pi` folder.
+const ARTIFACT_CONFIG_DIR: &str = ".explore";
 
-/// Resolve `<workspace>/<config_dir>/<kind>` with every component checked for
-/// links. `config_dir` and `kind` are always `'static` literals, never caller
-/// text.
+/// Resolve `<workspace>/.explore/<kind>` with every component checked for
+/// links. `kind` is always a `'static` literal, never caller text.
 pub(crate) fn plan_directory(
     workspace_root: &Path,
-    config_dir: &'static str,
     kind: &'static str,
     create: bool,
 ) -> Result<(PathBuf, PathBuf)> {
@@ -98,7 +93,7 @@ pub(crate) fn plan_directory(
     if is_link_or_reparse(&root_metadata) || !root_metadata.is_dir() {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
     }
-    let config = root.join(config_dir);
+    let config = root.join(ARTIFACT_CONFIG_DIR);
     safe_directory(&config, create)?;
     let directory = config.join(kind);
     safe_directory(&directory, create)?;
@@ -118,7 +113,7 @@ pub(crate) fn publish_artifact(
     if bytes.len() > PLAN_MAX_MARKDOWN_BYTES {
         return Err(plan_error("PLAN_MARKDOWN_TOO_LARGE"));
     }
-    let (_root, directory) = plan_directory(workspace_root, ARTIFACT_CONFIG_DIR, kind, true)?;
+    let (_root, directory) = plan_directory(workspace_root, kind, true)?;
     let now = Local::now();
     for suffix in 1..=10_000u32 {
         let filename = plan_filename(kind, title, now, suffix);
@@ -158,18 +153,10 @@ pub(crate) fn safe_artifact_path(
     kind: &'static str,
     relative_path: &str,
 ) -> Result<PathBuf> {
+    let (root, _directory) = plan_directory(workspace_root, kind, false)?;
     let components = Path::new(relative_path).components().collect::<Vec<_>>();
-    // Only the current or the legacy literal is accepted; anything else falls
-    // back to the current one and is rejected by the component check below.
-    let legacy = Component::Normal(LEGACY_ARTIFACT_CONFIG_DIR.as_ref());
-    let config_dir = if components.first() == Some(&legacy) {
-        LEGACY_ARTIFACT_CONFIG_DIR
-    } else {
-        ARTIFACT_CONFIG_DIR
-    };
-    let (root, _directory) = plan_directory(workspace_root, config_dir, kind, false)?;
     if components.len() != 3
-        || components[0] != Component::Normal(config_dir.as_ref())
+        || components[0] != Component::Normal(ARTIFACT_CONFIG_DIR.as_ref())
         || components[1] != Component::Normal(kind.as_ref())
     {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
@@ -187,7 +174,7 @@ pub(crate) fn safe_artifact_path(
     {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
     }
-    let path = root.join(config_dir).join(kind).join(filename);
+    let path = root.join(ARTIFACT_CONFIG_DIR).join(kind).join(filename);
     let metadata =
         fs::symlink_metadata(&path).map_err(|_| plan_error("PLAN_ARTIFACT_NOT_READY"))?;
     if is_link_or_reparse(&metadata) || !metadata.is_file() || !path.starts_with(&root) {
