@@ -991,7 +991,7 @@ async function verifyArtifact(state, proposal, checkpoint) {
   const artifact = proposal?.artifact;
   assert(artifact?.relativePath, `proposal has no artifact: ${jsonText(proposal)}`);
   assert(
-    /^\.pi\/plan\/[^/\\]+\.md$/.test(artifact.relativePath),
+    /^\.explore\/plan\/[^/\\]+\.md$/.test(artifact.relativePath),
     `unexpected artifact path: ${artifact.relativePath}`,
   );
   const artifactPath = join(state.workspace, ...artifact.relativePath.split("/"));
