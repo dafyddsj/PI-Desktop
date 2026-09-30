@@ -692,7 +692,9 @@ fn every_kind_publishes_into_its_own_artifact_directory() {
         let (artifact, path) =
             publish_artifact(&root, kind, "Ship checkout", "# Contract\n- done").unwrap();
         assert!(
-            artifact.relative_path.starts_with(&format!(".explore/{kind}/")),
+            artifact
+                .relative_path
+                .starts_with(&format!(".explore/{kind}/")),
             "{} should live under .explore/{kind}/",
             artifact.relative_path
         );
