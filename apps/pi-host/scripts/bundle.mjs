@@ -5,10 +5,10 @@
  *   dist-bundle/pi-host-<version>-<platform>-<arch>/
  *     pi-host.js                 the CLI, esbuild-bundled with every workspace package
  *     agent-runtime/sidecar.js   the same sidecar bundle the desktop ships
- *     bin/pi-desktop-host-core   the platform host-core binary
+ *     bin/explore-host-core   the platform host-core binary
  *     node_modules/node-pty      optional; terminals are disabled without it
  *     package.json               { type: module, version }
- *     install.sh                 copies the bundle under ~/.pi-desktop/pi-host/<version>
+ *     install.sh                 copies the bundle under ~/.explore/app/pi-host/<version>
  *
  * Usage: node scripts/bundle.mjs [--host-core <path>] [--platform linux] [--arch x64|arm64] [--out <dir>]
  */
@@ -30,7 +30,7 @@ const args = Object.fromEntries(
 const platform = String(args.platform ?? process.platform);
 const arch = String(args.arch ?? process.arch);
 const exe = platform === "win32" ? ".exe" : "";
-const hostCore = resolve(String(args["host-core"] ?? join(root, `target/release/pi-desktop-host-core${exe}`)));
+const hostCore = resolve(String(args["host-core"] ?? join(root, `target/release/explore-host-core${exe}`)));
 const sidecar = join(root, "packages/agent-runtime/dist-bundle/sidecar.js");
 const out = resolve(String(args.out ?? join(app, "dist-bundle", `pi-host-${version}-${platform}-${arch}`)));
 
@@ -63,8 +63,8 @@ execFileSync(
 );
 cpSync(sidecar, join(out, "agent-runtime/sidecar.js"));
 writeFileSync(join(out, "agent-runtime/package.json"), '{ "type": "module" }\n');
-cpSync(hostCore, join(out, `bin/pi-desktop-host-core${exe}`));
-chmodSync(join(out, `bin/pi-desktop-host-core${exe}`), 0o755);
+cpSync(hostCore, join(out, `bin/explore-host-core${exe}`));
+chmodSync(join(out, `bin/explore-host-core${exe}`), 0o755);
 try {
   const pty = dirname(require.resolve("node-pty/package.json"));
   cpSync(pty, join(out, "node_modules/node-pty"), { recursive: true, dereference: true });
@@ -77,10 +77,10 @@ writeFileSync(
   `#!/bin/sh
 # Install this pi-host bundle under the user's home (D375 bootstrap).
 set -eu
-target="\${PI_HOST_INSTALL_DIR:-$HOME/.pi-desktop/pi-host}/${version}"
+target="\${PI_HOST_INSTALL_DIR:-$HOME/.explore/app/pi-host}/${version}"
 mkdir -p "$target"
 cp -R "$(dirname "$0")"/. "$target"/
-chmod 755 "$target/bin/pi-desktop-host-core${exe}"
+chmod 755 "$target/bin/explore-host-core${exe}"
 ln -sfn "$target" "$(dirname "$target")/current"
 echo "PI_HOST_INSTALLED $target"
 `,

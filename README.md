@@ -3,13 +3,13 @@
 A local-first desktop workspace for AI agents, built on a fork of
 [PI-Desktop](https://github.com/vastsa/PI-Desktop).
 
-> **Current release line: 0.15.x (pre-release).** Versioning, naming, and
-> distribution still carry PI-Desktop defaults and will change as the product
-> is rebranded.
+> **Current release line: 0.1.x (pre-release).** Rebrand status and remaining
+> work: [`docs/rebrand-next-steps.md`](docs/rebrand-next-steps.md).
 
 EXplore Agent keeps its agent configuration apart from a separately installed
 pi CLI: global config lives in `~/.explore/agent` and per-project config in
-`<workspace>/.explore/`.
+`<workspace>/.explore/`. App data (sessions, logs, provider keys) lives in
+`~/.explore/app`.
 
 ## Architecture
 

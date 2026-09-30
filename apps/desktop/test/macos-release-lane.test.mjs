@@ -42,11 +42,11 @@ exit 0
 printf 'pnpm %s\\n' "$*" >> "${log}"
 case "$*" in
   *electron-builder*)
-    app="${repoRoot}/apps/desktop/release/mac-arm64/PI-Desktop.app"
+    app="${repoRoot}/apps/desktop/release/mac-arm64/EXplore Agent.app"
     mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources/bin"
-    : > "$app/Contents/MacOS/PI-Desktop"
-    : > "$app/Contents/Resources/bin/pi-desktop-host-core"
-    : > "${repoRoot}/apps/desktop/release/PI-Desktop-0.0.0-arm64.dmg"
+    : > "$app/Contents/MacOS/EXplore Agent"
+    : > "$app/Contents/Resources/bin/explore-host-core"
+    : > "${repoRoot}/apps/desktop/release/EXplore-Agent-0.0.0-arm64.dmg"
     ;;
 esac
 exit 0

@@ -6,7 +6,7 @@
 
 ## Purpose
 
-Live Voice may submit a bounded work request to the existing local PI-Desktop
+Live Voice may submit a bounded work request to the existing local EXplore Agent
 Agent session selected by the user. The Live provider remains a voice interface;
 the existing Agent Runtime continues to own file, shell, MCP, plugin, skill, and
 subagent work under the session's current model and permission policy.

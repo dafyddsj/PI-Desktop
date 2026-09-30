@@ -86,7 +86,7 @@ function initialConfigSyncForm(draft = readConfigSyncDraft()): ConfigSyncForm {
     endpoint: draft.endpoint ?? "",
     username: draft.username ?? "",
     appPassword: "",
-    directory: draft.directory ?? "pi-desktop",
+    directory: draft.directory ?? "explore-agent",
     deviceLabel: draft.deviceLabel ?? "",
     backupPassword: "",
     currentBackupPassword: "",
@@ -98,7 +98,7 @@ function draftFromState(next: ConfigSyncState) {
   return {
     endpoint: next.endpoint ?? "",
     username: next.username ?? "",
-    directory: next.directory ?? "pi-desktop",
+    directory: next.directory ?? "explore-agent",
     deviceLabel: next.deviceLabel ?? "",
     remoteMode: next.remoteMode,
     categories: {

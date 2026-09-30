@@ -47,7 +47,7 @@ try {
     define: { __dirname: JSON.stringify(join(root, "apps/desktop/electron/main")) },
   });
   const { HostProcess, AgentSidecar } = require(bundle);
-  process.env.PI_DESKTOP_HOST_BIN ??= join(root, "target/debug", `pi-desktop-host-core${process.platform === "win32" ? ".exe" : ""}`);
+  process.env.PI_DESKTOP_HOST_BIN ??= join(root, "target/debug", `explore-host-core${process.platform === "win32" ? ".exe" : ""}`);
   host = new HostProcess(join(temp, "data"), () => {});
   await deadline(host.handshake());
   const created = await deadline(host.call("session.create", { title: "Unicode regression", mode: "agent", projectPath: temp }));

@@ -3363,7 +3363,7 @@ mod tests {
         std::fs::write(dir.path().join("generated/out.txt"), "needle\n").unwrap();
         std::fs::write(dir.path().join("debug.log"), "needle\n").unwrap();
         std::fs::write(dir.path().join("src.txt"), "needle\n").unwrap();
-        std::fs::write(dir.path().join(".pi-desktopignore"), "generated/\n").unwrap();
+        std::fs::write(dir.path().join(".exploreignore"), "generated/\n").unwrap();
 
         let unscoped = execute_tool(
             Some(dir.path()),
@@ -3381,7 +3381,7 @@ mod tests {
         );
         assert!(
             !shown.contains("generated"),
-            ".pi-desktopignore is honored: {shown}"
+            ".exploreignore is honored: {shown}"
         );
         assert!(
             !shown.contains("debug.log"),

@@ -257,7 +257,7 @@ test("packaging publishes an electron-updater feed for GitHub Releases", () => {
     );
   }
   assert.match(pkg.scripts.dist, /build-desktop-release\.mjs/);
-  assert.equal(pkg.build.linux.executableName, "pi-desktop");
+  assert.equal(pkg.build.linux.executableName, "explore-agent");
   const linuxTargets = pkg.build.linux.target.map((entry) => entry.target);
   assert.deepEqual(
     linuxTargets,
@@ -265,12 +265,12 @@ test("packaging publishes an electron-updater feed for GitHub Releases", () => {
     "Linux release targets",
   );
   // Scoped package name is not a valid deb/rpm package or file name.
-  assert.equal(pkg.build.deb.packageName, "pi-desktop");
-  assert.equal(pkg.build.rpm.packageName, "pi-desktop");
+  assert.equal(pkg.build.deb.packageName, "explore-agent");
+  assert.equal(pkg.build.rpm.packageName, "explore-agent");
   assert.ok(!pkg.build.deb.artifactName.includes("${name}"), "deb artifactName");
   assert.equal(
     pkg.build.rpm.artifactName,
-    "pi-desktop-${version}-${arch}.${ext}",
+    "explore-agent-${version}-${arch}.${ext}",
     "rpm artifactName",
   );
   assert.deepEqual(
@@ -279,13 +279,13 @@ test("packaging publishes an electron-updater feed for GitHub Releases", () => {
     "rpm build-id configuration",
   );
   // GitHub asset URLs mangle spaces; keep Windows artifact names space-free.
-  assert.equal(pkg.build.nsis.artifactName, "PI-Desktop-Setup-${version}.${ext}");
+  assert.equal(pkg.build.nsis.artifactName, "EXplore-Agent-Setup-${version}.${ext}");
   const winTargets = pkg.build.win.target.map((entry) => entry.target);
   assert.deepEqual(winTargets, ["nsis", "zip", "portable"], "Windows release targets");
-  assert.equal(pkg.build.portable.artifactName, "PI-Desktop-Portable-${version}.${ext}", "portable artifact name");
+  assert.equal(pkg.build.portable.artifactName, "EXplore-Agent-Portable-${version}.${ext}", "portable artifact name");
   assert.equal(
     pkg.build.win.artifactName,
-    "PI-Desktop-Portable-${version}.${ext}",
+    "EXplore-Agent-Portable-${version}.${ext}",
   );
   assert.equal(pkg.build.extraMetadata.piDistribution, "installed");
   assert.match(pkg.scripts["dist:win"], /build-desktop-release\.mjs win/);
@@ -314,7 +314,7 @@ test("shared shipped-locale changelog is the in-app notes source of truth", () =
   assert.match(changelogSource, /formatChangelogNotes/);
   assert.match(changelogSource, /"zh-CN"/);
   assert.match(changelogSource, /"zh-TW"/);
-  assert.match(changelogSource, /version: "0\.2\.7"/);
+  assert.match(changelogSource, /version: "0\.1\.0"/);
   assert.match(
     mainSource,
     /getLocale:\s*\(\)\s*=>\s*(?:updaterLocale|mainState\.updaterLocale)/,

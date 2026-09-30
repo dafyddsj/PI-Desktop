@@ -234,7 +234,7 @@ test("macOS DMG remains a two-icon install and artifacts omit first-launch guida
   assert.equal(packageJson.build.mac.extraDistFiles, undefined);
   assert.doesNotMatch(
     JSON.stringify(packageJson.build),
-    /PI-Desktop-macOS-open\.command|PI-Desktop-macOS-opening-help\.txt/,
+    /EXplore-Agent-macOS-open\.command|EXplore-Agent-macOS-opening-help\.txt/,
     "macOS package configuration must not ship first-launch guidance assets",
   );
   assert.equal(packageJson.build.dmg.background, "build/dmg-background.png");
@@ -248,7 +248,7 @@ test("macOS DMG remains a two-icon install and artifacts omit first-launch guida
   ]);
   assert.doesNotMatch(
     JSON.stringify(packageJson.build.dmg.contents),
-    /PI-Desktop-macOS-open\.command|Open PI-Desktop\.command|opening-help|If app won't open/,
+    /EXplore-Agent-macOS-open\.command|Open EXplore Agent\.command|opening-help|If app won't open/,
     "the DMG must not expose first-launch guidance assets",
   );
   assert.deepEqual([...dmgBackground.subarray(0, 8)], [

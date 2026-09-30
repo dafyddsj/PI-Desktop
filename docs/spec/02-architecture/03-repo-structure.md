@@ -7,7 +7,7 @@ Two workspaces share one repository: pnpm owns every JavaScript package
 `package.json` scripts fan out to both.
 
 ```text
-PI-Desktop/
+EXplore Agent/
 ├── apps/
 │ └── desktop/                # Electron product shell
 │   ├── electron/
@@ -29,7 +29,7 @@ PI-Desktop/
 │   ├── electron.vite.config.ts
 │   └── package.json          # also holds the electron-builder config
 ├── crates/
-│ └── host-core/              # Rust privileged host (binary pi-desktop-host-core)
+│ └── host-core/              # Rust privileged host (binary explore-host-core)
 │   ├── Cargo.toml
 │   └── src/                  # rpc/, tools/, plus one module per domain
 ├── packages/
@@ -122,12 +122,12 @@ Cross-boundary contracts:
 
 ## 3. Runtime data (not in git)
 
-`PI_DESKTOP_DATA_DIR` overrides the default location: `~/.pi-desktop` for a
-packaged installation, `~/.pi-desktop-dev` for a development build, which is
+`PI_DESKTOP_DATA_DIR` overrides the default location: `~/.explore/app` for a
+packaged installation, `~/.explore/app-dev` for a development build, which is
 how `pnpm dev` runs beside the packaged app (D599).
 
 ```text
-~/.pi-desktop/
+~/.explore/app/
  ├── pi.sqlite               # single DB, host-core owned (03-runtime/04, D086)
  ├── sessions/               # per-session transcript files (D119)
  ├── artifacts/              # plan and goal checkpoint artifacts
@@ -155,7 +155,7 @@ how `pnpm dev` runs beside the packaged app (D599).
 | Object | Convention |
 |---|---|
 | JS packages | `@pi-desktop/*` |
-| Rust crate | `pi-desktop-host-core` (or `host-core`) |
+| Rust crate | `explore-host-core` (or `host-core`) |
 | IPC channels | `pi-desktop/<domain>/<action>` |
 | i18n keys | `domain.section.key` |
 | Plugin IDs | reverse-domain style |

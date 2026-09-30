@@ -34,10 +34,10 @@ export function hostCoreCandidates(root = here()): string[] {
   return [
     process.env.PI_HOST_CORE_BIN ?? "",
     process.env.PI_DESKTOP_HOST_BIN ?? "",
-    join(root, `bin/pi-desktop-host-core${exe}`),
-    join(root, `../bin/pi-desktop-host-core${exe}`),
-    join(root, `../../../target/release/pi-desktop-host-core${exe}`),
-    join(root, `../../../target/debug/pi-desktop-host-core${exe}`),
+    join(root, `bin/explore-host-core${exe}`),
+    join(root, `../bin/explore-host-core${exe}`),
+    join(root, `../../../target/release/explore-host-core${exe}`),
+    join(root, `../../../target/debug/explore-host-core${exe}`),
   ].filter(Boolean);
 }
 
@@ -82,7 +82,7 @@ export function parseArgs(argv: string[]): CliArgs {
 }
 
 export function resolveConfig(args: CliArgs, env: NodeJS.ProcessEnv = process.env): PiHostConfig {
-  const dataDir = resolve(String(args["data-dir"] ?? env.PI_DESKTOP_DATA_DIR ?? join(homedir(), ".pi-desktop")));
+  const dataDir = resolve(String(args["data-dir"] ?? env.PI_DESKTOP_DATA_DIR ?? join(homedir(), ".explore", "app")));
   const port = Number(args.port ?? env.PI_HOST_PORT ?? DEFAULT_PORT);
   if (!Number.isInteger(port) || port < 0 || port > 65_535) {
     throw Object.assign(new Error(`invalid port ${String(args.port ?? env.PI_HOST_PORT)}`), { errorCode: "INVALID_ARGUMENT" });

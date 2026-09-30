@@ -26,10 +26,10 @@ function resolveHostBinary(): string {
   const exe = process.platform === "win32" ? ".exe" : "";
   const candidates = [
     // packaged resources
-    join(process.resourcesPath || "", `bin/pi-desktop-host-core${exe}`),
+    join(process.resourcesPath || "", `bin/explore-host-core${exe}`),
     // monorepo dev/build
-    join(__dirname, `../../../../target/debug/pi-desktop-host-core${exe}`),
-    join(__dirname, `../../../../target/release/pi-desktop-host-core${exe}`),
+    join(__dirname, `../../../../target/debug/explore-host-core${exe}`),
+    join(__dirname, `../../../../target/release/explore-host-core${exe}`),
   ];
   for (const c of candidates) {
     if (c && existsSync(c)) return c;

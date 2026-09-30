@@ -43,10 +43,10 @@ const MAIN_PANE_REOPEN_TARGET_WIDTH = 460;
 function resolveHostBinary() {
   const candidates = [
     process.env.PI_DESKTOP_HOST_BIN?.trim(),
-    join(root, "target", "debug", "pi-desktop-host-core"),
-    join(root, "target", "debug", "pi-desktop-host-core.exe"),
-    join(root, "target", "release", "pi-desktop-host-core"),
-    join(root, "target", "release", "pi-desktop-host-core.exe"),
+    join(root, "target", "debug", "explore-host-core"),
+    join(root, "target", "debug", "explore-host-core.exe"),
+    join(root, "target", "release", "explore-host-core"),
+    join(root, "target", "release", "explore-host-core.exe"),
   ].filter(Boolean);
   const found = candidates.find((candidate) => existsSync(candidate));
   if (!found) {

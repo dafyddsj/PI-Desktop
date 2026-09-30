@@ -1,4 +1,4 @@
-# PI-Desktop Baseline Freeze
+# EXplore Agent Baseline Freeze
 
 - Baseline Version: `0.4.19`
 - Date: `2026-09-29`
@@ -113,7 +113,7 @@
 
 ## Frozen Decisions
 
-1. Product name: **PI-Desktop**
+1. Product name: **EXplore Agent**
 2. Desktop shell: **Electron**
 3. UI: **React + TypeScript + Vite + Tailwind**
 4. UI language default: **English**
@@ -158,7 +158,7 @@
 35. Model policy: **no closed allowlist; models.dev release catalog, generic unknown IDs, and free-form model IDs**
 36. Provider storage: **Rust SQLite configs + OS secret store references**
 37. Secrets backend: **safeStorage primary + encrypted file fallback**
-38. Workspace ignore: **denylist + defaults + `.pi-desktopignore`**
+38. Workspace ignore: **denylist + defaults + `.exploreignore`**
 39. Tool result limits: **per-tool budgets (128KB / 4000 lines search, 96KB / 4000 lines shell); `truncated` only when a result is cut short**
 40. Settings directory: **Basics / Model configuration / Import / Project archive / Info**;
     the project archive owns durable project discovery, archive, restore, and

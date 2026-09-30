@@ -9,7 +9,7 @@ import { HostClient } from "../packages/agent-runtime/dist/host-client.js";
 import { PROTOCOL_VERSION } from "../packages/shared/dist/protocol.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const hostBin = join(root, "target/debug/pi-desktop-host-core");
+const hostBin = join(root, "target/debug/explore-host-core");
 const dataDir = mkdtempSync(join(tmpdir(), "pi-agent-live-"));
 // No defaults on purpose: this script sends a real prompt with a real key, so
 // the endpoint and model must be chosen explicitly by whoever runs it.

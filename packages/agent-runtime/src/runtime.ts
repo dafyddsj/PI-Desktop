@@ -781,7 +781,7 @@ const PROGRESS_TURN_NUDGE = [
 /**
  * Some OpenAI-style models emit their internal parallel-call wrapper as
  * assistant text (`to=multi_tool_use.parallel code:{"tool_uses":[…]}`) instead
- * of real tool calls. PI-Desktop has no such tool, so the whole batch lands as
+ * of real tool calls. EXplore Agent has no such tool, so the whole batch lands as
  * prose and silently does nothing — the turn looks finished while no work ran.
  * Rare (2 occurrences across 255 recorded sessions) but indistinguishable from
  * a stuck agent when it happens.
@@ -2893,7 +2893,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       if (scheduledToolDescriptions[toolName]) return scheduledToolDescriptions[toolName];
       switch (toolName) {
         case "BrowserPreview":
-          return "Open a workspace HTML file in PI-Desktop's built-in browser panel. `path` is workspace-relative (e.g. \"demo/index.html\"). The preview live-reloads on later edits to the file or its sibling assets, so call once per page.";
+          return "Open a workspace HTML file in EXplore Agent's built-in browser panel. `path` is workspace-relative (e.g. \"demo/index.html\"). The preview live-reloads on later edits to the file or its sibling assets, so call once per page.";
         case "Read":
           return (
             "Read a bounded window from an existing regular text file, never a directory. " +
@@ -2930,13 +2930,13 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
         case ASK_TOOL_NAME:
           return "Ask the user one or more questions. Use Markdown in question text and option labels when formatting helps (for example, emphasis, inline code, or lists); the desktop card renders it safely. Plain strings and existing `{ label, description? }` options are accepted; descriptions remain plain text and answers return the selected source label. The card always provides a custom user-input option.";
         case "PluginScaffold":
-          return "Create a PI-Desktop plugin from a template and load it for development. `directory` is workspace-relative and must be empty or new; `template` is one of panel-basic, agent-tool-basic, skill-pack, full-demo. Use this instead of hand-writing plugin files.";
+          return "Create a EXplore Agent plugin from a template and load it for development. `directory` is workspace-relative and must be empty or new; `template` is one of panel-basic, agent-tool-basic, skill-pack, full-demo. Use this instead of hand-writing plugin files.";
         case "PluginCheck":
-          return "Validate a PI-Desktop plugin directory against every rule the installer enforces (manifest, entry file, panel, skills, permissions, package limits). `directory` is workspace-relative. Run this before packaging.";
+          return "Validate a EXplore Agent plugin directory against every rule the installer enforces (manifest, entry file, panel, skills, permissions, package limits). `directory` is workspace-relative. Run this before packaging.";
         case "PluginPack":
-          return "Package a PI-Desktop plugin directory into an installable dist/<id>-<version>.piplug. `directory` is workspace-relative. Runs the same validation as PluginCheck first and refuses to package a plugin with errors. Never build a .piplug with shell tools — the installer only accepts uncompressed archives.";
+          return "Package a EXplore Agent plugin directory into an installable dist/<id>-<version>.piplug. `directory` is workspace-relative. Runs the same validation as PluginCheck first and refuses to package a plugin with errors. Never build a .piplug with shell tools — the installer only accepts uncompressed archives.";
         default:
-          return `${toolName} tool via PI-Desktop host-core`;
+          return `${toolName} tool via EXplore Agent host-core`;
       }
     };
     // One entry per tool: the shapes diverge enough that a chain of ternaries
@@ -3650,11 +3650,11 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
       case "BrowserPreview":
         return "Preview an HTML file in the built-in browser panel.";
       case "PluginCheck":
-        return "Validate a PI-Desktop plugin directory.";
+        return "Validate a EXplore Agent plugin directory.";
       case "PluginScaffold":
-        return "Create a PI-Desktop plugin from a template.";
+        return "Create a EXplore Agent plugin from a template.";
       case "PluginPack":
-        return "Validate and package a PI-Desktop plugin.";
+        return "Validate and package a EXplore Agent plugin.";
       default:
         return this.compactToolDescription(tool.description);
     }
@@ -4225,7 +4225,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
             if (!provider) {
               return this.subagentToolError(
                 toolCallId,
-                `The ${definition.name} subagent pins ${definition.model?.providerId}/${definition.model?.modelId}, which is not configured in PI-Desktop. Do this work yourself or delegate to another subagent.`,
+                `The ${definition.name} subagent pins ${definition.model?.providerId}/${definition.model?.modelId}, which is not configured in EXplore Agent. Do this work yourself or delegate to another subagent.`,
               );
             }
           } else if (this.isSessionModelOverride(modelOverride)) {
@@ -4257,7 +4257,7 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
           if (!provider) {
             return this.subagentToolError(
               toolCallId,
-              `The ${definition.name} subagent pins ${definition.model?.providerId}/${definition.model?.modelId}, which is not configured in PI-Desktop. Do this work yourself or delegate to another subagent.`,
+              `The ${definition.name} subagent pins ${definition.model?.providerId}/${definition.model?.modelId}, which is not configured in EXplore Agent. Do this work yourself or delegate to another subagent.`,
             );
           }
         }

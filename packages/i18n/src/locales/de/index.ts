@@ -2,16 +2,16 @@ import { en, type EnglishCatalog } from "../en/index.js";
 
 export const de = {
   "app": {
-    "shellName": "PI-Desktop",
+    "shellName": "EXplore Agent",
     "tagline": "Lokaler AI-Codierungspartner",
-    "starting": "PI-Desktop wird gestartet…",
+    "starting": "EXplore Agent wird gestartet…",
     "loadingView": "Ansicht wird geladen…",
     "uiCrashed": "Mit der Schnittstelle ist ein Fehler aufgetreten"
   },
   "startup": {
     "slowTitle": "Startet noch…",
-    "slowBody": "PI-Desktop braucht länger als sonst, um Ihren lokalen Dienst zu erreichen. Der Start kann noch von selbst abschließen — Sie können warten oder zuerst die Protokolle sichern.",
-    "stalledTitle": "PI-Desktop konnte den Start nicht abschließen",
+    "slowBody": "EXplore Agent braucht länger als sonst, um Ihren lokalen Dienst zu erreichen. Der Start kann noch von selbst abschließen — Sie können warten oder zuerst die Protokolle sichern.",
+    "stalledTitle": "EXplore Agent konnte den Start nicht abschließen",
     "stalledBody": "Dieses Fenster hat Ihre Chats und Einstellungen nie erhalten, daher gibt es noch nichts anzuzeigen. Es wurde nichts gelöscht — Ihre Daten sind noch auf dem Datenträger.",
     "retrying": "Erneuter Versuch…",
     "copyDiagnostics": "Diagnosen kopieren",
@@ -36,12 +36,12 @@ export const de = {
     "unread": "Ungelesen",
     "pinned": "Angeheftet",
     "viewMore": "Mehr anzeigen…",
-    "open": "Öffnen Sie PI-Desktop",
-    "quit": "Beenden Sie PI-Desktop",
-    "askTitle": "Lassen Sie PI-Desktop im Hintergrund laufen?",
-    "askBody": "Wenn Sie das Fenster schließen, kann PI-Desktop in der Taskleiste weiterlaufen, sodass nichts verloren geht. Sie können dies jederzeit in den Einstellungen ändern.",
+    "open": "Öffnen Sie EXplore Agent",
+    "quit": "Beenden Sie EXplore Agent",
+    "askTitle": "Lassen Sie EXplore Agent im Hintergrund laufen?",
+    "askBody": "Wenn Sie das Fenster schließen, kann EXplore Agent in der Taskleiste weiterlaufen, sodass nichts verloren geht. Sie können dies jederzeit in den Einstellungen ändern.",
     "closeToTray": "In der Taskleiste",
-    "confirmQuitTitle": "PI-Desktop beenden?",
+    "confirmQuitTitle": "EXplore Agent beenden?",
     "confirmQuitBody": "Sind Sie sicher, dass Sie beenden möchten? Alle laufenden Sitzungen werden gestoppt und nicht gespeicherte Änderungen gehen möglicherweise verloren.",
     "confirmQuit": "Beenden"
   },
@@ -92,7 +92,7 @@ export const de = {
     "zoomOut": "Verkleinern",
     "toggleFullScreen": "Vollbild umschalten",
     "toggleDevTools": "Entwicklertools",
-    "appHelp": "PI-Desktop-Hilfe",
+    "appHelp": "EXplore-Agent-Hilfe",
     "openLogs": "Protokolle öffnen",
     "checkForUpdates": "Nach Updates suchen…"
   },
@@ -246,7 +246,7 @@ export const de = {
     "emptyTitle": "Was kann ich Ihnen beim Aufbau helfen?",
     "emptyTitleInProject": "Was können wir in {{project}} bauen?",
     "emptyTitleTemporary": "Was würden Sie gerne vorübergehend erkunden?",
-    "placeholder": "Bitten Sie PI-Desktop um Hilfe bei allem",
+    "placeholder": "Bitten Sie EXplore Agent um Hilfe bei allem",
     "placeholderHome": "Fragen Sie alles",
     "placeholderHint": "Geben Sie / für Befehle · @ für Dateien ein",
     "placeholderHomeHint": "Geben Sie / für Befehle · @ für Dateien ein",
@@ -599,7 +599,7 @@ export const de = {
   "settings": {
     "power": "Energie",
     "keepAwakeWhileRunning": "Computer wach halten",
-    "keepAwakeWhileRunningDesc": "Verhindert den Ruhezustand bei Inaktivität, solange PI-Desktop läuft. Der Bildschirm kann sich ausschalten; manuelles Schlafen und Zuklappen bleiben möglich.",
+    "keepAwakeWhileRunningDesc": "Verhindert den Ruhezustand bei Inaktivität, solange EXplore Agent läuft. Der Bildschirm kann sich ausschalten; manuelles Schlafen und Zuklappen bleiben möglich.",
     "imageModel": "Bildgenerierungsmodell",
     "imageModelUnset": "Nicht konfiguriert",
     "imageModelUnavailable": "Derzeit nicht verfügbar",
@@ -697,7 +697,7 @@ sklm: {
       "Dieser Anbieter stammt aus dem Plugin „{{plugin}}“, das Endpunkt und Modelle bereitstellt. Aktivieren oder deaktivieren Sie es auf der Seite „Erweiterungen“.",
     "pluginProviderKey": "API-Schlüssel",
     "pluginProviderKeyHint":
-      "Wird in PI-Desktop gespeichert und von der Laufzeitumgebung verwendet. Das Plugin erhält ihn niemals.",
+      "Wird in EXplore Agent gespeichert und von der Laufzeitumgebung verwendet. Das Plugin erhält ihn niemals.",
     "pluginProviderKeyRemove": "Schlüssel entfernen",
     "pluginProviderKeySaved": "API-Schlüssel gespeichert",
     "pluginProviderKeyRemoved": "API-Schlüssel entfernt",
@@ -1671,7 +1671,7 @@ sklm: {
     "noProjects": "Noch keine Projekte"
   },
   "scheduled": {
-    "description": "Wiederkehrende Agent-Aufgaben ausführen, solange PI-Desktop geöffnet ist.",
+    "description": "Wiederkehrende Agent-Aufgaben ausführen, solange EXplore Agent geöffnet ist.",
     "edit": "Aufgabe bearbeiten",
     "hourlyHint": "Läuft stündlich, erstmals eine Stunde nach dem Speichern oder Aktivieren. Ein App-Neustart startet das Intervall neu.",
     "morning": "Vormittag",
@@ -1685,7 +1685,7 @@ sklm: {
     "legacyHint": "Zeitplan bearbeiten und speichern, um automatische Ausführungen zu aktivieren.",
     "time": "Uhrzeit",
     "weekday": "Wochentag",
-    "localTimeHint": "Verwendet die lokale Zeitzone. PI-Desktop muss geöffnet bleiben; verpasste Ausführungen werden übersprungen.",
+    "localTimeHint": "Verwendet die lokale Zeitzone. EXplore Agent muss geöffnet bleiben; verpasste Ausführungen werden übersprungen.",
     "projectHint": "Das aktuelle Projekt wird gespeichert. Ausführungen verwenden das Standardmodell.",
     "autoPermissionHint": "Auto kann eingeschränkte Aktionen ohne Nachfrage ausführen. Verwenden Sie es nur für vertrauenswürdige Aufgaben.",
     "unavailableModel": "{{provider}} / {{model}} (nicht verfügbar)",
@@ -2141,10 +2141,10 @@ sklm: {
       "agent.tool.register": "Ermöglicht der KI, zusätzliche Tools aufzurufen, die von diesem Plugin bereitgestellt werden.",
       "agent.prompt.inject": "Kann Anweisungen ändern, die an den KI-Agenten gesendet werden.",
       "agent.complete": "Kann Ihr Modellkontingent für eine einmalige Fertigstellung ausgeben. Das Plugin erhält niemals Ihre API-Schlüssel.",
-      "renderer.extension": "Lädt das Renderer-Modul dieses Plugins in das App-Fenster, um UI-Slot-Komponenten zu zeichnen (Nachrichten-Aktionsleisten, Antwort-Anhänge, Tool-Karten, Codeblock-Renderer, Eingabebereich). Das Modul läuft im selben Dokument wie PI-Desktop. Aktiviere nur Code, dem du vertraust.",
+      "renderer.extension": "Lädt das Renderer-Modul dieses Plugins in das App-Fenster, um UI-Slot-Komponenten zu zeichnen (Nachrichten-Aktionsleisten, Antwort-Anhänge, Tool-Karten, Codeblock-Renderer, Eingabebereich). Das Modul läuft im selben Dokument wie EXplore Agent. Aktiviere nur Code, dem du vertraust.",
       "agent.extension": "Führt ExtensionAPI-Module im Agentenprozess mit denselben Rechten wie die Tools des Agenten aus. Aktivieren Sie nur Code, dem Sie vertrauen.",
-      "provider.register": "Fügt die Anbieter, die dieses Plugin definiert, zur Anbieterliste in den Einstellungen hinzu. Das Plugin liefert den Endpunkt und die Modelle; Ihr API-Schlüssel bleibt in PI-Desktop.",
-      "desktop.control": "Erlaubt den Aufruf des geprüften PI-Desktop-Katalogs; destruktive Vorgänge benötigen weiterhin confirm=true, und das MCP-Bearer-Token wird nicht offengelegt.",
+      "provider.register": "Fügt die Anbieter, die dieses Plugin definiert, zur Anbieterliste in den Einstellungen hinzu. Das Plugin liefert den Endpunkt und die Modelle; Ihr API-Schlüssel bleibt in EXplore Agent.",
+      "desktop.control": "Erlaubt den Aufruf des geprüften EXplore-Agent-Katalogs; destruktive Vorgänge benötigen weiterhin confirm=true, und das MCP-Bearer-Token wird nicht offengelegt.",
       "models.list": "Kann sehen, für welche Modelle Sie sich angemeldet haben. Es erhält keine Schlüssel.",
       "session.read": "Kann die Konversation lesen, an der der aktuelle Tool-Aufruf arbeitet, einschließlich der Tool-Ergebnisse.",
       "net.fetch": "Kann ausgehende Netzwerkanfragen stellen.",
@@ -2157,7 +2157,7 @@ sklm: {
       "audio.capture.background": "Erfasst das Mikrofon, während das Plugin im Hintergrund läuft und kein Panel geöffnet ist.",
       "audio.playback.background": "Gibt Audio wieder, das das Plugin streamt, auch wenn kein Panel geöffnet ist.",
       "speech.adapter.register": "Kann ein Transkriptions- oder Sprachprotokoll hinzufügen, das vorhandene Anbieterschlüssel nutzt. Das Plugin sieht den Schlüssel nie.",
-      "keyboard.globalShortcut": "Registriert systemweite Tastaturkürzel, die die eigenen Befehle dieses Plugins auslösen, während PI-Desktop nicht fokussiert ist.",
+      "keyboard.globalShortcut": "Registriert systemweite Tastaturkürzel, die die eigenen Befehle dieses Plugins auslösen, während EXplore Agent nicht fokussiert ist.",
       "net.websocket": "Öffnet bidirektionale Echtzeitverbindungen zu den Hosts, die das Plugin deklariert hat.",
       "net.anyHost": "Kann jeden Server über HTTP(S) oder WebSocket(S) erreichen, einschließlich vom Nutzer eingegebener selbst gehosteter Adressen. Cloud-Metadata-Endpunkte bleiben blockiert.",
       "bus.publish": "Kann Nachrichten zu den angegebenen Themen senden.",
@@ -2384,7 +2384,7 @@ sklm: {
     "unsupportedGlibc":
       "Diese Linux-Version benötigt glibc 2.35 oder neuer (Ubuntu 22.04, Debian 12, Fedora 36+).",
     "dbSchemaTooNew":
-      "Diese PI-Desktop-Version ist älter als Ihre lokalen Daten (Datenschema {{found}}, diese Version unterstützt {{supported}}). Installieren Sie die neuere PI-Desktop-Version, die diese Daten zuletzt geöffnet hat, oder eine spätere.",
+      "Diese EXplore-Agent-Version ist älter als Ihre lokalen Daten (Datenschema {{found}}, diese Version unterstützt {{supported}}). Installieren Sie die neuere EXplore-Agent-Version, die diese Daten zuletzt geöffnet hat, oder eine spätere.",
     "archMismatch":
       "Dies ist die {{buildArch}}-Version auf einem {{machineArch}}-Rechner; sie läuft übersetzt und daher langsamer. Installieren Sie stattdessen die {{machineArch}}-Version.",
     "dismissArchMismatch": "Ausblenden",

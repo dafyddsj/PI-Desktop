@@ -2,7 +2,7 @@
 
 ## 1. Policy
 
-PI-Desktop is a global product.
+EXplore Agent is a global product.
 
 - **Default locale:** `en`
 - **Source language:** English

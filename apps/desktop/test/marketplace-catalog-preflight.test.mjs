@@ -22,7 +22,7 @@ test("preflight accepts a string catalog author", () => {
   const errors = validateCatalog(
     catalog({
       id: "demo.hello",
-      author: "PI-Desktop",
+      author: "EXplore Agent",
       versions: [packageFields],
     }),
     "demo.hello",

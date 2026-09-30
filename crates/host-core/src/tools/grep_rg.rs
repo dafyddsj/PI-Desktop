@@ -1,6 +1,6 @@
 //! Optional system `rg` backend for the Grep tool.
 //!
-//! Codex prefers `rg` when the machine has it. PI-Desktop keeps Grep as the
+//! Codex prefers `rg` when the machine has it. EXplore Agent keeps Grep as the
 //! model-facing contract (budgets, newest-first, scoped ignore) and uses a
 //! direct `rg` exec as the fast path when a binary is on the user PATH.
 //! Spawn failures and `rg` exit 2 fall back to the in-process searcher so a
@@ -23,7 +23,7 @@ pub struct SystemGrep<'a> {
     pub pattern: &'a str,
     pub search_dir: &'a Path,
     pub workspace_root: &'a Path,
-    /// Root whose `.pi-desktopignore` applies (workspace root, or the search
+    /// Root whose `.exploreignore` applies (workspace root, or the search
     /// root for scratch/external searches).
     pub ignore_root: &'a Path,
     pub root_kind: ToolRoot,

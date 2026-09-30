@@ -47,14 +47,14 @@ read time; their path-scoped memory and filesystem instructions remain readable.
 
 ## 2. File layout
 
-A packaged installation keeps this tree in `~/.pi-desktop`. A development build
-keeps the same tree in `~/.pi-desktop-dev`, because a shipped app and a
+A packaged installation keeps this tree in `~/.explore/app`. A development build
+keeps the same tree in `~/.explore/app-dev`, because a shipped app and a
 `pnpm dev` host are two installations that have to run at the same time (D599,
 ADR 0094). `PI_DESKTOP_DATA_DIR` replaces either root outright and is resolved
 to an absolute path before it reaches host-core as a child-process variable.
 
 ```text
-~/.pi-desktop/
+~/.explore/app/
  ├── pi.sqlite            # index database (WAL: + -wal/-shm) — host-core only
  ├── pi.sqlite.v6.bak     # archived pre-v7 database (D119 breaking reset)
  ├── pi.sqlite.v8.bak     # exact readable backup before v8→v15 destructive work
@@ -1556,7 +1556,7 @@ migration is required.
 
 ## 12. Native Pi session authority (ADR 0254)
 
-Native Pi v3 sessions under PI-Desktop's agent session root
+Native Pi v3 sessions under EXplore Agent's agent session root
 (`~/.explore/agent/sessions`, §13) are a second, explicitly
 source-discriminated transcript authority owned by the Node agent sidecar. They
 are never inserted into SQLite and never copied to the Desktop transcript
@@ -1624,13 +1624,13 @@ versions ignore the key and cannot enforce the new conversion guard.
 
 ## 13. Explore config directories
 
-PI-Desktop uses `.explore` where the pi SDK and pi CLI use `.pi`, so it never
+EXplore Agent uses `.explore` where the pi SDK and pi CLI use `.pi`, so it never
 shares state with a separately installed pi CLI. The bundled SDK's
 `CONFIG_DIR_NAME` is patched to `.explore`
-(`patches/@earendil-works__pi-coding-agent@0.87.1.patch`), and PI-Desktop's own
+(`patches/@earendil-works__pi-coding-agent@0.87.1.patch`), and EXplore Agent's own
 modules resolve the same name through `packages/agent-runtime/src/agent-dir.ts`.
 
-- **Global** `~/.explore/agent`: the SDK-owned files PI-Desktop reads or writes
+- **Global** `~/.explore/agent`: the SDK-owned files EXplore Agent reads or writes
   through the sidecar: `auth.json`, `models.json`, `settings.json`, the
   project trust store, `prompts/`, `AGENTS.md`, `SYSTEM.md` /
   `APPEND_SYSTEM.md`, native `sessions/`, and the SDK's `bin/` tool cache. The
@@ -1644,5 +1644,5 @@ modules resolve the same name through `packages/agent-runtime/src/agent-dir.ts`.
 A pi CLI project's `.pi/` folder is otherwise ignored, and `~/.pi` is read only
 by the explicit Pi model-config importer.
 
-This is separate from the Desktop data directory (`~/.pi-desktop`), which
+This is separate from the Desktop data directory (`~/.explore/app`), which
 host-core owns for SQLite, Desktop transcripts, and Desktop provider secrets.
