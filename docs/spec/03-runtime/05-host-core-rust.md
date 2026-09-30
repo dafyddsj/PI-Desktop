@@ -17,7 +17,7 @@ It does **not** replace pi. It provides safe host capabilities to:
 2. Builtin tool execution (Read/Glob/Grep/Write/Edit/Bash)
 3. Authoritative durable session-mode and tool-policy evaluation
 4. Permission policy evaluation, including Plan/Goal Bash prompts
-5. Immutable `.pi/plan/*.md` and `.pi/goal/*.md` artifact writer,
+5. Immutable `.explore/plan/*.md` and `.explore/goal/*.md` artifact writer,
    `plan_approvals` broker, and
    startup interruption fence
 6. Selectable shell catalog, identity validation, streamed output, and process
@@ -108,7 +108,7 @@ notification.list
 
 ## 6. Security invariants
 
-1. No unchecked path escape from workspace tools or `.pi/plan/*.md`; an
+1. No unchecked path escape from workspace tools or `.explore/plan/*.md`; an
    explicit outside path is resolved only after host permission evaluation
 2. Host resolves the durable session mode; request-supplied mode is never
    authoritative
@@ -146,7 +146,7 @@ notification.list
 6. a durable Plan or Goal session cannot authorize Write/Edit/plugin tools through
    a conflicting request mode, and Plan/Goal Bash follows the resolved permission
    mode
-7. SubmitPlan writes exact Markdown bytes to a new `.pi/plan/*.md` artifact and
+7. SubmitPlan writes exact Markdown bytes to a new `.explore/plan/*.md` artifact and
    stores durable path/hash/size plus structured title/question in
    `plan_approvals`; approval is approve/reject-only, session/turn/version
    scoped, and expires at 30 absolute minutes with

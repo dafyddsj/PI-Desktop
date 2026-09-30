@@ -1,4 +1,4 @@
-# PI-Desktop Spec Navigation
+# EXplore Agent Spec Navigation
 
 ## Overview
 - [README.md](README.md)
@@ -16,7 +16,6 @@
 - [README.md](02-architecture/README.md)
 - [01-architecture.md](02-architecture/01-architecture.md)
 - [02-tech-stack.md](02-architecture/02-tech-stack.md)
-- [04-documentation-site.md](02-architecture/04-documentation-site.md)
 - [03-repo-structure.md](02-architecture/03-repo-structure.md)
 - [05-remote-agent-control.md](02-architecture/05-remote-agent-control.md)
 
@@ -70,13 +69,8 @@
 
 ## 6. Delivery
 - [README.md](06-delivery/README.md)
-- [01-mvp-milestones.md](06-delivery/01-mvp-milestones.md)
-- [02-acceptance-criteria.md](06-delivery/02-acceptance-criteria.md)
-- [03-ai-development-workflow.md](06-delivery/03-ai-development-workflow.md)
 - [04-e2e-test-plan.md](06-delivery/04-e2e-test-plan.md)
-- [05-change-checklist.md](06-delivery/05-change-checklist.md)
 - [06-release-runbook.md](06-delivery/06-release-runbook.md)
-- [07-remote-control-rollout.md](06-delivery/07-remote-control-rollout.md)
 
 ## 7. Plugins
 - [README.md](07-plugins/README.md)
@@ -98,9 +92,9 @@
 - [16-trusted-extensions.md](07-plugins/16-trusted-extensions.md)
 
 ## 8. Meta
-- [README.md](08-meta/README.md)
-- [decisions-log.md](08-meta/decisions-log.md)
-- [open-questions.md](08-meta/open-questions.md)
+- README.md
+- decisions-log.md
+- open-questions.md
 
 ## ADR
-- [../adr/README.md](../adr/README.md)
+- ../adr/README.md

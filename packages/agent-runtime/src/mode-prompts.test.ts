@@ -17,7 +17,7 @@ describe("mode-specific system prompts", () => {
     expect(prompt).toContain("immediately exactly once in the current turn");
     expect(prompt).toContain("one complete Markdown snapshot");
     expect(prompt).toContain("Do not write or edit a plan file yourself");
-    expect(prompt).toContain("host writes a new .pi/plan artifact");
+    expect(prompt).toContain("host writes a new .explore/plan artifact");
     expect(prompt).toContain("An accepted new Plan prompt means no prior approval is pending");
     expect(prompt).toContain("historical immutable checkpoints");
     expect(prompt).toContain("After reject, expiry, or interruption");
@@ -40,7 +40,7 @@ describe("mode-specific system prompts", () => {
     expect(prompt).toContain("acceptance criteria");
     expect(prompt).toContain("boundaries");
     expect(prompt).toContain("Do not enumerate implementation steps");
-    expect(prompt).toContain("host writes a new .pi/goal artifact");
+    expect(prompt).toContain("host writes a new .explore/goal artifact");
     expect(prompt).toContain("follow the same one-SubmitGoal rule");
     expect(prompt).toContain("pursue it autonomously");
     expect(prompt).toContain("Do not use Write, Edit");

@@ -33,9 +33,9 @@ Let the agent get things done, but stay under control by default.
 | `Grep` | low | Content search; uses system `rg` when installed, else in-process; mints a per-file `tag` |
 | `BrowserPreview` | low | Open a workspace-relative preview in the bundled Browser plugin (fails if `pi.browser` is disabled) |
 | `EnterPlanMode` | low | Move the same Agent from Agent to Plan after host validation |
-| `SubmitPlan` | low | Preserve exact Markdown bytes in a new `.pi/plan/*.md` artifact and request approval |
+| `SubmitPlan` | low | Preserve exact Markdown bytes in a new `.explore/plan/*.md` artifact and request approval |
 | `EnterGoalMode` | low | Move the same Agent from Agent to Goal after host validation |
-| `SubmitGoal` | low | Preserve exact Markdown bytes in a new `.pi/goal/*.md` artifact and request approval |
+| `SubmitGoal` | low | Preserve exact Markdown bytes in a new `.explore/goal/*.md` artifact and request approval |
 | `Write` | high | Create/overwrite files; returns the post-write `tag` |
 | `Edit` | high | Modify files through line-anchored ops against a verified `tag` ([18](18-line-anchored-edit-contract.md)) |
 | `Bash` | high | Execute commands |
@@ -527,7 +527,7 @@ own once the hard budget is reached (see
 [02-agent-runtime](02-agent-runtime.md) §5.1). A submit
 tool is available only in its own contract mode and must be the only tool call in its assistant batch. It preserves
 the exact Markdown bytes in a new unique artifact under the kind's directory
-(`.pi/plan/*.md` for `SubmitPlan`, `.pi/goal/*.md` for `SubmitGoal`)
+(`.explore/plan/*.md` for `SubmitPlan`, `.explore/goal/*.md` for `SubmitGoal`)
 through host-core before creating one pending approval. `EnterPlanMode` and
 `EnterGoalMode` are available only in Agent, and each must be the only tool call
 in its batch. The host validates the durable mode, the proposal kind, and the

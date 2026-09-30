@@ -66,7 +66,7 @@ export async function verifyArtifact(ctx, proposal, markdown, title, question) {
   const artifact = proposal.artifact;
   assert(artifact, "proposal has no artifact: " + shortJson(proposal));
   assert(
-    /^\.pi\/plan\/[^/\\]+\.md$/.test(artifact.relativePath),
+    /^\.explore\/plan\/[^/\\]+\.md$/.test(artifact.relativePath),
     "unsafe/unexpected artifact path: " + artifact.relativePath,
   );
   const path = join(ctx.workspace, ...artifact.relativePath.split("/"));

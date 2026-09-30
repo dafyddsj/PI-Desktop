@@ -90,5 +90,4 @@ PI-Desktop =
 - IPC: `../03-runtime/01-ipc-protocol.md`
 - Agent runtime: `../03-runtime/02-agent-runtime.md`
 - Tools/permissions: `../03-runtime/03-tools-and-permissions.md`
-- Milestones: `../06-delivery/01-mvp-milestones.md`
 - Plugins: `../07-plugins/01-plugin-system.md`

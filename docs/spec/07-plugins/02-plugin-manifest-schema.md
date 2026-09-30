@@ -443,7 +443,7 @@ and `**` matches one or more trailing segments (final segment only).
 ## 5.4 providers — provider rows the plugin declares
 
 `contributes.providers` declares at most 8 providers that the Host materializes
-as rows in the native provider list, owned by the plugin ([ADR 0259](../../adr/0259-plugin-declared-providers.md)):
+as rows in the native provider list, owned by the plugin (ADR 0259):
 
 - the declaration `id` matches `[a-zA-Z][a-zA-Z0-9_-]{0,63}` and is unique
   within the plugin; the row id is `plugin:<pluginId>:<declaredId>`
@@ -489,7 +489,7 @@ MVP may implement only:
 
 1. `schemaVersion` must be `1`
 2. `id` / `name` / `version` are required
-3. Whether a manifest that declares `ui.panel` needs the `ui.panel` permission implicitly (auto-filled) or by explicit declaration is an **open question** (tracked in [08-meta/open-questions.md](../08-meta/open-questions.md))
+3. Whether a manifest that declares `ui.panel` needs the `ui.panel` permission implicitly (auto-filled) or by explicit declaration is an **open question** (tracked in 08-meta/open-questions.md)
 4. If `agentTools` are present, `agent.tool.register` must be declared
 5. Path fields must not use absolute paths or `..`
 6. `main` / `ui.panel` / skills / `views[].entry` paths must exist

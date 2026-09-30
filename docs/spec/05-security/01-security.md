@@ -90,7 +90,7 @@ read-only UI inspection exception (it reveals bundled `pi.browser` chrome; raw
 CDP plugin tools stay denied in Plan). Bash remains available in Plan: Ask and
 Accept edits prompt, and Auto runs without confirmation and may mutate the
 workspace or scratch directory. The UI must state this tradeoff. `SubmitPlan`
-preserves exact Markdown bytes in a new unique `<workspaceRoot>/.pi/plan/*.md`
+preserves exact Markdown bytes in a new unique `<workspaceRoot>/.explore/plan/*.md`
 file through host-core, validates the in-root artifact path, computes SHA-256
 and byte size, and only then creates the `plan_approvals` record with
 structured title/question fields. Renderer and sidecar state cannot write or

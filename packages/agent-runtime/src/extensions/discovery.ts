@@ -10,6 +10,7 @@
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { basename, extname, join, resolve } from "node:path";
 import type { TrustedExtensionSource, TrustedExtensionSpec } from "./types.js";
+import { projectConfigDir } from "../agent-dir.js";
 
 const EXTENSION_FILE_EXTENSIONS = new Set([".ts", ".js", ".mjs", ".mts"]);
 
@@ -164,9 +165,9 @@ export function discoverManualPath(target: string): TrustedExtensionSpec[] {
 }
 
 export type DiscoverTrustedExtensionsInput = {
-  /** `~/.pi/agent` or a test override. */
+  /** `~/.explore/agent` or a test override. */
   agentDir: string;
-  /** Workspace root; project extensions live under `<workspace>/.pi/extensions`. */
+  /** Workspace root; project extensions live under `<workspace>/.explore/extensions`. */
   projectPath?: string;
   /** Paths the user added by hand. */
   manualPaths?: string[];
@@ -187,7 +188,7 @@ export function discoverTrustedExtensions(
   };
   add(discoverExtensionsInDir(join(input.agentDir, "extensions"), "user"));
   if (input.projectPath) {
-    add(discoverExtensionsInDir(join(input.projectPath, ".pi", "extensions"), "project"));
+    add(discoverExtensionsInDir(join(projectConfigDir(input.projectPath), "extensions"), "project"));
   }
   for (const manual of input.manualPaths ?? []) add(discoverManualPath(manual));
   return out;

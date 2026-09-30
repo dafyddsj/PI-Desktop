@@ -8,7 +8,7 @@
 > Shell layout is Codex-aligned: left thread sidebar (240–520px, default 275px), main transcript, floating bottom composer with runtime mode/permission/model controls, and a compact action-only top bar. Prefer neutral charcoal surfaces over blue-slate chrome.
 >
 > **Precedence rule**: where a metric or copy string below disagrees with a
-> Codex parity decision in [decisions-log §D](../08-meta/decisions-log.md)
+> Codex parity decision in decisions-log §D
 > (D034+), the decision log wins — it tracks the live gold captures. Known
 > updated values: sidebar 240–520px (default 275px), toolbar 46px (not 44px),
 > composer placeholder per D094/D066, home empty stack and bottom composer per
@@ -218,7 +218,7 @@ truncation. View more expands session navigation;
 session rows enter their original conversation. The menu follows active locale
 changes and never marks a result read merely by opening. macOS single-click
 opens the attached menu; Open and double-click restore/focus the window.
-See [ADR tray-session-shortcuts](/adr/tray-session-shortcuts).
+See ADR tray-session-shortcuts.
 
 ## 2. Topbar
 
@@ -875,7 +875,7 @@ message, and applies each reveal request once. Item-level targeting is not part
 of this change. Compact reasoning stays hidden until
 the user selects Detailed. Permission, question, plan/goal approval and other
 pending action cards remain reachable outside a hidden process. See
-[ADR turn-process-and-thinking-display](../../adr/turn-process-and-thinking-display.md).
+ADR turn-process-and-thinking-display.
 
 ### 4.4 States
 
@@ -2650,14 +2650,14 @@ fields. It is never a JSON dump.
 ### 10A.1 Purpose
 
 Inline approval surface for the exact Markdown bytes submitted by the same pi
-Agent and preserved in a new immutable `.pi/<kind>/*.md` artifact. It is distinct
+Agent and preserved in a new immutable `.explore/<kind>/*.md` artifact. It is distinct
 from `PermissionCard`: it approves a Plan or Goal → Agent transition and an explicit
 execution permission mode, not an individual tool call.
 
 ### 10A.2 Content
 
 The card renders the structured title and an opener for the exact
-`.pi/<kind>/*.md` path; the opener prefers the bundled file view and falls back
+`.explore/<kind>/*.md` path; the opener prefers the bundled file view and falls back
 to the host file tab when that view is not launchable (D452). Opening the
 artifact reads the host-written file; renderer edits do not change the approved
 bytes. The submitted question/description, status, validity/deadline, inline
@@ -2840,7 +2840,7 @@ reasoning-level control.
 | Context checkpoint | Same as Running until durable checkpoint completion; intermediate `turn_end` does not reactivate controls. A retained-tail fallback remains Running and shows a warning toast | Same single-slot Stop/Send behavior as Running |
 | Permission pending | textarea disabled (per [03-permission-ux.md](03-permission-ux.md) §7) | Send disabled; Stop remains active whenever the running empty-draft condition is met |
 | Plan / Goal / planning | textarea active while idle; contract badge and permission chip visible; mode chip pulses while the live turn projects `planning` | inspect, send, or submit a contract |
-| Plan / Goal / awaiting approval | approval surface shows only the title and artifact opener for the exact `.pi/<kind>/*.md` approval; draft is preserved read-only and composer controls remain blocked for that session | approve or reject |
+| Plan / Goal / awaiting approval | approval surface shows only the title and artifact opener for the exact `.explore/<kind>/*.md` approval; draft is preserved read-only and composer controls remain blocked for that session | approve or reject |
 | Plan / queued or running | Agent badge remains selected; queue/running state is visible; draft and next-turn controls remain editable | Stop; Send queues the next prompt; no replay control |
 | Plan / Goal / planning after rejected, expired, or interrupted proposal | contract chip remains visible and editable | send a later prompt; submit a new contract; no execution action |
 | No workspace | textarea active, warning banner "No project — tools limited" | Send enabled |

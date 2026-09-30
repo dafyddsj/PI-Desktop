@@ -1,6 +1,6 @@
 import { readFile, realpath } from "node:fs/promises";
-import { homedir } from "node:os";
 import { dirname, join, relative, resolve, sep } from "node:path";
+import { AGENT_DIR_DISPLAY, agentDir } from "./agent-dir.js";
 
 const INSTRUCTION_FILE_NAMES = [
   "AGENTS.override.md",
@@ -9,7 +9,7 @@ const INSTRUCTION_FILE_NAMES = [
   join(".claude", "CLAUDE.md"),
 ];
 const MAX_INSTRUCTION_BYTES = 32 * 1024;
-const GLOBAL_INSTRUCTION_PATH = join(homedir(), ".pi", "agent", "AGENTS.md");
+const GLOBAL_INSTRUCTION_PATH = join(agentDir(), "AGENTS.md");
 
 export type ProjectInstruction = {
   source: string;
@@ -121,7 +121,7 @@ export async function loadInstructionChain(
     const content = (await readFile(globalPath, "utf8")).trim();
     if (content) {
       const limited = limitUtf8(content, remaining);
-      entries.push({ source: "~/.pi/agent/AGENTS.md", content: limited });
+      entries.push({ source: `${AGENT_DIR_DISPLAY}/AGENTS.md`, content: limited });
       remaining -= Buffer.byteLength(limited, "utf8");
     }
   } catch {

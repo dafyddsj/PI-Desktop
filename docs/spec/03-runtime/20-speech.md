@@ -3,7 +3,7 @@
 > Source of truth: `packages/shared/src/types/speech.ts`,
 > `packages/agent-runtime/src/speech/`,
 > `apps/desktop/electron/main/services/speech-service.ts`.
-> ADR: [0281-host-speech-capability](../../adr/0281-host-speech-capability.md).
+> ADR: 0281-host-speech-capability.
 
 ## 1. Capability
 

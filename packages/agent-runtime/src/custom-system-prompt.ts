@@ -5,10 +5,11 @@
  * `APPEND_SYSTEM.md` (append to it) in two locations, discovered
  * independently and each picked as a single winner — project before global:
  *
- * - `<workspace>/.pi/SYSTEM.md` / `.pi/APPEND_SYSTEM.md` (project)
- * - `~/.pi/agent/SYSTEM.md` / `~/.pi/agent/APPEND_SYSTEM.md` (global)
+ * - `<workspace>/.explore/SYSTEM.md` / `.explore/APPEND_SYSTEM.md` (project)
+ * - `~/.explore/agent/SYSTEM.md` / `~/.explore/agent/APPEND_SYSTEM.md` (global)
  *
- * PI-Desktop follows the same discovery and precedence. One deliberate
+ * PI-Desktop follows the same discovery and precedence from its own
+ * `.explore` folders instead of pi's `.pi`. One deliberate
  * deviation, recorded in spec 03-runtime/02-agent-runtime.md §7: replacing
  * the default prompt here means replacing only the product persona block;
  * the runtime's operational rules (tool guidance, collaboration, scratch
@@ -20,8 +21,8 @@
  */
 
 import { readFile } from "node:fs/promises";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { agentDir, projectConfigDir } from "./agent-dir.js";
 
 const MAX_PROMPT_BYTES = 64 * 1024;
 
@@ -41,8 +42,8 @@ export function customSystemPromptDirs(
   workspaceRoot: string | null | undefined,
 ): CustomSystemPromptDirs {
   return {
-    ...(workspaceRoot?.trim() ? { project: join(workspaceRoot.trim(), ".pi") } : {}),
-    global: join(homedir(), ".pi", "agent"),
+    ...(workspaceRoot?.trim() ? { project: projectConfigDir(workspaceRoot.trim()) } : {}),
+    global: agentDir(),
   };
 }
 

@@ -98,8 +98,8 @@ across devices without synchronizing conversation history or source files.
 | Product selector | Behavior |
 |---|---|
 | Agent | The pi Agent runs with the full execution tool set under the selected permission policy. |
-| Plan | The same pi Agent runs in planning state. It can inspect with Read/Glob/Grep/BrowserPreview, run Bash under the selected permission policy, use plan/context controls, and call `SubmitPlan(title, markdown, question)`. Host-core preserves the exact Markdown bytes in a new immutable `<workspaceRoot>/.pi/plan/*.md` artifact before separate approval; title/question remain structured approval fields and the card opens the artifact. Write/Edit/plugin tools are denied. |
-| Goal | The same pi Agent negotiates an outcome contract through `SubmitGoal(title, markdown, question)`, preserving an immutable `<workspaceRoot>/.pi/goal/*.md` artifact before separate approval. After approval it returns to Agent mode and works toward the stated acceptance criteria, reporting the criteria it verified or the boundary that stopped it. |
+| Plan | The same pi Agent runs in planning state. It can inspect with Read/Glob/Grep/BrowserPreview, run Bash under the selected permission policy, use plan/context controls, and call `SubmitPlan(title, markdown, question)`. Host-core preserves the exact Markdown bytes in a new immutable `<workspaceRoot>/.explore/plan/*.md` artifact before separate approval; title/question remain structured approval fields and the card opens the artifact. Write/Edit/plugin tools are denied. |
+| Goal | The same pi Agent negotiates an outcome contract through `SubmitGoal(title, markdown, question)`, preserving an immutable `<workspaceRoot>/.explore/goal/*.md` artifact before separate approval. After approval it returns to Agent mode and works toward the stated acceptance criteria, reporting the criteria it verified or the boundary that stopped it. |
 
 Plan and Goal are contract modes, not strict read-only security profiles: Bash
 under `ask` or `accept-edits` prompts, while Bash under `auto` runs without
@@ -125,7 +125,7 @@ the internal `page = "chat"` route value; that value is not an operating mode.
 6. UI is fully usable in English
 7. A submitted Plan or Goal cannot cross into execution without a separate
    matching approval; its exact Markdown bytes are preserved in a unique
-   `.pi/<kind>/*.md` artifact and the approval row records its path, hash, and
+   `.explore/<kind>/*.md` artifact and the approval row records its path, hash, and
    size
 
 ## 8. Naming

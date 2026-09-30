@@ -44,23 +44,17 @@ PI-Desktop/
 ├── examples/
 │ ├── plugins/                # hello and roundtable sample plugins
 │ └── fixtures/sample-project # workspace fixture for E2E scenarios
-├── docs/                     # VitePress site and the English source of truth
+├── docs/
 │ ├── spec/                   # numbered specification domains (see spec/README.md)
-│ ├── adr/                    # architecture decision records
-│ ├── project/                # board, audits, implementation plans
-│ ├── guide/                  # user-facing quick guide
-│ ├── zh-CN/                  # path-for-path Chinese mirror of spec/ and guide/
-│ ├── image/                  # images embedded by the repository READMEs
-│ ├── public/                 # static assets served by the docs site
-│ ├── scripts/                # docs-only checks (check-locales.mjs)
-│ └── .vitepress/             # site config and theme
+│ ├── architecture/           # module-size allowlist read by check-architecture.mjs
+│ └── plugin-development.md   # plugin author guide
 ├── scripts/                  # repository automation (see scripts/README.md)
-├── .github/                  # CI and release workflows, issue templates
-├── AGENTS.md                 # mandatory rules for AI coding agents
+├── .github/                  # CI and release workflows
+├── AGENTS.md                 # working notes for AI coding agents
 ├── package.json              # root scripts, pnpm workspace
 ├── pnpm-workspace.yaml
 ├── Cargo.toml                # Rust workspace
-└── README.md · README.zh-CN.md
+└── README.md
 ```
 
 ## Split-domain facades

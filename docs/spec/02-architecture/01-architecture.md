@@ -138,7 +138,7 @@ specified but unscheduled.
 ```
 
 When the same Agent calls `SubmitPlan`, host-core preserves the exact Markdown
-bytes in a new immutable `<workspaceRoot>/.pi/plan/*.md` artifact, records its
+bytes in a new immutable `<workspaceRoot>/.explore/plan/*.md` artifact, records its
 relative path/hash/size and structured title/question in `plan_approvals`, and
 waits for `plans.resolve`. The approval card opens that artifact. Approval
 atomically changes the durable session to Agent with the selected permission

@@ -175,6 +175,7 @@ fn oversized_markdown_is_rejected_before_artifact_creation() {
         )
         .unwrap_err();
     assert_eq!(error.to_string(), "PLAN_MARKDOWN_TOO_LARGE");
+    assert!(!root.join(".explore").exists());
     assert!(!root.join(".pi").exists());
 }
 
@@ -186,8 +187,8 @@ fn existing_plan_symlink_is_rejected() {
     let outside = dir.path().join("outside");
     fs::create_dir_all(&root).unwrap();
     fs::create_dir_all(&outside).unwrap();
-    fs::create_dir_all(root.join(".pi")).unwrap();
-    std::os::unix::fs::symlink(&outside, root.join(".pi/plan")).unwrap();
+    fs::create_dir_all(root.join(".explore")).unwrap();
+    std::os::unix::fs::symlink(&outside, root.join(".explore/plan")).unwrap();
     let session = plan_session(&db, &root);
     let turn = live_turn(&db, &session.id);
     let error = PlanManager
@@ -691,8 +692,10 @@ fn every_kind_publishes_into_its_own_artifact_directory() {
         let (artifact, path) =
             publish_artifact(&root, kind, "Ship checkout", "# Contract\n- done").unwrap();
         assert!(
-            artifact.relative_path.starts_with(&format!(".pi/{kind}/")),
-            "{} should live under .pi/{kind}/",
+            artifact
+                .relative_path
+                .starts_with(&format!(".explore/{kind}/")),
+            "{} should live under .explore/{kind}/",
             artifact.relative_path
         );
         assert!(path.is_file());
@@ -704,6 +707,23 @@ fn every_kind_publishes_into_its_own_artifact_directory() {
         };
         assert_eq!(
             safe_artifact_path(&root, other, &artifact.relative_path)
+                .unwrap_err()
+                .to_string(),
+            "PLAN_ARTIFACT_PATH_UNSAFE"
+        );
+    }
+}
+
+#[test]
+fn artifacts_outside_the_explore_directory_are_rejected() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path().join("workspace");
+    fs::create_dir_all(root.join(".explore").join(KIND_PLAN)).unwrap();
+    for other_root in [".pi", ".other"] {
+        fs::create_dir_all(root.join(other_root).join(KIND_PLAN)).unwrap();
+        fs::write(root.join(other_root).join(KIND_PLAN).join("x.md"), "# Plan").unwrap();
+        assert_eq!(
+            safe_artifact_path(&root, KIND_PLAN, &format!("{other_root}/{KIND_PLAN}/x.md"))
                 .unwrap_err()
                 .to_string(),
             "PLAN_ARTIFACT_PATH_UNSAFE"
@@ -740,7 +760,7 @@ fn goal_contract_round_trips_through_its_own_kind() {
         .as_ref()
         .unwrap()
         .relative_path
-        .starts_with(".pi/goal/"));
+        .starts_with(".explore/goal/"));
     assert_eq!(
         manager.active_kind(&db, &session.id).unwrap(),
         Some(KIND_GOAL)
@@ -831,8 +851,8 @@ fn submitting_the_other_contract_kind_is_rejected() {
         "PLAN_KIND_MISMATCH"
     );
     // Neither rejected submission may leave an artifact behind.
-    assert!(!root.join(".pi").join("goal").exists());
-    assert!(!root.join(".pi").join("plan").exists());
+    assert!(!root.join(".explore").join("goal").exists());
+    assert!(!root.join(".explore").join("plan").exists());
 }
 
 #[test]

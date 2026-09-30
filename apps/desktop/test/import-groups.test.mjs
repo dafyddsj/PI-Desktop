@@ -13,7 +13,6 @@ const labels = {
     "claude-code": "Claude Code",
     opencode: "OpenCode",
     codex: "Codex",
-    pi: "Pi",
   },
 };
 
@@ -65,7 +64,7 @@ test("groups candidates by source and orders groups by latest activity", () => {
   const groups = groupImportCandidates(
     [
       candidate({ source: "codex", externalId: "codex" }),
-      candidate({ source: "pi", externalId: "pi", updatedAt: "2026-07-25T15:00:00.000Z" }),
+      candidate({ source: "opencode", externalId: "opencode", updatedAt: "2026-07-25T15:00:00.000Z" }),
     ],
     "source",
     labels,
@@ -74,7 +73,7 @@ test("groups candidates by source and orders groups by latest activity", () => {
   assert.deepEqual(
     groups.map(({ id, name }) => ({ id, name })),
     [
-      { id: "source:pi", name: "Pi" },
+      { id: "source:opencode", name: "OpenCode" },
       { id: "source:codex", name: "Codex" },
     ],
   );

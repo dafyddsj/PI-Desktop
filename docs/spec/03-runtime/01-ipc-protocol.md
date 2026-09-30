@@ -378,7 +378,7 @@ type SubmitPlanInput = {
 };
 
 type PlanArtifact = {
-  relativePath: string; // `.pi/plan/<unique-name>.md` or `.pi/goal/<unique-name>.md`
+  relativePath: string; // `.explore/plan/<unique-name>.md` or `.explore/goal/<unique-name>.md`
   sha256: string;
   sizeBytes: number;
 };
@@ -1123,7 +1123,7 @@ new session id and therefore cannot reuse or mutate the source pi runtime or
 its provider cache.
 
 Protocol version 9 adds the checkpoint Plan contract: `SubmitPlan`, unique
-`.pi/plan/*.md` artifact metadata, approve/reject-only responses, absolute
+`.explore/plan/*.md` artifact metadata, approve/reject-only responses, absolute
 expiry, `plan_approvals` execution fields, shell catalog/identity fields, and
 streamed stdout/stderr events. A v7 or older host, and any incompatible v8
 peer, must fail the handshake so a desktop cannot display Plan while silently
@@ -2022,8 +2022,8 @@ type ComposerCommand = {
 };
 ```
 
-Templates load from `<workspace>/.pi/prompts/*.md` and
-`~/.pi/agent/prompts/*.md` (project wins name conflicts; short TTL cache).
+Templates load from `<workspace>/.explore/prompts/*.md` and
+`~/.explore/agent/prompts/*.md` (project wins name conflicts; short TTL cache).
 Without a workspace only user-global templates, builtins, and plugin
 commands return.
 
@@ -2167,7 +2167,7 @@ app/openFeedback() -> { ok: true }
 ```
 
 Electron Main builds a fixed GitHub bug-form URL
-(`https://github.com/vastsa/PI-Desktop/issues/new?template=bug_report.yml`)
+(`https://github.com/dafyddsj/PI-Desktop/issues/new?template=bug_report.yml`)
 and opens it with `shell.openExternal`. Query fields `app-version`, `os`, and
 `environment` are filled from Main-owned version info. The renderer cannot
 supply a URL. Construction that leaves that origin or template is rejected.

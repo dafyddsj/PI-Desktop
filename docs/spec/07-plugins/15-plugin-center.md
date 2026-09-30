@@ -2,7 +2,7 @@
 
 > Management repository: [vastsa/pi-plugin-center](https://github.com/vastsa/pi-plugin-center)
 > Distribution repository: [vastsa/pi-desktop-plugins](https://github.com/vastsa/pi-desktop-plugins)
-> Decision record: [ADR 0102](../../adr/0102-publisher-owned-plugin-source-and-git-hosted-artifacts.md)
+> Decision record: ADR 0102
 > Client contract: [07-plugin-marketplace.md](07-plugin-marketplace.md)
 
 This document defines the distribution system that replaces the single-repository

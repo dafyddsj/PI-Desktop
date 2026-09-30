@@ -2,7 +2,6 @@
 
 > Scope: MVP acceptance scenarios plus current shipped product increments for PI-Desktop
 > Status: Accepted (protocol/Electron automation is active; full desktop Playwright remains planned)
-> Cross-references: [acceptance-criteria](02-acceptance-criteria.md) · [milestones](01-mvp-milestones.md) · [ai-development-workflow](03-ai-development-workflow.md) · [change-checklist](05-change-checklist.md)
 
 ---
 
@@ -641,27 +640,6 @@ identify the platform validation still needed.
 - **Milestone**: M6+
 - **Status**: Workflow script/unit-covered; clean-machine journey required for
   each release (run only in a capable environment when this surface changes)
-
-#### E2E-212: GitHub Release starts the CNB mirror pipeline
-
-- **Preconditions**: Repository secret `CNB_MIRROR_TOKEN` is configured on
-  `vastsa/PI-Desktop`; the CNB pipeline at `aixk/Pi-Desktop` listens for
-  `api_trigger_mirror`; a GitHub Release tag such as `vX.Y.Z` exists with
-  uploaded artifacts.
-- **Steps**: 1) Publish or edit that GitHub Release, or dispatch
-  `mirror-to-cnb.yml` with the same tag. 2) Inspect the Actions log for the
-  resolved tag and the POST to `api.cnb.cool`. 3) Confirm the CNB pipeline
-  starts with `MIRROR_TAGS` equal to that tag.
-- **Expected**: The job runs only on `vastsa/PI-Desktop`. Manual dispatch
-  without a `vX.Y.Z` tag fails before calling CNB. A missing
-  `CNB_MIRROR_TOKEN` fails closed. The JSON body is built with `jq` (not
-  YAML string interpolation). GitHub Release artifacts and updater feeds are
-  unchanged; CNB is a mirror of the same tag.
-- **Specs linked**: `06-delivery/06-release-runbook.md`
-- **Acceptance**: Quality (release mirroring)
-- **Milestone**: M6+
-- **Status**: Source-contract covered (`ci-workflow.test.mjs`); live CNB
-  start remains operator validation (run only in a capable environment when this surface changes)
 
 ### Boot & Healthcheck
 
@@ -6029,7 +6007,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   3. Open the Projects view and use a project's more menu to edit and save its
      displayed `AGENTS.md`.
   4. Submit a prompt in a new or idle session.
-- **Expected**: The global editor targets only `~/.pi/agent/AGENTS.md`. The
+- **Expected**: The global editor targets only `~/.explore/agent/AGENTS.md`. The
   project editor is available only from a known project's Projects-view more
   menu and targets only that project's root `AGENTS.md`. Both editors show
   their resolved paths, preserve the typed text, and save through the dedicated
@@ -6449,10 +6427,10 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 #### E2E-106: SubmitPlan rejects into editable planning and resubmits a new artifact
 
 - **Preconditions**: A project-bound session is idle in Plan with a provider;
-  `.pi/plan/` is absent or empty and the workspace permits host artifact
+  `.explore/plan/` is absent or empty and the workspace permits host artifact
   creation.
 - **Steps**: 1) Let the Agent call `SubmitPlan` with fixed title, Markdown, and
-  question. 2) Inspect the new `.pi/plan/*.md` file byte-for-byte and the
+  question. 2) Inspect the new `.explore/plan/*.md` file byte-for-byte and the
   `plan_approvals` row. 3) Inspect the card's title and artifact opener; confirm
   the opener uses the bundled file view when it is launchable and the host
   file tab otherwise (D452), and that the question/description,
@@ -6475,7 +6453,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   approval.
   Rejection is terminal for the first row, leaves durable mode Plan, and returns
   live state to editable planning. The later prompt/resubmission creates a
-  second complete Markdown snapshot and a different `.pi/plan/*.md` artifact;
+  second complete Markdown snapshot and a different `.explore/plan/*.md` artifact;
   the first artifact bytes remain unchanged. Approving the second proposal with
   the remembered Auto mode still changes the same Agent to Agent and queues execution.
 - **Specs linked**: `03-runtime/01-ipc-protocol.md`,
@@ -6598,7 +6576,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 - **Preconditions**: A scheduled task is Plan and an unattended runner is
   available; provider, artifact, and queue writes can be observed.
 - **Steps**: 1) Trigger the task through the unattended path. 2) Inspect the
-  provider trace, `.pi/plan/`, and `plan_approvals` table. 3) Switch the
+  provider trace, `.explore/plan/`, and `plan_approvals` table. 3) Switch the
   task/session explicitly to Agent and run it again.
 - **Expected**: Plan is rejected before provider, artifact, approval, or queue
   work with `PLAN_REQUIRES_INTERACTIVE_SESSION`; no background auto-approval
@@ -8126,7 +8104,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   prior test goal artifact.
 - **Steps**: 1) Switch the session to Goal and let the Agent call
   `EnterGoalMode`, then `SubmitGoal(title, markdown, question)`. 2) Inspect the
-  exact Markdown bytes in the new `.pi/goal/*.md` artifact and the matching
+  exact Markdown bytes in the new `.explore/goal/*.md` artifact and the matching
   `plan_approvals` row. 3) Confirm the shared approval card exposes only
   Approve/Reject and that Goal denies Write/Edit/plugin tools while Bash follows
   the selected permission mode. 4) Approve with Ask and observe the same Agent
@@ -8944,7 +8922,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 | M2 (IME slash alias) | E2E-255 |
 | M5 (Skill residency) | E2E-254 |
 | M6 | E2E-104, E2E-105, E2E-106, E2E-107, E2E-108, E2E-109, E2E-110, E2E-111, E2E-112, E2E-113, E2E-114, E2E-115, E2E-116, E2E-117, E2E-118, E2E-119, E2E-120, E2E-103, E2E-172 |
-| M6+ | E2E-121, E2E-122, E2E-148, E2E-150, E2E-151, E2E-154, E2E-155, E2E-158, E2E-159, E2E-160, E2E-161, E2E-162, E2E-163, E2E-166, E2E-168, E2E-173, E2E-174, E2E-176, E2E-179, E2E-196a, E2E-196b, E2E-196c, E2E-198, E2E-199, E2E-200, E2E-202, E2E-203, E2E-205, E2E-209, E2E-210, E2E-UPDATE-preference-and-once-only-reminder, E2E-212, E2E-213, E2E-214, E2E-215, E2E-216, E2E-217, E2E-218, E2E-259, E2E-219, E2E-257, E2E-SUBAGENT-settlement-updates-before-parent-poll, E2E-PLUGIN-fs-root-follows-the-calling-session, E2E-SUBAGENT-resume-a-settled-delegation |
+| M6+ | E2E-121, E2E-122, E2E-148, E2E-150, E2E-151, E2E-154, E2E-155, E2E-158, E2E-159, E2E-160, E2E-161, E2E-162, E2E-163, E2E-166, E2E-168, E2E-173, E2E-174, E2E-176, E2E-179, E2E-196a, E2E-196b, E2E-196c, E2E-198, E2E-199, E2E-200, E2E-202, E2E-203, E2E-205, E2E-209, E2E-210, E2E-UPDATE-preference-and-once-only-reminder, E2E-213, E2E-214, E2E-215, E2E-216, E2E-217, E2E-218, E2E-259, E2E-219, E2E-257, E2E-SUBAGENT-settlement-updates-before-parent-poll, E2E-PLUGIN-fs-root-follows-the-calling-session, E2E-SUBAGENT-resume-a-settled-delegation |
 | M6+ (Session Orchestrator) | E2E-PLUGIN-session-orchestrator-real-workers |
 | M6+ (Selected model order) | E2E-MODEL-selected-order-persists |
 | M6+ (Destination loading and focus) | E2E-087b |
@@ -8992,7 +8970,7 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
 | Quality (crash report) | E2E-PLUGIN-crash-report-names-the-exit-code |
 
 The `US-UI-*` visual scenarios (§UI shell visual scenarios) trace to the
-Codex parity decisions in [decisions-log §D](../08-meta/decisions-log.md)
+Codex parity decisions in decisions-log §D
 rather than the A–H criteria; their gold source is the capture suite.
 
 The release artifact paths are covered by E2E-192, E2E-196a, E2E-196b, E2E-196c,
@@ -9011,7 +8989,7 @@ When adding or changing a feature that affects user-visible or protocol-visible 
    or M6+ for the current product increment).
 3. **Set status** to `Draft` unless an automated test already exists.
 4. **Update the traceability matrix** in §8.
-5. **Commit** the update as part of the change (per [ai-development-workflow](03-ai-development-workflow.md) R3).
+5. **Commit** the update as part of the change (per ai-development-workflow R3).
 
 ---
 
@@ -11772,7 +11750,7 @@ are withdrawn with ADR 0165.
   4) Activate Open GitHub.
 - **Expected**: The row is indexed by Settings search and stays on Info. The
   action calls `pi-desktop/app/openFeedback` with no URL from the renderer.
-  Main opens `https://github.com/vastsa/PI-Desktop/issues/new` with
+  Main opens `https://github.com/dafyddsj/PI-Desktop/issues/new` with
   `template=bug_report.yml` and prefills `app-version`, `os`, and
   `environment`. The GitHub bug form still requires description, reproduction
   steps, expected, actual, version, and OS; blank issues remain disabled.

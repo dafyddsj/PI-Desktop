@@ -74,8 +74,12 @@ pub(crate) fn safe_directory(path: &Path, create: bool) -> Result<()> {
     Ok(())
 }
 
-/// Resolve `<workspace>/.pi/<kind>` with every component checked for links.
-/// `kind` is always a `'static` literal, never caller text.
+/// Plan/goal artifacts live under `<workspace>/.explore/<kind>/`, apart from a
+/// separately installed pi CLI's `.pi` folder.
+const ARTIFACT_CONFIG_DIR: &str = ".explore";
+
+/// Resolve `<workspace>/.explore/<kind>` with every component checked for
+/// links. `kind` is always a `'static` literal, never caller text.
 pub(crate) fn plan_directory(
     workspace_root: &Path,
     kind: &'static str,
@@ -89,9 +93,9 @@ pub(crate) fn plan_directory(
     if is_link_or_reparse(&root_metadata) || !root_metadata.is_dir() {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
     }
-    let pi = root.join(".pi");
-    safe_directory(&pi, create)?;
-    let directory = pi.join(kind);
+    let config = root.join(ARTIFACT_CONFIG_DIR);
+    safe_directory(&config, create)?;
+    let directory = config.join(kind);
     safe_directory(&directory, create)?;
     Ok((root, directory))
 }
@@ -131,7 +135,7 @@ pub(crate) fn publish_artifact(
             let _ = fs::remove_file(&path);
             return Err(error);
         }
-        let relative_path = format!(".pi/{kind}/{filename}");
+        let relative_path = format!("{ARTIFACT_CONFIG_DIR}/{kind}/{filename}");
         return Ok((
             PlanArtifact {
                 relative_path,
@@ -152,7 +156,7 @@ pub(crate) fn safe_artifact_path(
     let (root, _directory) = plan_directory(workspace_root, kind, false)?;
     let components = Path::new(relative_path).components().collect::<Vec<_>>();
     if components.len() != 3
-        || components[0] != Component::Normal(".pi".as_ref())
+        || components[0] != Component::Normal(ARTIFACT_CONFIG_DIR.as_ref())
         || components[1] != Component::Normal(kind.as_ref())
     {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
@@ -170,7 +174,7 @@ pub(crate) fn safe_artifact_path(
     {
         return Err(plan_error("PLAN_ARTIFACT_PATH_UNSAFE"));
     }
-    let path = root.join(".pi").join(kind).join(filename);
+    let path = root.join(ARTIFACT_CONFIG_DIR).join(kind).join(filename);
     let metadata =
         fs::symlink_metadata(&path).map_err(|_| plan_error("PLAN_ARTIFACT_NOT_READY"))?;
     if is_link_or_reparse(&metadata) || !metadata.is_file() || !path.starts_with(&root) {

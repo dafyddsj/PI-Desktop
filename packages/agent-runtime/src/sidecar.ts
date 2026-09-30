@@ -3,6 +3,8 @@
  * Protocol: NDJSON JSON-RPC on stdio with Electron main.
  * Host access is proxied through main (single host-core process).
  */
+// Keep first: pins the pi SDK's agent dir before any pi module loads.
+import "./agent-dir-env.js";
 import { randomUUID } from "node:crypto";
 import type { ModelAuth } from "@earendil-works/pi-ai";
 import { ParentHostProxy } from "./parent-host-proxy.js";

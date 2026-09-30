@@ -62,7 +62,8 @@ describe("discovery", () => {
     const agentDir = join(root, "agent");
     const project = join(root, "proj");
     file(join(agentDir, "extensions", "a.ts"));
-    file(join(project, ".pi", "extensions", "b.ts"));
+    file(join(project, ".explore", "extensions", "b.ts"));
+    file(join(project, ".pi", "extensions", "cli-only.ts"));
     const manualFile = join(root, "manual", "c.ts");
     file(manualFile);
     const specs = discoverTrustedExtensions({

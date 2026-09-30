@@ -145,7 +145,7 @@ the permission runtime.
 Plan and Goal approval are not generic tool permission cards. They are rendered
 inline in the originating session after `SubmitPlan(...)` or `SubmitGoal(...)`
 causes host-core to preserve the exact Markdown bytes in a new immutable
-`.pi/plan/*.md` or `.pi/goal/*.md` artifact. The card sits in the transparent
+`.explore/plan/*.md` or `.explore/goal/*.md` artifact. The card sits in the transparent
 composer dock, so it paints `--ds-bg-composer` with `--ds-shadow-composer`
 rather than the in-flow `--ds-tile` wash.
 
