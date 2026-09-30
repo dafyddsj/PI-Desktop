@@ -880,10 +880,10 @@ and a shown notification restores/shows and focuses the window before emitting
 `activated`. No permission, scheduled-reminder, or plugin source enters the
 task notification contract. Native delivery is best-effort; the durable
 inbox remains authoritative when the OS suppresses a banner. On Windows,
-Electron Main registers `net.aiuo.pi-desktop` as the process AppUserModelID
+Electron Main registers `co.dafydd.explore` as the process AppUserModelID
 before readiness and before any window is created. The ID matches the NSIS
 package identity so notification attribution, notification settings, taskbar
-grouping, and installed shortcuts resolve to `PI-Desktop`, never the stock
+grouping, and installed shortcuts resolve to `EXplore Agent`, never the stock
 Electron host.
 
 Task native objects are retained by durable notification id, with at most one
@@ -2176,7 +2176,7 @@ protocol version.
 
 ## 13d. Local MCP control API (D370)
 
-PI-Desktop can expose a local automation surface for an external Agent without
+EXplore Agent can expose a local automation surface for an external Agent without
 changing the renderer preload contract or host RPC protocol. The server is
 disabled by default and starts only when the Electron process receives:
 

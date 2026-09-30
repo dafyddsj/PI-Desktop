@@ -1,123 +1,89 @@
-# EXplore Agent: Rebrand Next Steps
+# EXplore Agent: Rebrand Status and Next Steps
 
-Status: planning. Last updated 2026-09-30.
+Status: user-facing rebrand done; internal identifiers, services, assets, and
+release setup remain. Last updated 2026-09-30.
 
-EXplore Agent is a new product built from a fork of PI-Desktop. The first pass
-(branch `feat/explore-agent-dir`) separated the agent configuration from the
-pi CLI, trimmed the inherited documentation and process, and pointed the
-updater, in-app feedback, and remote-host downloads at this fork. The app
-itself still ships under the PI-Desktop identity. This document lists what
-remains and the decisions each step needs.
-
-There are no existing users, so no step needs a migration, a compatibility
-shim, or support for the old names.
+EXplore Agent is a new product built from a fork of PI-Desktop. There are no
+existing users, so no step needs a migration, a compatibility shim, or support
+for the old names.
 
 ## Naming
 
 - The product name is **EXplore Agent**: capital E and capital X. Use it in UI
-  copy, window titles, installers, menus, and docs.
-- Machine identifiers stay lowercase. The config folders are already
-  `~/.explore/agent` and `<workspace>/.explore/`; new identifiers should follow
-  the same pattern (for example `explore-agent`).
+  copy, window titles, installers, menus, and docs. In file names and German
+  compounds it is hyphenated (`EXplore-Agent-Setup-0.1.0.exe`,
+  `EXplore-Agent-Hilfe`).
+- Machine identifiers are lowercase: `explore-agent` (Linux package,
+  executable, desktop entry), `explore-host-core` (host binary), `.explore`
+  (config and data folders), `.exploreignore` (workspace ignore file).
 
-## Already done
+## Done
 
-- The global pi config lives in `~/.explore/agent` and project config in
-  `<workspace>/.explore/`. The bundled pi SDK's `CONFIG_DIR_NAME` is patched to
-  `.explore` (`patches/@earendil-works__pi-coding-agent@0.87.1.patch`).
-- The pi CLI session importer is removed.
-- AGENTS.md, CLAUDE.md, and README are rewritten; upstream docs, site,
-  translations, ADRs, and process workflows are removed.
-- The updater feed, the Settings → Feedback link, and remote pi-host downloads
-  use `dafyddsj/PI-Desktop` (`packages/shared/src/github-feedback.ts`,
-  `apps/desktop/electron/main/updater.ts`, `apps/desktop/package.json`).
-
-## Decisions needed first
-
-| Decision | Options / notes |
+| Area | Result |
 |---|---|
-| Final repository | Rename `dafyddsj/PI-Desktop` or create a new repo. The updater, Feedback, and remote-host downloads all derive from `GITHUB_REPO` plus `build.publish`. |
-| App ID | Replace `net.aiuo.pi-desktop` with a reverse-DNS ID you control (for example `com.<your-domain>.explore-agent`). It sets the macOS bundle ID and the Windows AppUserModelID. |
-| Desktop data folder | Currently `~/.pi-desktop` (and `~/.pi-desktop-dev`). Options: `~/.explore-agent`, or fold into `~/.explore/` (for example `~/.explore/app`) next to `~/.explore/agent`. |
-| Package scope | `@pi-desktop/*` is used in 575 files. Renaming to `@explore-agent/*` is mechanical but large; it can wait if it isn't user-visible. |
-| Plugin ecosystem | Keep pi-compatible plugins (`.piplug`, `pi-plugin` CLI, `pi.*` plugin IDs) or fork the format. Keeping it preserves compatibility with existing pi plugins. |
-| Plugin marketplace | Run your own catalog, point at upstream's, or disable the marketplace until one exists. |
-| Version line | Continue from `0.15.x` or restart (for example `0.1.0`). A restart also means resetting the in-app changelog. |
-| Signing | An Apple Developer ID team and a Windows code-signing certificate for release builds. |
+| Agent config | `~/.explore/agent` and `<workspace>/.explore/`; the bundled pi SDK's `CONFIG_DIR_NAME` is patched to `.explore` |
+| App data | `~/.explore/app` (development builds `~/.explore/app-dev`), including the remote pi-host install path |
+| App identity | Product name `EXplore Agent`, app ID `co.dafydd.explore` (`co.dafydd.explore.dev` for development), author metadata, installer/executable/shortcut names, Linux package and desktop entry `explore-agent` |
+| Host binary | `pi-desktop-host-core` → `explore-host-core` |
+| UI copy | "PI-Desktop" replaced in all nine locales, macOS usage strings, window titles, dialogs, and diagnostics |
+| Agent prompts | Main, Plan, Goal, and subagent prompts introduce the agent as EXplore Agent |
+| Plugins | Devkit templates, CLI help, example plugins, and the built-in browser plugin name EXplore Agent; the vendored file-manager plugin is untouched so its upstream checksum matches |
+| Version | Restarted at `0.1.0` with a single changelog entry in every shipped locale |
+| Upstream links | Updater feed, Settings → Feedback, and remote pi-host downloads use `dafyddsj/PI-Desktop` |
+| Docs | Upstream process, ADRs, site, and translations removed; specs and the plugin guide renamed |
 
-## Work items
+## Decisions still open
 
-### 1. App identity and packaging
+| Decision | Notes |
+|---|---|
+| Final repository | The repo is still `dafyddsj/PI-Desktop`. Renaming it (or moving to a new one) means updating `GITHUB_REPO` in `packages/shared/src/github-feedback.ts`, `RELEASES_URL` in `apps/desktop/electron/main/updater.ts`, and `homepage` / `build.publish.repo` in `apps/desktop/package.json`, plus their tests. |
+| Plugin marketplace | Still points at upstream's catalog (`plugins.aiuo.net`, with `AIUO-Net` GitHub and `cnb.cool` mirrors) by choice. Revisit when an EXplore Agent catalog exists. |
+| Plugin format | `.piplug` packages, the `pi-plugin` CLI, and `pi.*` built-in plugin IDs are kept for compatibility with pi plugins. Forking the format is optional. |
+| UI locales | Nine locales ship (en, de, es, fr, ko, pt-BR, tr, zh-CN, zh-TW). Every new string must be translated into each one that stays. |
 
-- `apps/desktop/package.json`: `productName`, `appId`, `desktopName`,
-  `executableName`, every `artifactName`, `description`, `homepage`, and
-  `author` (still upstream's).
-- `packages/shared/src/protocol.ts`: `APP_ID` mirrors the electron-builder
-  `appId`; `apps/desktop/test/development-branding.test.mjs` pins the
-  development variant (`net.aiuo.pi-desktop.dev`).
-- Electron's `userData` folder is named after `productName`, so renaming the
-  product also moves it.
-- Root `package.json`: `name` (`pi-desktop`) and `description`.
-- `apps/desktop/electron/main/data-paths.ts`: `INSTALLATION_DATA_DIR_NAME`
-  and `DEVELOPMENT_DATA_DIR_NAME`, plus the `PI-Desktop Dev` userData name.
-  Keep `crates/host-core/src/main.rs`, `crates/host-core/src/tools/ignore_rules.rs`,
-  and `apps/pi-host/src/config.ts` in step (they also default to
-  `.pi-desktop`).
-- Host binary name `explore-host-core` (`crates/host-core/Cargo.toml`, the
-  electron-builder `extraResources`, and the host resolvers).
+## Remaining work
 
-### 2. User-visible strings
+### 1. Visual assets
 
-- `PI-Desktop` appears about 20 times in each locale catalog under
-  `packages/i18n/src/locales/` (en, de, es, fr, ko, pt-BR, tr, zh-CN, zh-TW),
-  and in about 90 non-test source files (window titles, menus, notifications,
-  tray, dialogs, the feedback environment string).
-- Decide whether to keep all nine UI locales. Every string change must be made
-  in each one that ships.
-- `packages/shared/src/changelog*.ts`: PI-Desktop release notes in every
-  shipped locale. Replace with an EXplore Agent history.
-
-### 3. Visual assets
+The icons, logos, and mascot are still PI-Desktop's artwork.
 
 - `apps/desktop/build/`: `icon.png`, `icon_1024.png`, `icon.icns`, `icon.ico`,
   `logo_dark.png`, `tray-icon-mac.png`, and the DMG background
-  (`dmg-background*.png`, from `scripts/make-dmg-background.py`).
-- `scripts/make-icon.py` regenerates the icon set from one canonical PNG.
+  (`dmg-background*.png`, generated by `scripts/make-dmg-background.py`).
+- `scripts/make-icon.py` regenerates the platform icon set from one canonical
+  PNG.
 - Renderer brand assets: `apps/desktop/src/assets/brand/logo-{dark,light}.png`
   and the home mascot (`apps/desktop/src/assets/home-mascot-*`), used by
   `BrandLogo.tsx` and `HomeMascotLogo.tsx`.
 
-### 4. Services that still point upstream
+### 2. Release pipeline and signing
 
-- **Plugin marketplace** (`crates/host-core/src/plugins/marketplace.rs`,
-  `marketplace/catalog.rs`, `resolve.rs`, `validation.rs`): the default
-  catalog is `plugins.aiuo.net`, with mirrors on `AIUO-Net/pi-desktop-plugins`
-  and `cnb.cool`. `packages/shared/src/types/settings.ts` has a `mirror`
-  provider option for CNB.
-- **Built-in plugins** (`apps/desktop/resources/plugins/pi.file-manager`,
-  `pi.browser`): third-party upstream plugins published to the upstream plugin
-  center; review their licenses and IDs.
-- **Release pipeline** (`.github/workflows/release.yml`,
-  `scripts/release-macos.sh` and the macOS signing scripts): hard-wired to
-  upstream's Apple team `DUV63RKYTW` ("XingYu Liu"). Tag releases fail until
-  that is replaced with your team and secrets. Tests pin it in
-  `apps/desktop/test/ci-workflow.test.mjs`,
-  `macos-release-lane.test.mjs`, and `macos-release-verification.test.mjs`.
+- `.github/workflows/release.yml`, `scripts/release-macos.sh`, and the macOS
+  signing scripts are hard-wired to upstream's Apple team `DUV63RKYTW`
+  ("XingYu Liu"). Tag releases fail until that is replaced with your Developer
+  ID team and secrets. Tests pin it in `apps/desktop/test/ci-workflow.test.mjs`,
+  `macos-release-lane.test.mjs`, and `macos-release-verification.test.mjs`;
   `apps/desktop/build/entitlements.mac.plist` mentions the same team.
-- `docs/spec/06-delivery/06-release-runbook.md` describes the upstream release
-  process and should be rewritten with the pipeline.
+- Windows builds are unsigned; add a code-signing certificate if needed.
+- `docs/spec/06-delivery/06-release-runbook.md` still describes the upstream
+  release process and should be rewritten with the pipeline.
 
-### 5. Internal identifiers (optional, low user impact)
+### 3. Internal identifiers (optional, no user impact)
 
-- IPC channel prefix `pi-desktop/` (about 295 channels in
-  `packages/shared/src/protocol.ts`).
-- Environment variables prefixed `PI_DESKTOP_` (about 40 names, for example
+- `@pi-desktop/*` package scope (about 575 files).
+- `pi-desktop/` IPC channel prefix (about 295 channels in
+  `packages/shared/src/protocol.ts`) and the `PiDesktopPreloadApi` type.
+- About 40 `PI_DESKTOP_*` environment variables (for example
   `PI_DESKTOP_DATA_DIR`, `PI_DESKTOP_HOST_BIN`, `PI_DESKTOP_DEV`).
-- The `@pi-desktop/*` package scope.
-- Test fixtures and E2E scripts that use upstream URLs as sample data (for
-  example `markdown-link-destinations.test.mjs`); harmless, change at will.
+- The local MCP control server name (`pi-desktop`), its
+  `x-pi-desktop-token` header, the OAuth client ID, DOM ids, drag MIME types,
+  and the `--pi-desktop-locale` renderer argument.
+- The `apps/pi-host` headless host and its `pi-host-*` release artifacts.
+- Provider-facing values: the default `User-Agent: pi-desktop/<version>`, the
+  OpenCode client value, and `X-Title` fixtures. Some vendor gateways check
+  these, so change them deliberately and test against the providers you use.
 
-### 6. Legal
+### 4. Legal
 
 - The repository is LGPL-3.0 (`LICENSE`). Keep the license and the PI-Desktop
   attribution in `README.md`; any distributed build must continue to meet the
@@ -127,12 +93,9 @@ shim, or support for the old names.
 
 ## Suggested order
 
-1. Make the decisions above (repo, app ID, data folder, version line).
-2. App identity, data folder, and user-visible strings in one pass (sections
-   1 and 2), then the icons (section 3).
-3. Marketplace and release pipeline (section 4) once the repo and signing
-   accounts exist.
-4. Internal identifiers (section 5) when convenient.
+1. Visual assets (section 1), so builds look like EXplore Agent.
+2. Repository decision, then the release pipeline and signing (section 2).
+3. Internal identifiers (section 3) when convenient.
 
 ## Keep in mind
 
@@ -140,4 +103,6 @@ shim, or support for the old names.
   forward; `packages/agent-runtime/src/agent-dir.test.ts` fails if it is lost.
 - Run `cargo fmt --check`, `cargo test -p host-core`, `cargo clippy`, the JS
   tests, and the relevant `pnpm test:e2e:*` suites after each pass (see
-  AGENTS.md).
+  AGENTS.md). Known pre-existing failures: the `plugin-ui-slots` toolbar-width
+  check, and the desktop `chat-error-message` and `plugin-websocket` unit
+  tests.

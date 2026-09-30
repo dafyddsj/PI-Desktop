@@ -4,8 +4,9 @@
 
 EXplore Agent is a new product built from a fork of PI-Desktop. These specs
 were inherited from PI-Desktop and describe the current implementation; they
-are a design reference, not a change-control process. PI-Desktop product names
-remain where the code still uses them.
+are a design reference, not a change-control process. Internal identifiers
+such as the `@pi-desktop/*` packages, `pi-desktop/` IPC channels, and
+`PI_DESKTOP_*` environment variables keep their inherited names.
 
 References to ADR numbers (`ADR 0254`), decision IDs (`D637`), the decisions
 log, Chinese (`zh-CN`) mirrors, and delivery documents such as milestones or

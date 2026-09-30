@@ -10,8 +10,8 @@ intentionally targets a path outside the session workspace.
 
 1. **Security denylist** (always on, not user-disable in MVP)
 2. **App defaults** (shipped)
-3. **Workspace rules** (`.pi-desktopignore` at the workspace root)
-4. **User global ignore** (`<data_dir>/ignore`, i.e. `~/.pi-desktop/ignore`
+3. **Workspace rules** (`.exploreignore` at the workspace root)
+4. **User global ignore** (`<data_dir>/ignore`, i.e. `~/.explore/app/ignore`
    by default)
 5. Explicit tool path still subject to the security denylist and the
    outside-path permission gate
@@ -72,7 +72,7 @@ coverage/
 Support:
 
 ```text
-.pi-desktopignore
+.exploreignore
 ```
 
 Syntax: gitignore-compatible subset.
