@@ -23,6 +23,7 @@ import { registerSessionIpc } from "./session-ipc";
 import { registerSettingsIpc } from "./settings-ipc";
 import { registerConfigSyncIpc } from "./config-sync-ipc";
 import { registerSkillsIpc } from "./skills-ipc";
+import { registerSkillPackIpc } from "./skill-pack-ipc";
 import { registerAgentImportIpc } from "./agent-import-ipc";
 import { registerRemoteHostIpc } from "./remote-host-ipc";
 import { fetchSkillMarketDocument, searchSkillMarket } from "../skill-market-catalog";
@@ -91,6 +92,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     togglePluginLauncher,
     safeOpenExternal,
     updater,
+    skillPack,
     dataDir,
     activeTurns,
     isTurnDispatchable,
@@ -442,6 +444,8 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     sendToRenderer,
     logger,
   });
+
+  registerSkillPackIpc({ registrar, skillPack, sendToRenderer });
 
 
   registerAgentImportIpc({

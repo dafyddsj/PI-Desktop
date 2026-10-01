@@ -132,6 +132,10 @@
         "to": "skills"
       },
       {
+        "from": "resources/skill-packs",
+        "to": "skill-packs"
+      },
+      {
         "from": "resources/plugins",
         "to": "plugins"
       },

@@ -1,5 +1,7 @@
 import type {
   ScheduledTaskRun,
+  SkillPackState,
+  SkillPackUpdateNotice,
   ActivationScope,
   AgentCapabilityMove,
   AgentCapabilityQuery,
@@ -1109,6 +1111,26 @@ export const api = {
       IPC.invoke.skillMarketFetch,
       { entry },
     ),
+
+  // --- Built-in skill pack ---------------------------------------------------
+  skillPackGetState: () => invoke<SkillPackState>(IPC.invoke.skillPackGetState),
+  skillPackCheck: () => invoke<SkillPackState>(IPC.invoke.skillPackCheck),
+  skillPackInstall: () => invoke<SkillPackState>(IPC.invoke.skillPackInstall),
+  skillPackRevert: () => invoke<SkillPackState>(IPC.invoke.skillPackRevert),
+  skillPackSetBeta: (enabled: boolean) =>
+    invoke<SkillPackState>(IPC.invoke.skillPackSetBeta, enabled),
+  onSkillPackState: (listener: (state: SkillPackState) => void) => {
+    if (!window.piDesktop?.on) return () => undefined;
+    return window.piDesktop.on(IPC.event.skillPackState, (payload) =>
+      listener(payload as SkillPackState),
+    );
+  },
+  onSkillPackUpdateNotice: (listener: (notice: SkillPackUpdateNotice) => void) => {
+    if (!window.piDesktop?.on) return () => undefined;
+    return window.piDesktop.on(IPC.event.skillPackUpdateNotice, (payload) =>
+      listener(payload as SkillPackUpdateNotice),
+    );
+  },
 
   // --- Skills the user owns -------------------------------------------------
   listUserSkills: (query?: AgentCapabilityQuery) =>

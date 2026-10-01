@@ -28,6 +28,7 @@ import {
 } from "../mcp-control";
 import type { ModelsDevCatalog } from "../models-dev-catalog";
 import type { AppUpdaterController } from "../updater";
+import type { SkillPackService } from "../skill-pack/service";
 import type { HostProcess } from "../host-process";
 import type { Logger } from "../logger";
 import type { PluginRuntime } from "../plugin-runtime";
@@ -74,6 +75,8 @@ export type StartupDependencies = {
   dataDir: string;
   logger: Logger;
   updater: AppUpdaterController;
+  /** Built-in skill pack update checks, started with the app update checks. */
+  skillPack?: Pick<SkillPackService, "start">;
   modelsDevCatalog: ModelsDevCatalog;
   plugins: PluginRuntime;
   /**
@@ -144,6 +147,7 @@ export function registerApplicationStartup(deps: StartupDependencies): void {
       dataDir,
       logger,
       updater,
+      skillPack,
       modelsDevCatalog,
       plugins,
       isSessionBusy,
@@ -366,6 +370,8 @@ export function registerApplicationStartup(deps: StartupDependencies): void {
     void updater
       .reclaimRelocatedUpdateCache()
       .finally(() => updater.startAutoCheck());
+    // The skill pack's first check is delayed the same way, for the same reason.
+    skillPack?.start();
     // createWindow awaits the initial load (loadFile resolves on
     // did-finish-load), so the page is up; give React a beat to mount its
     // event subscriptions before pushing the boot outcome.

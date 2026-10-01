@@ -3,6 +3,8 @@ import { join } from "node:path";
 import { parseSkillFrontmatter } from "@pi-desktop/plugin-sdk";
 import type { PluginSkillDef } from "@pi-desktop/agent-runtime";
 import type { LoadedSkillDocument } from "./skill-document";
+import { loadSkillPackDocument, skillPackCatalog } from "./skill-pack/pack-catalog.ts";
+import { skillPackStore } from "./skill-pack/active-store.ts";
 
 /**
  * Skills EXplore Agent ships itself.
@@ -11,6 +13,10 @@ import type { LoadedSkillDocument } from "./skill-document";
  * skills (D174), so a first-party skill and a third-party one are
  * indistinguishable to the model — but they need no permission grant, because
  * the host is not a plugin.
+ *
+ * Besides the two documents in `resources/skills`, the built-ins include the
+ * EXplore skill pack (`explore/...` ids): a copy of an upstream repository the
+ * app bundles and can update without a release (see `./skill-pack`).
  */
 
 /** Bundled skill teaching the plugin-development loop. */
@@ -86,18 +92,20 @@ export type BuiltinSkillInput = {
 
 /**
  * Catalog entries for the built-in skills that apply to the given session, read
- * fresh so a packaged update takes effect without a restart.
+ * fresh so a packaged update or a skill pack update takes effect without a
+ * restart.
  */
 export function builtinSkills(input: BuiltinSkillInput): PluginSkillDef[] {
   const ids = [IMAGE_GENERATION_SKILL_ID];
   if (isPluginWorkspace(input.workspacePath, input.pluginPaths)) ids.push(PLUGIN_DEV_SKILL_ID);
-  return ids.flatMap((id) => {
+  const shipped = ids.flatMap((id): PluginSkillDef[] => {
     const file = id === IMAGE_GENERATION_SKILL_ID ? IMAGE_GENERATION_SKILL_FILE : PLUGIN_DEV_SKILL_FILE;
     const raw = readBuiltinSkill(file);
     if (!raw?.raw.trim()) return [];
     const parsed = parseSkillFrontmatter(raw.raw);
     return parsed.body ? [{ id, name: parsed.name ?? id, description: parsed.description }] : [];
   });
+  return [...shipped, ...skillPackCatalog(skillPackStore.active())];
 }
 
 /**
@@ -105,6 +113,8 @@ export function builtinSkills(input: BuiltinSkillInput): PluginSkillDef[] {
  * host does not ship, which is the caller's cue to try the plugin registry.
  */
 export function loadBuiltinSkillBody(id: string): LoadedSkillDocument | null {
+  const packDocument = loadSkillPackDocument(skillPackStore.active(), id);
+  if (packDocument) return packDocument;
   if (id !== PLUGIN_DEV_SKILL_ID && id !== IMAGE_GENERATION_SKILL_ID) return null;
   const raw = readBuiltinSkill(id === IMAGE_GENERATION_SKILL_ID ? IMAGE_GENERATION_SKILL_FILE : PLUGIN_DEV_SKILL_FILE);
   if (!raw?.raw.trim()) return null;

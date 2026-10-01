@@ -40,6 +40,7 @@ import {
 } from "./models-dev-catalog";
 import { VendorOAuth } from "./oauth";
 import { AppUpdaterController } from "./updater";
+import { createDesktopSkillPackService } from "./skill-pack/desktop";
 import {
   WINDOW_MIN_HEIGHT,
   WINDOW_MIN_WIDTH,
@@ -292,6 +293,15 @@ const updater = new AppUpdaterController({
     if (!host?.isAvailable()) throw new Error("host unavailable");
     await host.call("settings.set", { lastNotifiedUpdateVersion: version });
   },
+});
+
+/** Built-in skill pack updates: checks on a timer, installs only on request. */
+const skillPack = createDesktopSkillPackService({
+  devBuild: isDevelopmentBuild,
+  dataDir,
+  getHost,
+  send: sendToRenderer,
+  logger,
 });
 
 /**
@@ -868,6 +878,7 @@ function registerIpc() {
     togglePluginLauncher,
     safeOpenExternal,
     updater,
+    skillPack,
     dataDir,
     activeTurns,
     isTurnDispatchable,
@@ -996,6 +1007,7 @@ registerApplicationStartup({
   dataDir,
   logger,
   updater,
+  skillPack,
   modelsDevCatalog,
   plugins,
   isSessionBusy,
@@ -1043,6 +1055,7 @@ registerShutdownHandlers({
   browserHost,
   pluginViews,
   updater,
+  skillPack,
   logger,
   confirmQuitDialog,
   disposePowerSaveBlockers,

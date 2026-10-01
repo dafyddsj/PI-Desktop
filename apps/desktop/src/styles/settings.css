@@ -3799,3 +3799,51 @@
 .sklm-page-jump::placeholder {
   color: var(--ds-text-muted);
 }
+
+/* Built-in skill pack: version, update offer and channel above its skill rows. */
+.skill-pack-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: var(--radius-lg);
+  background: var(--ds-tile);
+  padding: 12px 14px;
+  color: var(--ds-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.skill-pack-status-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.skill-pack-status-line strong {
+  color: var(--ds-text-primary);
+  font-weight: var(--font-weight-strong);
+}
+
+.skill-pack-status-message {
+  color: var(--ds-text-muted);
+}
+
+.skill-pack-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.skill-pack-beta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.skill-pack-beta small {
+  display: block;
+  color: var(--ds-text-muted);
+  font-size: var(--text-2xs);
+}

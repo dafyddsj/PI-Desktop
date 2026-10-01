@@ -1012,6 +1012,27 @@ fn validate_settings_value(value: &Value) -> Result<(), JsonRpcError> {
             ));
         }
     }
+    if let Some(beta) = object.get("skillPackBeta") {
+        if !beta.is_boolean() {
+            return Err(rpc_err(
+                1002,
+                "skillPackBeta must be a boolean",
+                "INVALID_PARAMS",
+            ));
+        }
+    }
+    if let Some(sha) = object.get("skillPackLastNotifiedSha") {
+        let valid = sha
+            .as_str()
+            .is_some_and(|sha| sha.len() == 40 && sha.bytes().all(|b| b.is_ascii_hexdigit()));
+        if !valid {
+            return Err(rpc_err(
+                1002,
+                "skillPackLastNotifiedSha must be a 40-character commit id",
+                "INVALID_PARAMS",
+            ));
+        }
+    }
     if let Some(infinite_retry) = object.get("infiniteProviderRetry") {
         if !infinite_retry.is_boolean() {
             return Err(rpc_err(
@@ -9460,6 +9481,32 @@ mod update_settings_tests {
             json!({"lastNotifiedUpdateVersion": "  "}),
             json!({"lastNotifiedUpdateVersion": 12}),
             json!({"lastNotifiedUpdateVersion": "x".repeat(129)}),
+        ] {
+            assert!(validate_settings_value(&value).is_err(), "{value}");
+        }
+    }
+}
+
+#[cfg(test)]
+mod skill_pack_settings_tests {
+    use super::*;
+
+    #[test]
+    fn validates_skill_pack_beta_and_notified_commit() {
+        let sha = "1b5c69fe723c6a94fe538c727e1b9e403b932eba";
+        for value in [
+            json!({"skillPackBeta": true}),
+            json!({"skillPackBeta": false}),
+            json!({"skillPackLastNotifiedSha": sha}),
+        ] {
+            assert!(validate_settings_value(&value).is_ok(), "{value}");
+        }
+        for value in [
+            json!({"skillPackBeta": "yes"}),
+            json!({"skillPackBeta": null}),
+            json!({"skillPackLastNotifiedSha": "main"}),
+            json!({"skillPackLastNotifiedSha": format!("{sha}0")}),
+            json!({"skillPackLastNotifiedSha": 7}),
         ] {
             assert!(validate_settings_value(&value).is_err(), "{value}");
         }
