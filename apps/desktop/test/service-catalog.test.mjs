@@ -12,7 +12,15 @@ import {
   filterServiceOptions,
   endpointLabel,
   namedServiceOptions,
+  serviceRegion,
+  servicesForRegion,
 } from "../src/components/settings/service-catalog.ts";
+import {
+  defaultEndpointRegion,
+  ENDPOINT_REGION_STORAGE_KEY,
+  readEndpointRegion,
+  rememberEndpointRegion,
+} from "../src/components/settings/endpoint-region.ts";
 
 // Stands in for i18next with localized labels, so a label-only match is
 // distinguishable from a match on the canonical English name.
@@ -86,4 +94,86 @@ test("endpoint labels retain routes and ports without showing credentials or que
   assert.equal(endpointLabel("https://user:password@api.example:8443/plan/v1?key=private#fragment"),
     "api.example:8443/plan/v1");
   assert.equal(endpointLabel("https://api.example/"), "api.example");
+});
+
+test("browsing lists one region's endpoints plus the region-free services", () => {
+  const listed = (region) =>
+    servicesForRegion(options, region, false).map((option) => option.id);
+  const global = listed("global");
+  const china = listed("cn");
+  for (const id of [CUSTOM_SERVICE, "openai", "deepseek"]) {
+    assert.ok(global.includes(id) && china.includes(id), id);
+  }
+  for (const [globalId, chinaId] of [
+    ["minimax", "minimax-cn"],
+    ["moonshotai", "moonshotai-cn"],
+    ["alibaba", "alibaba-cn"],
+    ["siliconflow", "siliconflow-cn"],
+    ["zai", "zhipuai"],
+  ]) {
+    assert.ok(global.includes(globalId) && !global.includes(chinaId), globalId);
+    assert.ok(china.includes(chinaId) && !china.includes(globalId), chinaId);
+  }
+  // The custom endpoint still leads, whichever region is shown.
+  assert.equal(global[0], CUSTOM_SERVICE);
+  assert.equal(china[0], CUSTOM_SERVICE);
+});
+
+test("a search reaches the other region after the shown region's matches", () => {
+  const found = (query, region) =>
+    servicesForRegion(filterServiceOptions(options, query), region, true).map((option) => option.id);
+  assert.deepEqual(found("api.moonshot.cn", "global"), ["moonshotai-cn"]);
+  const minimax = found("minimax", "global");
+  assert.ok(minimax.indexOf("minimax") < minimax.indexOf("minimax-cn"));
+  const minimaxChina = found("minimax", "cn");
+  assert.ok(minimaxChina.indexOf("minimax-cn") < minimaxChina.indexOf("minimax"));
+});
+
+test("a stored service names its region; region-free and custom ones do not", () => {
+  assert.equal(serviceRegion("moonshotai-cn"), "cn");
+  assert.equal(serviceRegion("moonshotai"), "global");
+  assert.equal(serviceRegion("openai"), undefined);
+  assert.equal(serviceRegion(CUSTOM_SERVICE), undefined);
+  assert.equal(serviceRegion(undefined), undefined);
+});
+
+test("the region defaults to global, China for a Simplified Chinese interface", () => {
+  assert.equal(defaultEndpointRegion("en"), "global");
+  assert.equal(defaultEndpointRegion("zh-TW"), "global");
+  assert.equal(defaultEndpointRegion("zh-CN"), "cn");
+  assert.equal(defaultEndpointRegion(undefined), "global");
+});
+
+test("the region choice is remembered and survives unusable storage", () => {
+  const saved = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  const store = new Map();
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (key) => store.get(key) ?? null,
+      setItem: (key, value) => store.set(key, String(value)),
+    },
+  });
+  try {
+    assert.equal(readEndpointRegion("en"), "global");
+    rememberEndpointRegion("cn");
+    assert.equal(store.get(ENDPOINT_REGION_STORAGE_KEY), "cn");
+    assert.equal(readEndpointRegion("en"), "cn");
+    store.set(ENDPOINT_REGION_STORAGE_KEY, "mars");
+    assert.equal(readEndpointRegion("zh-CN"), "cn");
+    assert.equal(readEndpointRegion("en"), "global");
+
+    Object.defineProperty(globalThis, "localStorage", {
+      configurable: true,
+      value: {
+        getItem: () => { throw new Error("blocked"); },
+        setItem: () => { throw new Error("blocked"); },
+      },
+    });
+    assert.equal(readEndpointRegion("en"), "global");
+    assert.doesNotThrow(() => rememberEndpointRegion("cn"));
+  } finally {
+    if (saved) Object.defineProperty(globalThis, "localStorage", saved);
+    else delete globalThis.localStorage;
+  }
 });

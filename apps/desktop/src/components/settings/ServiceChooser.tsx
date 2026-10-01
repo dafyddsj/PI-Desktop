@@ -8,18 +8,27 @@
  * services now sit side by side as tiles; the custom endpoint leads its
  * group, because it is the one choice that needs no preset found first.
  * Filtering never talks to the host.
+ *
+ * Most people sign in with a subscription, so the API-key group starts
+ * collapsed beneath it and opens on demand, on a search, or when the user
+ * comes back from an API service. Vendors with separate mainland-China and
+ * global endpoints list only the side the region switch points at.
  */
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import type { OAuthVendor } from "@pi-desktop/shared";
-import { cx, Input } from "../ui";
-import { IconPlus, IconSearch } from "../icons";
+import type { EndpointRegion, OAuthVendor } from "@pi-desktop/shared";
+import { cx, Input, SegmentedControl } from "../ui";
+import { IconChevronRight, IconPlus, IconSearch } from "../icons";
 import { ServiceMonogram } from "./ServiceMonogram";
+import { serviceLogoKey } from "./service-logo-keys";
+import { readEndpointRegion, rememberEndpointRegion } from "./endpoint-region";
 import {
   CUSTOM_SERVICE,
   customServiceOption,
   filterServiceOptions,
   namedServiceOptions,
+  serviceRegion,
+  servicesForRegion,
 } from "./service-catalog";
 
 export type ServiceChooserProps = {
@@ -43,8 +52,13 @@ export function ServiceChooser({
   onPickService,
   onPickSubscription,
 }: ServiceChooserProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [query, setQuery] = useState("");
+  const [region, setRegion] = useState<EndpointRegion>(
+    () => serviceRegion(current) ?? readEndpointRegion(i18n.resolvedLanguage),
+  );
+  // Coming back from an API service reopens the group it was picked from.
+  const [apiOpen, setApiOpen] = useState(() => Boolean(current));
   const searchRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -64,15 +78,27 @@ export function ServiceChooser({
     [onPickSubscription, vendors],
   );
 
+  const searching = query.trim() !== "";
   const visibleServices = useMemo(
-    () => filterServiceOptions(serviceOptions, query),
-    [query, serviceOptions],
+    () => servicesForRegion(filterServiceOptions(serviceOptions, query), region, searching),
+    [query, region, searching, serviceOptions],
   );
   const visibleSubscriptions = useMemo(
     () => filterServiceOptions(subscriptionOptions, query),
     [query, subscriptionOptions],
   );
   const nothingMatches = visibleServices.length === 0 && visibleSubscriptions.length === 0;
+  // Without subscriptions to lead (editing an API service) there is nothing to
+  // collapse beneath, and a search always shows what it found.
+  const apiCollapsible = subscriptionOptions.length > 0 && !searching;
+  const apiExpanded = !apiCollapsible || apiOpen;
+
+  const changeRegion = (next: EndpointRegion) => {
+    setRegion(next);
+    rememberEndpointRegion(next);
+  };
+  const regionLabel = (value: EndpointRegion) =>
+    value === "cn" ? t("settings.chooserRegionChina") : t("settings.chooserRegionGlobal");
 
   // Enter prefers an API service over a subscription: a pick there only moves
   // to the key field, while a subscription opens the browser.
@@ -206,7 +232,7 @@ export function ServiceChooser({
                     onKeyDown={onTileKeyDown}
                     onClick={() => pickSubscription(vendor)}
                   >
-                    <ServiceMonogram name={vendor.name} />
+                    <ServiceMonogram name={vendor.name} logo={serviceLogoKey(vendor.vendorId)} />
                     <span className="service-chooser-tile-copy">
                       <span className="service-chooser-tile-name">{vendor.name}</span>
                       {detail || existing ? (
@@ -224,44 +250,81 @@ export function ServiceChooser({
 
         {visibleServices.length > 0 ? (
           <section className="service-chooser-group" aria-labelledby="service-chooser-api-keys">
-            <h4 id="service-chooser-api-keys" className="service-chooser-group-title">
-              {t("settings.chooserApiKeys")}
-            </h4>
-            <div className="service-chooser-grid">
-              {visibleServices.map((option) => {
-                const isCustom = option.id === CUSTOM_SERVICE;
-                return (
+            <div className="service-chooser-group-header">
+              <h4 id="service-chooser-api-keys" className="service-chooser-group-title">
+                {apiCollapsible ? (
                   <button
-                    key={option.id}
                     type="button"
                     data-service-tile
-                    data-service-id={option.id}
-                    className={cx(
-                      "service-chooser-tile",
-                      enterTarget === `service:${option.id}` && "is-active",
-                    )}
-                    aria-current={option.id === current ? "true" : undefined}
-                    disabled={disabled}
+                    className="service-chooser-disclosure"
+                    aria-expanded={apiExpanded}
+                    aria-controls="service-chooser-api-grid"
                     onKeyDown={onTileKeyDown}
-                    onClick={() => pickService(option.id)}
+                    onClick={() => setApiOpen((open) => !open)}
                   >
-                    {isCustom ? (
-                      <span className="service-monogram" aria-hidden>
-                        <IconPlus size={14} />
-                      </span>
-                    ) : (
-                      <ServiceMonogram name={option.label} />
-                    )}
-                    <span className="service-chooser-tile-copy">
-                      <span className="service-chooser-tile-name">{option.label}</span>
-                      <span className="service-chooser-tile-detail">
-                        {isCustom ? t("settings.customEndpointDesc") : option.endpoint}
-                      </span>
-                    </span>
+                    <IconChevronRight size={12} className="service-chooser-disclosure-icon" aria-hidden />
+                    {t("settings.chooserApiKeys")}
+                    <span className="service-chooser-group-count">{visibleServices.length}</span>
                   </button>
-                );
-              })}
+                ) : (
+                  t("settings.chooserApiKeys")
+                )}
+              </h4>
+              {apiExpanded ? (
+                <SegmentedControl
+                  className="service-chooser-region"
+                  value={region}
+                  onChange={changeRegion}
+                  options={[
+                    { value: "global", label: regionLabel("global") },
+                    { value: "cn", label: regionLabel("cn") },
+                  ]}
+                  label={t("settings.chooserRegion")}
+                  disabled={disabled}
+                />
+              ) : null}
             </div>
+            {apiExpanded ? (
+              <div id="service-chooser-api-grid" className="service-chooser-grid">
+                {visibleServices.map((option) => {
+                  const isCustom = option.id === CUSTOM_SERVICE;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      data-service-tile
+                      data-service-id={option.id}
+                      className={cx(
+                        "service-chooser-tile",
+                        enterTarget === `service:${option.id}` && "is-active",
+                      )}
+                      aria-current={option.id === current ? "true" : undefined}
+                      disabled={disabled}
+                      onKeyDown={onTileKeyDown}
+                      onClick={() => pickService(option.id)}
+                    >
+                      {isCustom ? (
+                        <span className="service-monogram" aria-hidden>
+                          <IconPlus size={14} />
+                        </span>
+                      ) : (
+                        <ServiceMonogram name={option.label} logo={serviceLogoKey(option.id)} />
+                      )}
+                      <span className="service-chooser-tile-copy">
+                        <span className="service-chooser-tile-name">{option.label}</span>
+                        <span className="service-chooser-tile-detail">
+                          {isCustom
+                            ? t("settings.customEndpointDesc")
+                            : option.region && option.region !== region
+                              ? `${regionLabel(option.region)} · ${option.endpoint}`
+                              : option.endpoint}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
           </section>
         ) : null}
       </div>

@@ -6,6 +6,13 @@ export const OPENCODE_GO_API_STYLE = "opencode_go" as const;
 export const OPENCODE_GO_NAME = "OpenCode Go";
 export const OPENCODE_GO_BASE_URL = "https://opencode.ai/zen/go/v1";
 
+/**
+ * Which side of the mainland-China split an endpoint serves. Presets without a
+ * region are offered everywhere; a regional preset is listed only while the
+ * chooser shows its region, so one vendor never appears twice side by side.
+ */
+export type EndpointRegion = "global" | "cn";
+
 export type NamedEndpointPreset = {
   id: string;
   /** models.dev provider key persisted as `vendorKey`. */
@@ -18,6 +25,7 @@ export type NamedEndpointPreset = {
   aliases?: readonly string[];
   /** Completions thinking/tool-stream flags for Zhipu / Z.AI hosts. */
   zhipuCompat?: boolean;
+  region?: EndpointRegion;
 };
 
 export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
@@ -112,6 +120,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     apiStyle: "chat_completions",
     labelKey: "settings.presetZaiApi",
     zhipuCompat: true,
+    region: "global",
   },
   {
     id: "zai-coding-plan",
@@ -121,6 +130,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     apiStyle: "chat_completions",
     labelKey: "settings.presetZaiCodingPlan",
     zhipuCompat: true,
+    region: "global",
   },
   {
     id: "deepseek",
@@ -137,7 +147,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetAlibabaCn",
-    aliases: ["dashscope", "qwen"],
+    region: "cn",
   },
   {
     id: "moonshotai-cn",
@@ -146,7 +156,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://api.moonshot.cn/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetMoonshotCn",
-    aliases: ["moonshot"],
+    region: "cn",
   },
   {
     id: "zhipuai",
@@ -157,6 +167,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     labelKey: "settings.presetZhipuApi",
     aliases: ["zhipu", "bigmodel"],
     zhipuCompat: true,
+    region: "cn",
   },
   {
     id: "zhipuai-coding-plan",
@@ -167,6 +178,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     labelKey: "settings.presetZhipuCodingPlan",
     aliases: ["zai-coding-cn"],
     zhipuCompat: true,
+    region: "cn",
   },
   {
     id: "siliconflow-cn",
@@ -175,6 +187,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://api.siliconflow.cn/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetSiliconflowCn",
+    region: "cn",
   },
   {
     id: "volcengine",
@@ -184,24 +197,25 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     apiStyle: "chat_completions",
     labelKey: "settings.presetVolcengine",
     aliases: ["doubao", "ark"],
+    region: "cn",
   },
   {
     id: "minimax-cn",
     vendorKey: "minimax-cn",
-    name: "MiniMax",
+    name: "MiniMax (China)",
     baseUrl: "https://api.minimaxi.com/anthropic/v1",
     apiStyle: "anthropic_messages",
     labelKey: "settings.presetMinimaxCn",
-    aliases: ["minimax"],
+    region: "cn",
   },
   {
     id: "minimax-cn-openai",
     vendorKey: "minimax-cn",
-    name: "MiniMax (OpenAI)",
+    name: "MiniMax (OpenAI, China)",
     baseUrl: "https://api.minimaxi.com/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetMinimaxCnOpenai",
-    aliases: ["minimax-openai", "minimax-compatible"],
+    region: "cn",
   },
   {
     id: "stepfun-plan",
@@ -210,6 +224,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://api.stepfun.com/step_plan/v1",
     apiStyle: "anthropic_messages",
     labelKey: "settings.presetStepfunPlan",
+    region: "cn",
   },
   {
     id: "xiaomi",
@@ -273,18 +288,31 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
   {
     id: "minimax",
     vendorKey: "minimax",
-    name: "MiniMax (International)",
+    name: "MiniMax",
     baseUrl: "https://api.minimax.io/anthropic/v1",
     apiStyle: "anthropic_messages",
     labelKey: "settings.presetMinimaxIntl",
+    region: "global",
+  },
+  {
+    id: "minimax-openai",
+    vendorKey: "minimax",
+    name: "MiniMax (OpenAI)",
+    baseUrl: "https://api.minimax.io/v1",
+    apiStyle: "chat_completions",
+    labelKey: "settings.presetMinimaxOpenai",
+    aliases: ["minimax-compatible"],
+    region: "global",
   },
   {
     id: "moonshotai",
     vendorKey: "moonshotai",
-    name: "Moonshot AI (International)",
+    name: "Moonshot AI",
     baseUrl: "https://api.moonshot.ai/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetMoonshotIntl",
+    aliases: ["moonshot"],
+    region: "global",
   },
   {
     id: "nvidia",
@@ -314,6 +342,25 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     aliases: ["vercel-ai-gateway"],
   },
   {
+    id: "alibaba",
+    vendorKey: "alibaba",
+    name: "Alibaba",
+    baseUrl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    apiStyle: "chat_completions",
+    labelKey: "settings.presetAlibaba",
+    aliases: ["dashscope", "qwen"],
+    region: "global",
+  },
+  {
+    id: "siliconflow",
+    vendorKey: "siliconflow",
+    name: "SiliconFlow",
+    baseUrl: "https://api.siliconflow.com/v1",
+    apiStyle: "chat_completions",
+    labelKey: "settings.presetSiliconflow",
+    region: "global",
+  },
+  {
     id: "alibaba-token-plan",
     vendorKey: "alibaba-token-plan",
     name: "Qwen Token Plan",
@@ -321,6 +368,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     apiStyle: "chat_completions",
     labelKey: "settings.presetAlibabaTokenPlan",
     aliases: ["qwen-token-plan", "qwen-token-plan-individual"],
+    region: "global",
   },
   {
     id: "alibaba-token-plan-cn",
@@ -330,6 +378,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     apiStyle: "chat_completions",
     labelKey: "settings.presetAlibabaTokenPlanCn",
     aliases: ["qwen-token-plan-cn"],
+    region: "cn",
   },
   {
     id: "xiaomi-token-plan-cn",
@@ -338,6 +387,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://token-plan-cn.xiaomimimo.com/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetXiaomiTokenPlanCn",
+    region: "cn",
   },
   {
     id: "xiaomi-token-plan-ams",
@@ -346,6 +396,7 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://token-plan-ams.xiaomimimo.com/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetXiaomiTokenPlanAms",
+    region: "global",
   },
   {
     id: "xiaomi-token-plan-sgp",
@@ -354,8 +405,14 @@ export const NAMED_ENDPOINT_PRESETS: readonly NamedEndpointPreset[] = [
     baseUrl: "https://token-plan-sgp.xiaomimimo.com/v1",
     apiStyle: "chat_completions",
     labelKey: "settings.presetXiaomiTokenPlanSgp",
+    region: "global",
   },
 ];
+
+/** Presets offered while the chooser shows `region`; region-free ones always are. */
+export function presetsForRegion(region: EndpointRegion): NamedEndpointPreset[] {
+  return NAMED_ENDPOINT_PRESETS.filter((preset) => !preset.region || preset.region === region);
+}
 
 /** Canonical form of a configured endpoint for preset matching. */
 export function normalizeEndpointUrl(value: string | undefined): string | undefined {

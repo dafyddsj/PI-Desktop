@@ -74,6 +74,8 @@ export type ProviderConnectionFieldsProps = {
   serviceLabel: string;
   /** Endpoint the named preset talks to; empty on a custom endpoint. */
   serviceBaseUrl: string;
+  /** Bundled mark for the chosen service; absent for a custom endpoint. */
+  serviceLogo?: string;
   onChangeService: () => void;
   apiKeyRef: RefObject<HTMLInputElement | null>;
   nameRef: RefObject<HTMLInputElement | null>;
@@ -101,6 +103,7 @@ export function ProviderConnectionFields({
   saving,
   serviceLabel,
   serviceBaseUrl,
+  serviceLogo,
   onChangeService,
   apiKeyRef,
   nameRef,
@@ -133,7 +136,7 @@ export function ProviderConnectionFields({
         <div className="block space-y-1.5">
           <div className="text-sm text-text-secondary">{t("settings.service")}</div>
           <div className="provider-service-chip">
-            <ServiceMonogram name={serviceLabel} />
+            <ServiceMonogram name={serviceLabel} logo={serviceLogo} />
             <span className="provider-service-chip-copy">
               <span className="provider-service-chip-name">{serviceLabel}</span>
               {serviceBaseUrl ? (

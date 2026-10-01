@@ -71,6 +71,65 @@
   text-transform: uppercase;
 }
 
+/* Title on the left, region switch on the right, one line when it fits. */
+.service-chooser-group-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 24px;
+}
+
+/* The disclosure is the title itself; it inherits the title's type. */
+.service-chooser-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 0 -4px;
+  padding: 4px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.service-chooser-disclosure:hover {
+  color: var(--ds-text-primary);
+}
+
+.service-chooser-disclosure:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ds-accent) 24%, transparent);
+}
+
+.service-chooser-disclosure-icon {
+  transition: transform var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.service-chooser-disclosure[aria-expanded="true"] .service-chooser-disclosure-icon {
+  transform: rotate(90deg);
+}
+
+.service-chooser-group-count {
+  color: var(--ds-text-faint);
+  font-weight: var(--font-weight-medium);
+}
+
+/* The shared segment (providers.css), at the size of the group title. */
+.settings-segment.service-chooser-region {
+  flex: none;
+}
+
+.service-chooser-region .settings-segment-item {
+  padding: 4px 10px;
+  font-size: var(--text-xs);
+}
+
 .service-chooser-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

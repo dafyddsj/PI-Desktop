@@ -54,9 +54,37 @@ test("subscriptions and API services share the chooser, custom endpoint first", 
   // Editing only changes the API service; subscriptions are not offered.
   assert.match(setupSource, /vendors=\{editing \? null : vendors\}/);
   assert.match(setupSource, /onPickSubscription=\{editing \? undefined : onPickSubscription\}/);
+  // Regions are a switch over one list, not separate preset groups.
   assert.doesNotMatch(chooserSource, /presetGroupInternational|presetGroupChina/);
   assert.doesNotMatch(chooserSource, /NAMED_PRESET_GROUPS/);
   assert.doesNotMatch(catalogSource, /NAMED_PRESET_GROUPS/);
+});
+
+test("the API-key group starts collapsed beneath open subscriptions", () => {
+  // Opens on its own when the user comes back from a service.
+  assert.match(chooserSource, /useState\(\(\) => Boolean\(current\)\)/);
+  // A search or a chooser without subscriptions never hides API services.
+  assert.match(chooserSource, /const apiCollapsible = subscriptionOptions\.length > 0 && !searching;/);
+  assert.match(chooserSource, /const apiExpanded = !apiCollapsible \|\| apiOpen;/);
+  assert.match(chooserSource, /aria-expanded=\{apiExpanded\}/);
+  assert.match(chooserSource, /aria-controls="service-chooser-api-grid"/);
+  assert.match(chooserSource, /\{apiExpanded \? \(\s*<div id="service-chooser-api-grid"/);
+  // The subscription grid has no disclosure of its own.
+  const subscriptionsAt = chooserSource.indexOf("settings.chooserSubscriptions");
+  const disclosureAt = chooserSource.indexOf("service-chooser-disclosure");
+  assert.ok(disclosureAt > subscriptionsAt, "only the API-key group collapses");
+  assert.match(rule(".service-chooser-disclosure"), /background: transparent;/);
+});
+
+test("a region switch picks global or China endpoints, global by default", () => {
+  assert.match(chooserSource, /servicesForRegion\(filterServiceOptions\(serviceOptions, query\), region, searching\)/);
+  assert.match(chooserSource, /serviceRegion\(current\) \?\? readEndpointRegion\(i18n\.resolvedLanguage\)/);
+  assert.match(chooserSource, /rememberEndpointRegion\(next\)/);
+  assert.match(chooserSource, /settings\.chooserRegion"/);
+  assert.match(chooserSource, /settings\.chooserRegionGlobal/);
+  assert.match(chooserSource, /settings\.chooserRegionChina/);
+  // A search hit from the other region says which region it serves.
+  assert.match(chooserSource, /option\.region && option\.region !== region/);
 });
 
 test("the chooser answers the keyboard and never dead-ends", () => {

@@ -9,6 +9,7 @@ import {
   matchNamedPreset,
   matchZhipuPreset,
   normalizeEndpointUrl,
+  presetsForRegion,
   zhipuRequestCompat,
 } from "./provider-presets.js";
 
@@ -194,8 +195,13 @@ describe("named endpoint presets", () => {
     expect(matchNamedPreset({ baseUrl: "https://api.stepfun.com/v1" })?.id).not.toBe(expected.id);
   });
 
-  it("maps DashScope and Doubao aliases to China catalog keys", () => {
-    expect(matchNamedPreset({ vendorKey: "dashscope" })?.id).toBe("alibaba-cn");
+  it("maps generic vendor aliases to the global endpoint, China-only ones to China", () => {
+    expect(matchNamedPreset({ vendorKey: "dashscope" })?.id).toBe("alibaba");
+    expect(matchNamedPreset({ vendorKey: "qwen" })?.id).toBe("alibaba");
+    expect(matchNamedPreset({ vendorKey: "moonshot" })?.id).toBe("moonshotai");
+    expect(matchNamedPreset({ vendorKey: "minimax" })?.id).toBe("minimax");
+    expect(matchNamedPreset({ vendorKey: "minimax-cn" })?.id).toBe("minimax-cn");
+    expect(matchNamedPreset({ vendorKey: "alibaba-cn" })?.id).toBe("alibaba-cn");
     expect(matchNamedPreset({ vendorKey: "doubao" })?.id).toBe("volcengine");
   });
 
@@ -206,6 +212,69 @@ describe("named endpoint presets", () => {
         baseUrl: "https://opencode.ai/zen/go/v1",
       })?.id,
     ).toBe("opencode_go");
+  });
+});
+
+describe("endpoint regions", () => {
+  const byId = (id: string) => NAMED_ENDPOINT_PRESETS.find((preset) => preset.id === id);
+
+  it("pairs every regional vendor with a counterpart on the other side", () => {
+    const twins = [
+      ["alibaba", "alibaba-cn"],
+      ["moonshotai", "moonshotai-cn"],
+      ["siliconflow", "siliconflow-cn"],
+      ["minimax", "minimax-cn"],
+      ["minimax-openai", "minimax-cn-openai"],
+      ["zai", "zhipuai"],
+      ["zai-coding-plan", "zhipuai-coding-plan"],
+      ["alibaba-token-plan", "alibaba-token-plan-cn"],
+      ["xiaomi-token-plan-sgp", "xiaomi-token-plan-cn"],
+    ] as const;
+    for (const [global, china] of twins) {
+      expect(byId(global)?.region, global).toBe("global");
+      expect(byId(china)?.region, china).toBe("cn");
+      expect(byId(global)?.apiStyle, global).toBe(byId(china)?.apiStyle);
+    }
+  });
+
+  it("marks mainland-only hosts as China and leaves worldwide vendors unmarked", () => {
+    for (const preset of NAMED_ENDPOINT_PRESETS) {
+      if (/\.cn\b|volces\.com|minimaxi\.com|cn-beijing|api\.stepfun\.com|token-plan-cn/.test(preset.baseUrl)) {
+        expect(preset.region, preset.id).toBe("cn");
+      }
+    }
+    for (const id of ["openai", "anthropic", "google", "openrouter", "deepseek", "kimi-for-coding"]) {
+      expect(byId(id)?.region, id).toBeUndefined();
+    }
+  });
+
+  it("canonical names carry no International suffix", () => {
+    for (const preset of NAMED_ENDPOINT_PRESETS) {
+      expect(preset.name, preset.id).not.toMatch(/International/);
+    }
+  });
+
+  it("lists each region's endpoints plus the region-free ones", () => {
+    const global = presetsForRegion("global").map((preset) => preset.id);
+    const china = presetsForRegion("cn").map((preset) => preset.id);
+    expect(global).toEqual(expect.arrayContaining(["openai", "minimax", "moonshotai", "alibaba"]));
+    expect(global).not.toEqual(expect.arrayContaining(["minimax-cn"]));
+    expect(china).toEqual(expect.arrayContaining(["openai", "minimax-cn", "moonshotai-cn", "alibaba-cn"]));
+    expect(china).not.toContain("minimax");
+    expect(global.length + china.length).toBe(
+      NAMED_ENDPOINT_PRESETS.length + NAMED_ENDPOINT_PRESETS.filter((preset) => !preset.region).length,
+    );
+  });
+
+  it("resolves the new global endpoints by URL", () => {
+    expect(matchNamedPreset({ baseUrl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1" })?.id)
+      .toBe("alibaba");
+    expect(matchNamedPreset({ baseUrl: "https://api.siliconflow.com/v1" })?.id).toBe("siliconflow");
+    expect(matchNamedPreset({ baseUrl: "https://api.minimax.io/v1" })).toMatchObject({
+      id: "minimax-openai",
+      vendorKey: "minimax",
+      apiStyle: "chat_completions",
+    });
   });
 });
 
