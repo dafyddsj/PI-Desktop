@@ -5,7 +5,11 @@
  * the preset's canonical name, id, vendor key, aliases, base URL and host, so
  * "kimi", "moonshot" and "api.moonshot.cn" all land on the same entry.
  */
-import { NAMED_ENDPOINT_PRESETS, type NamedEndpointPreset } from "@pi-desktop/shared";
+import {
+  NAMED_ENDPOINT_PRESETS,
+  type EndpointRegion,
+  type NamedEndpointPreset,
+} from "@pi-desktop/shared";
 
 export const CUSTOM_SERVICE = "custom";
 
@@ -17,6 +21,8 @@ export type ServiceOption = {
   /** Endpoint host and path shown under the label; empty for the custom endpoint. */
   endpoint: string;
   haystack: string;
+  /** Absent for services offered in every region. */
+  region?: EndpointRegion;
 };
 
 export function endpointLabel(url: string): string {
@@ -38,6 +44,7 @@ function presetOption(preset: NamedEndpointPreset, translate: Translate): Servic
     endpoint,
     haystack:
       `${label} ${preset.name} ${preset.id} ${preset.vendorKey} ${aliases} ${preset.baseUrl} ${endpoint}`.toLowerCase(),
+    ...(preset.region ? { region: preset.region } : {}),
   };
 }
 
@@ -55,6 +62,27 @@ export function customServiceOption(translate: Translate): ServiceOption {
     endpoint: "",
     haystack: `${label} custom endpoint`.toLowerCase(),
   };
+}
+
+/** The region a stored service belongs to, if it is a regional preset. */
+export function serviceRegion(id: string | undefined): EndpointRegion | undefined {
+  return NAMED_ENDPOINT_PRESETS.find((preset) => preset.id === id)?.region;
+}
+
+/**
+ * The services the API-key group lists for a region. Browsing shows only that
+ * region's endpoints (and the region-free ones); a search also reaches the
+ * other region, after the region's own matches, so a pasted host never comes
+ * up empty just because the toggle points elsewhere.
+ */
+export function servicesForRegion<T extends { region?: EndpointRegion }>(
+  options: readonly T[],
+  region: EndpointRegion,
+  searching: boolean,
+): T[] {
+  const inRegion = options.filter((option) => !option.region || option.region === region);
+  if (!searching) return inRegion;
+  return [...inRegion, ...options.filter((option) => option.region && option.region !== region)];
 }
 
 /** Case-insensitive substring match; an empty query keeps every option. */
