@@ -108,7 +108,11 @@ Tables (canonical DDL in [04-data-storage](04-data-storage.md) §4.3–4.4, §4.
           },
           "supportsImages": { "type": ["boolean", "null"] },
           "supportsDocuments": { "type": ["boolean", "null"] },
-          "availableForSubagents": { "type": "boolean", "default": false }
+          "availableForSubagents": { "type": "boolean", "default": false },
+          "extendedContext": {
+            "type": "boolean",
+            "description": "Run at the deployment's stated maximum window instead of its default; absent means off."
+          }
         }
       }
     },
@@ -243,6 +247,12 @@ Host read/write and normalization preserve `true`; records created before this
 field existed remain disabled by default. This flag is what Electron main uses
 to build the delegation model catalog, so changing it survives provider edits
 and application restarts.
+
+`extendedContext` is the per-binding store of a vendor account's Extended
+context switch. Host-core persists only the choice (absent and `false` are both
+off; off is written as absent); Electron main resolves the window from the
+account's own model list, so the stored `contextWindow` is not rewritten (see
+`13-model-catalog-and-selection.md` §6).
 
 `apiStyle: "opencode_go"` is a first-class OpenCode Go preset layered on the
 OpenAI-compatible provider type. It persists as its own style so the UI can

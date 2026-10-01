@@ -254,6 +254,13 @@ export type ModelBinding = {
    * knowledge of the endpoint is the only source.
    */
   nativeWebSearch?: boolean;
+  /**
+   * Run at the most the serving deployment accepts rather than its default
+   * window, when the deployment states a larger maximum (a ChatGPT/Codex
+   * account's `max_context_window`). The window follows that maximum as the
+   * deployment changes it; a number the user entered (`user`) still wins.
+   */
+  extendedContext?: boolean;
 };
 
 export const MODEL_MODALITIES = ["text", "image", "audio", "video", "pdf"] as const;
@@ -334,6 +341,11 @@ export type ModelInfo = {
   /** Convenience values retained for existing UI and cache consumers. */
   contextWindow?: number;
   maxTokens?: number;
+  /**
+   * Most the serving deployment accepts when it states more than its default
+   * window, e.g. a ChatGPT/Codex account. Absent when no deployment says so.
+   */
+  maxContextWindow?: number;
   capabilities: Array<
     | "text"
     | "tools"

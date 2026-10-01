@@ -170,6 +170,12 @@ pub struct ModelBinding {
     /// default because models.dev does not publish hosted-tool capability.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub native_web_search: Option<bool>,
+    /// Opt-in for running at the most the serving deployment accepts rather
+    /// than its default window (a ChatGPT/Codex account's
+    /// `max_context_window`). Electron resolves the number; host-core only
+    /// stores the choice. None/false keeps the default window.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub extended_context: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

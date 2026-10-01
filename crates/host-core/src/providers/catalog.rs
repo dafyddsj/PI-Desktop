@@ -81,6 +81,7 @@ pub(crate) fn normalize_model_bindings(bindings: &[ModelBinding]) -> Vec<ModelBi
                 supports_documents: binding.supports_documents,
                 available_for_subagents: binding.available_for_subagents,
                 native_web_search: binding.native_web_search,
+                extended_context: binding.extended_context,
             })
         })
         .collect()
@@ -104,6 +105,7 @@ fn legacy_model_binding(model_id: Option<String>) -> Vec<ModelBinding> {
                 supports_documents: None,
                 available_for_subagents: None,
                 native_web_search: None,
+                extended_context: None,
             }]
         })
         .unwrap_or_default()
@@ -389,6 +391,7 @@ mod tests {
             supports_documents: None,
             available_for_subagents: None,
             native_web_search: None,
+            extended_context: None,
         }
     }
 
@@ -427,6 +430,22 @@ mod tests {
             Some("user")
         );
         assert_eq!(read(&saved)[0].max_tokens_source.as_deref(), Some("user"));
+    }
+
+    /// The extended-context choice is the user's account setting; the store
+    /// must keep it, and an unset choice must not be written as `false`.
+    #[test]
+    fn the_extended_context_choice_survives_the_config_round_trip() {
+        let raw = r#"{"models":[{"id":"gpt-5.6-sol","contextWindow":272000,"maxTokens":128000,
+            "contextWindowSource":"catalog","extendedContext":true},
+            {"id":"gpt-5.5","contextWindow":272000,"maxTokens":128000}]}"#;
+        let saved = config_with_model_bindings("{}", &read(raw)).unwrap();
+        let value: serde_json::Value = serde_json::from_str(&saved).unwrap();
+        assert_eq!(value["models"][0]["extendedContext"], true);
+        assert!(value["models"][1].get("extendedContext").is_none());
+        let bindings = read(&saved);
+        assert_eq!(bindings[0].extended_context, Some(true));
+        assert_eq!(bindings[1].extended_context, None);
     }
 
     /// Records written before the marker name no source. They stay `None` so

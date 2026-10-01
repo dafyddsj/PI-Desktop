@@ -58,6 +58,12 @@ export type ModelConfig = {
   input: Array<"text" | "image">;
   /** Published context window retained as a safety ceiling for user overrides. */
   catalogContextWindow?: number;
+  /**
+   * Most the serving deployment accepts, when it states one (a ChatGPT/Codex
+   * account's `max_context_window`). A configured window above it is clamped
+   * for compaction as well, and an extended-context binding runs at it.
+   */
+  maxContextWindow?: number;
   contextWindow: number;
   maxTokens: number;
   /**

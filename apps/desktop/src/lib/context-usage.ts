@@ -100,7 +100,11 @@ export function resolveContextWindow(
     configured?.contextWindow,
     configured?.contextWindowSource,
   );
-  if (configuredWindow) return configuredWindow;
+  // The runtime compacts against the deployment's ceiling, so the meter does too.
+  const ceiling = positiveTokenCount(catalogModel?.maxContextWindow);
+  if (configuredWindow) {
+    return ceiling > 0 ? Math.min(configuredWindow, ceiling) : configuredWindow;
+  }
 
   // An enriched provider window may describe a different configured model.
   const providerWindow = !modelId || !provider?.models?.length

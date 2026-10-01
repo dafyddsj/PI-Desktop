@@ -326,3 +326,55 @@ describe("compact token counts", () => {
     expect(formatCompactTokenCount(1_500)).toBe("1.5K");
   });
 });
+
+describe("extended context", () => {
+  // A ChatGPT/Codex account: 272K by default, accepts up to 872K.
+  const deployment = {
+    source: "models.dev",
+    contextWindow: 272_000,
+    maxContextWindow: 872_000,
+  };
+  const binding = {
+    contextWindow: 272_000,
+    contextWindowSource: "catalog" as const,
+  };
+
+  it("runs an extended binding at the deployment's ceiling", () => {
+    const resolved = resolveBindingLimits(deployment, { ...binding, extendedContext: true });
+    expect(resolved.binding.contextWindow).toBe(872_000);
+    expect(resolved.catalogConfig.contextWindow).toBe(872_000);
+    // Still inherited, so a later change to the ceiling reaches it.
+    expect(resolved.binding.contextWindowSource).toBe("catalog");
+  });
+
+  it("keeps the default window without the switch", () => {
+    expect(resolveBindingLimits(deployment, binding).binding.contextWindow).toBe(272_000);
+  });
+
+  it("follows the ceiling as the deployment changes it", () => {
+    const extended = { ...binding, contextWindow: 872_000, extendedContext: true };
+    const lowered = { ...deployment, maxContextWindow: 600_000 };
+    expect(resolveBindingLimits(lowered, extended).binding.contextWindow).toBe(600_000);
+  });
+
+  it("does nothing where the deployment states no larger window", () => {
+    const pinned = { source: "models.dev", contextWindow: 272_000 };
+    expect(
+      resolveBindingLimits(pinned, { ...binding, extendedContext: true }).binding.contextWindow,
+    ).toBe(272_000);
+  });
+
+  it("never replaces a window the user entered", () => {
+    const user = { contextWindow: 400_000, contextWindowSource: "user" as const, extendedContext: true };
+    expect(resolveBindingLimits(deployment, user).binding.contextWindow).toBe(400_000);
+  });
+
+  it("treats a deployment-stated window as published for an uncatalogued id", () => {
+    const generic = { ...deployment, source: "generic" };
+    const seeded = { contextWindow: 128_000, contextWindowSource: "catalog" as const };
+    expect(resolveBindingLimits(generic, seeded).binding.contextWindow).toBe(272_000);
+    expect(
+      resolveBindingLimits(generic, { ...seeded, extendedContext: true }).binding.contextWindow,
+    ).toBe(872_000);
+  });
+});

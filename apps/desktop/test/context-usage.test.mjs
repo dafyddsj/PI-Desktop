@@ -337,3 +337,36 @@ test("tool usage aggregates repeated calls in first-seen order", () => {
     },
   ]);
 });
+
+test("the context meter never shows more than the deployment accepts", () => {
+  const providerModels = {
+    codex: [{
+      modelId: "gpt-5.6-sol",
+      displayName: "GPT-5.6 Sol",
+      providerId: "codex",
+      contextWindow: 272_000,
+      maxContextWindow: 872_000,
+      capabilities: ["text"],
+      source: "discovered",
+    }],
+  };
+  const providers = (contextWindow, contextWindowSource) => [{
+    id: "codex",
+    models: [{
+      id: "gpt-5.6-sol",
+      contextWindow,
+      contextWindowSource,
+      maxTokens: 128_000,
+      thinkingLevels: [],
+    }],
+  }];
+  assert.equal(
+    resolveContextWindow("codex", "gpt-5.6-sol", providerModels, providers(272_000, "catalog")),
+    272_000,
+  );
+  // A hand-typed 1M runs at the 872K the runtime compacts against.
+  assert.equal(
+    resolveContextWindow("codex", "gpt-5.6-sol", providerModels, providers(1_000_000, "user")),
+    872_000,
+  );
+});

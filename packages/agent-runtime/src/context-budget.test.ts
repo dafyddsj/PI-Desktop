@@ -230,3 +230,31 @@ describe("hosted search target model threading", () => {
     );
   });
 });
+
+describe("deployment ceiling", () => {
+  it("clamps a configured window above what the deployment accepts", () => {
+    // A Codex account accepts up to 872K; a hand-typed 1M must not let the
+    // session grow past that before compacting.
+    expect(
+      contextBudgetLimitsFor({
+        contextWindow: 1_000_000,
+        maxTokens: 128_000,
+        maxContextWindow: 872_000,
+      }),
+    ).toEqual(
+      contextBudgetLimitsFor({ contextWindow: 872_000, maxTokens: 128_000 }),
+    );
+  });
+
+  it("leaves a window at or below the ceiling unchanged", () => {
+    expect(
+      contextBudgetLimitsFor({
+        contextWindow: 272_000,
+        maxTokens: 128_000,
+        maxContextWindow: 872_000,
+      }),
+    ).toEqual(
+      contextBudgetLimitsFor({ contextWindow: 272_000, maxTokens: 128_000 }),
+    );
+  });
+});

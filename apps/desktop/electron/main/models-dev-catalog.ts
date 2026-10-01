@@ -850,6 +850,10 @@ function withVendorLimit(config: ModelConfig, limit: VendorModelLimit): ModelCon
     ...config,
     contextWindow: limit.contextWindow,
     catalogContextWindow: limit.maxContextWindow ?? limit.contextWindow,
+    // Only a ceiling the deployment states itself; a pinned default is not one.
+    ...(limit.maxContextWindow !== undefined
+      ? { maxContextWindow: limit.maxContextWindow }
+      : {}),
     limit: {
       ...config.limit,
       context: limit.contextWindow,

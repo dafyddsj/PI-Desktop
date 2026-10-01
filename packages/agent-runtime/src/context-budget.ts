@@ -83,6 +83,8 @@ export function automaticCompactionThresholdFor(
 export type ContextBudgetModel = {
   contextWindow?: number;
   maxTokens?: number;
+  /** Deployment ceiling; a configured window above it cannot be served. */
+  maxContextWindow?: number;
 };
 
 /**
@@ -107,9 +109,17 @@ export type ContextBudgetLimits = Omit<ContextBudget, "tokens">;
 export function contextBudgetLimitsFor(
   model: ContextBudgetModel,
 ): ContextBudgetLimits {
+  // A window set above what the deployment accepts would let the session grow
+  // past the point the provider rejects it before compaction starts.
+  const configuredWindow = Math.round(model.contextWindow || DEFAULT_CONTEXT_WINDOW);
+  const ceiling = typeof model.maxContextWindow === "number" &&
+    Number.isFinite(model.maxContextWindow) &&
+    model.maxContextWindow > 0
+    ? Math.round(model.maxContextWindow)
+    : undefined;
   const contextWindow = Math.max(
     1,
-    Math.round(model.contextWindow || DEFAULT_CONTEXT_WINDOW),
+    ceiling === undefined ? configuredWindow : Math.min(configuredWindow, ceiling),
   );
   const modelOutputBudget = Math.min(
     Math.max(1, Math.round(model.maxTokens || DEFAULT_MAX_TOKENS)),

@@ -867,4 +867,10 @@ test("a ChatGPT account runs the window its Codex list states, not the API recor
     resolveBindingLimits(binding.modelConfig, stale).binding.contextWindow,
     300_000,
   );
+  // The account's Extended context switch runs it at the stated maximum.
+  assert.equal(
+    resolveBindingLimits(binding.modelConfig, { ...stored, extendedContext: true })
+      .binding.contextWindow,
+    872_000,
+  );
 });

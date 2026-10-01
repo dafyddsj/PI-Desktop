@@ -1815,6 +1815,8 @@ test("a Codex account takes its deployment window over the public API record", a
   assert.equal(pinned.contextWindow, 272_000);
   assert.equal(pinned.limit.context, 272_000);
   assert.equal(pinned.catalogContextWindow, 272_000);
+  // A pinned default is not a ceiling the deployment stated.
+  assert.equal(pinned.maxContextWindow, undefined);
   assert.equal(pinned.maxTokens, 128_000);
 
   catalog.rememberVendorLimits("openai-codex", new Map([
@@ -1823,6 +1825,7 @@ test("a Codex account takes its deployment window over the public API record", a
   const live = catalogModelConfigFor(catalog, codex);
   assert.equal(live.contextWindow, 300_000);
   assert.equal(live.catalogContextWindow, 872_000);
+  assert.equal(live.maxContextWindow, 872_000);
 
   // An API key row for the same model keeps the published API window.
   const api = catalogModelConfigFor(catalog, {

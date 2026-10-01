@@ -17,7 +17,13 @@ import {
 } from "@pi-desktop/shared";
 import { useTranslation } from "react-i18next";
 import { pairsToRecord, recordToPairs } from "../extensions/KeyValueRows";
-import { Button, Field, Input, portalOverlay } from "../ui";
+import { Button, Field, Input, SettingsToggle, portalOverlay } from "../ui";
+import { SettingsRow } from "../../features/settings/primitives";
+import {
+  accountOffersExtendedContext,
+  extendedContextEnabled,
+  withExtendedContext,
+} from "./extended-context";
 import { ProviderHeadersEditor } from "./ProviderHeadersEditor";
 import { useProviderModels } from "./useProviderModels";
 import { ModelSelectionPanes, useModelSelection } from "./ModelSelectionPanes";
@@ -47,6 +53,9 @@ export function VendorAccountDialog({
   const [name, setName] = useState(initialName);
   const [headerPairs, setHeaderPairs] = useState(() => recordToPairs(provider.headers));
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [extendedContext, setExtendedContext] = useState(() =>
+    extendedContextEnabled(provider.models),
+  );
   const [models, setModels] = useState<ModelBinding[]>(
     provider.models.length > 0
       ? provider.models
@@ -68,6 +77,7 @@ export function VendorAccountDialog({
     provider,
   );
   const selection = useModelSelection(discovery, models, setModels);
+  const offersExtendedContext = accountOffersExtendedContext(discovery.models, models);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -90,7 +100,12 @@ export function VendorAccountDialog({
     // thinking level the runtime would discard. The account's default model is
     // always the first binding, so reordering or removing the head is the only
     // way to change it.
-    const persisted = selection.bindingsToPersist;
+    // Stamped at save so a model chosen after the switch was turned on runs
+    // extended too.
+    const persisted = withExtendedContext(
+      selection.bindingsToPersist,
+      offersExtendedContext && extendedContext,
+    );
     onSave({
       name: name.trim(),
       modelId: persisted[0].id,
@@ -132,6 +147,20 @@ export function VendorAccountDialog({
               onChange={(event) => setName(event.target.value)}
             />
           </Field>
+
+          {offersExtendedContext ? (
+            <SettingsRow
+              title={t("settings.extendedContext")}
+              description={t("settings.extendedContextHint")}
+            >
+              <SettingsToggle
+                checked={extendedContext}
+                label={t("settings.extendedContext")}
+                disabled={saving}
+                onChange={() => setExtendedContext((current) => !current)}
+              />
+            </SettingsRow>
+          ) : null}
 
           <ModelSelectionPanes
             discovery={discovery}

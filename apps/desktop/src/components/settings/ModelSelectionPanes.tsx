@@ -235,6 +235,15 @@ export function ModelSelectionPanes({
   autoPicked = false,
 }: ModelSelectionPanesProps) {
   const { t } = useTranslation();
+  // A deployment that accepts more than the window shown says so, e.g.
+  // "272K (up to 872K)", so the larger window is discoverable.
+  const contextWindowLabel = (window?: number, max?: number) =>
+    max !== undefined && max > (window ?? 0)
+      ? t("settings.contextWindowUpTo", {
+          window: formatTokenCount(window),
+          max: formatTokenCount(max),
+        })
+      : formatTokenCount(window);
   const { rows, models, publishedLevelsById, setModels } = selection;
   const [modelQuery, setModelQuery] = useState("");
   const [chosenQuery, setChosenQuery] = useState("");
@@ -463,7 +472,8 @@ export function ModelSelectionPanes({
                 ) : null}
               </span>
               <span className="provider-models-row-limits">
-                {formatTokenCount(row.contextWindow)} · {formatTokenCount(row.maxTokens)}
+                {contextWindowLabel(row.contextWindow, row.info?.maxContextWindow)} ·{" "}
+                {formatTokenCount(row.maxTokens)}
               </span>
             </label>
           </li>
@@ -631,7 +641,7 @@ export function ModelSelectionPanes({
                       <span className="provider-chosen-row-alias">{binding.alias.trim()}</span>
                     ) : null}
                     <span className="provider-chosen-row-limits">
-                      {formatTokenCount(binding.contextWindow)} ·{" "}
+                      {contextWindowLabel(binding.contextWindow, info?.maxContextWindow)} ·{" "}
                       {formatTokenCount(binding.maxTokens)}
                     </span>
                     <button

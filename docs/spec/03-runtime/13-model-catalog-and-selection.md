@@ -253,6 +253,23 @@ pi-ai's pinned Codex catalog answers. Other published metadata still comes from
 models.dev. A vendor-account login seeds each model's limits as `catalog`
 provenance, so a later refresh or account list reaches the saved row.
 
+A stated maximum is a hard ceiling: the compaction budget, output cap,
+overflow detection and the Composer context meter all clamp a configured
+window to it, so a hand-entered window above it (the `1M` preset on an 872K
+account) cannot let a session grow past what the deployment accepts. A pinned
+default is not a stated maximum and clamps nothing.
+
+The model pickers show a model whose deployment accepts more than its current
+window as `272K (up to 872K)`. When any listed model can run larger, the vendor
+account dialog offers an **Extended context** switch. It is stored per model
+binding as `extendedContext: true` and stamped onto every model the account
+saves, so a model chosen later runs extended too; turning it off removes the
+marker. `resolveBindingLimits` runs an extended, catalog-sourced binding at the
+deployment's stated maximum, so the window follows that maximum as the
+deployment changes it, and leaves models without a larger maximum (gpt-5.5) at
+their default. A window the user entered (`user`) still wins. A deployment-
+stated window also counts as published for an id models.dev does not list.
+
 Repeated metadata lookups use a bounded process-local cache keyed by the
 configured vendor key, base URL, and case-insensitive, trimmed model ID. Both
 matches and misses are cached; provider/API preference and candidate ranking

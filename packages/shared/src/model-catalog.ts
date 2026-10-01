@@ -198,7 +198,21 @@ function positiveTokenCount(value?: number | null): number | undefined {
 
 /** Binding fields the limits resolver reads and rewrites. */
 type BindingLimits = Pick<ModelBinding, "contextWindow"> &
-  Partial<Pick<ModelBinding, "maxTokens" | "contextWindowSource" | "maxTokensSource">>;
+  Partial<
+    Pick<
+      ModelBinding,
+      "maxTokens" | "contextWindowSource" | "maxTokensSource" | "extendedContext"
+    >
+  >;
+
+/** Catalog baseline fields the limits resolver reads. */
+type CatalogLimits = {
+  contextWindow?: number | null;
+  maxTokens?: number | null;
+  /** Deployment ceiling, when the serving deployment states one. */
+  maxContextWindow?: number | null;
+  source?: string;
+};
 
 /**
  * Resolve a saved binding's limits against its catalog baseline for
@@ -219,14 +233,14 @@ type BindingLimits = Pick<ModelBinding, "contextWindow"> &
  * taken while the record still resolved stays in force.
  */
 export function resolveBindingLimits<
-  C extends { contextWindow?: number | null; maxTokens?: number | null; source?: string },
+  C extends CatalogLimits,
   B extends BindingLimits,
 >(catalogConfig: C, binding: B): {
   catalogConfig: C;
   binding: B & Partial<Pick<ModelBinding, "contextWindowSource" | "maxTokensSource">>;
 };
 export function resolveBindingLimits<
-  C extends { contextWindow?: number | null; maxTokens?: number | null; source?: string },
+  C extends CatalogLimits,
   B extends BindingLimits,
 >(
   catalogConfig: C,
@@ -236,17 +250,28 @@ export function resolveBindingLimits<
   binding: (B & Partial<Pick<ModelBinding, "contextWindowSource" | "maxTokensSource">>) | null | undefined;
 };
 export function resolveBindingLimits(
-  catalogConfig: { contextWindow?: number | null; maxTokens?: number | null; source?: string },
+  catalogConfig: CatalogLimits,
   binding: BindingLimits | null | undefined,
 ): {
-  catalogConfig: { contextWindow?: number | null; maxTokens?: number | null; source?: string };
+  catalogConfig: CatalogLimits;
   binding: BindingLimits | null | undefined;
 } {
   if (!binding) return { catalogConfig, binding };
   const publishedRecord = catalogConfig.source !== "generic";
-  const published = publishedRecord
+  const deploymentCeiling = positiveTokenCount(catalogConfig.maxContextWindow);
+  // A window the serving deployment states is authoritative even for an id
+  // the catalog has no record of.
+  const deploymentDefault = publishedRecord || deploymentCeiling !== undefined
     ? positiveTokenCount(catalogConfig.contextWindow)
     : undefined;
+  // An extended-context binding runs at the deployment's ceiling and follows
+  // it as the deployment changes it.
+  const published =
+    binding.extendedContext === true &&
+    deploymentCeiling !== undefined &&
+    deploymentDefault !== undefined
+      ? Math.max(deploymentDefault, deploymentCeiling)
+      : deploymentDefault;
   const publishedMax = publishedRecord
     ? positiveTokenCount(catalogConfig.maxTokens)
     : undefined;

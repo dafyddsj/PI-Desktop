@@ -446,6 +446,11 @@ export function registerProviderIpc({
           providerId: provider?.id ?? "",
           contextWindow: modelConfig.contextWindow,
           maxTokens: modelConfig.maxTokens,
+          // What the deployment accepts when the window is raised, so the
+          // picker can say a larger window is available.
+          ...(catalogModelConfig.maxContextWindow !== undefined
+            ? { maxContextWindow: catalogModelConfig.maxContextWindow }
+            : {}),
           // Published modalities, taken before the binding is applied. This
           // record is what the settings panel compares its checkboxes against,
           // so letting a stored override shape it would make the override its
