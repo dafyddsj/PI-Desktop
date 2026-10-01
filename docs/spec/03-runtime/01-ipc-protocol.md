@@ -1679,8 +1679,9 @@ written into the Markdown file.
 - `agents.read(id)` → `{ subagent, body }`
 - `agents.remove(id)`
 - `agents.setEnabled(id, enabled)`
-- `agents.disabledBuiltins` → `{ disabled: string[] }`
+- `agents.builtinOverlay` → `{ disabled: string[], models: Record<string, string> }`
 - `agents.setBuiltinEnabled(id, enabled)` → `{ id, enabled }`
+- `agents.setBuiltinModel(id, model)` → `{ id, model }`
 
 The `thinkingLevel` field accepted by `agents.create` and `agents.update` may
 be a canonical thinking level, `omit`, or the empty string. The empty string
@@ -1698,7 +1699,7 @@ The `tools` array may include the token `inherit` (ADR 0246). `inherit` alone
 is a valid grant; host-core must not drop the document. Settings round-trips
 the token as `tools: inherit` or `tools: [inherit, Bash]`.
 
-`agents.disabledBuiltins` and `agents.setBuiltinEnabled` carry activation for the
+`agents.builtinOverlay` and `agents.setBuiltinEnabled` carry activation for the
 shipped builtins, which have no document to switch (ADR 0270). Handles are stored
 at the global level in `<data>/agent-capabilities/subagent-builtins.json`, a file
 of its own: the user-document scan prunes state for ids it cannot see, and a
@@ -1707,6 +1708,13 @@ the next scan. `agents.setBuiltinEnabled` normalizes the id the way a document
 name is normalized and rejects an empty one with `SUBAGENT_INVALID`; a handle no
 current builtin uses is stored inertly rather than refused, because host-core
 does not ship the builtin list.
+
+`agents.setBuiltinModel` stores a `provider/model` pin in
+`<data>/agent-capabilities/subagent-builtin-models.json`. Absence of a handle
+means inherit the session model. The empty string clears. Disabling a builtin
+does not drop its pin. Pins stay on this machine; they are not part of config
+sync. `agents.builtinOverlay` returns both maps in one read so launch and
+Settings stamp the same overlay.
 
 Electron's `subagent/list` IPC channel exposes the same global-only list to
 Settings > Agent > Subagents. `subagent/catalog` returns the effective Task

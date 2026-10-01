@@ -1214,6 +1214,11 @@ export const api = {
       id,
       enabled,
     }),
+  setBuiltinSubagentModel: (id: string, model: string) =>
+    invoke<{ id: string; model: string }>(IPC.invoke.subagentSetBuiltinModel, {
+      id,
+      model,
+    }),
   setUserSubagentScope: (id: string, scope: ActivationScope) =>
     invoke(IPC.invoke.subagentSetScope, { id, scope }),
   /** Registry entries reveal by id; project documents pass their own path. */

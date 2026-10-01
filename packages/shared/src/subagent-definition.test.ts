@@ -10,6 +10,7 @@ import {
   mergeSubagentDefinitions,
   normalizeSubagentName,
   parseSubagentDefinition,
+  parseSubagentModelPin,
   resolveSubagentToolNames,
   subagentCanMutate,
   subagentPinnedProviders,
@@ -645,5 +646,29 @@ describe("definition fallback models", () => {
   it("rejects a malformed fallback rather than silently changing the requested chain", () => {
     const result = parse("---\ndescription: Bad fallback.\nfallbackModels: [vendor/valid, bare-model]\n---\nFinish.");
     expect(result.ok).toBe(false);
+  });
+});
+
+describe("parseSubagentModelPin", () => {
+  it("splits on the first slash and keeps slashes in the model id", () => {
+    expect(parseSubagentModelPin("anthropic/claude-haiku-4-5")).toEqual({
+      providerId: "anthropic",
+      modelId: "claude-haiku-4-5",
+    });
+    expect(parseSubagentModelPin("openrouter/deepseek/deepseek-chat")).toEqual({
+      providerId: "openrouter",
+      modelId: "deepseek/deepseek-chat",
+    });
+    expect(parseSubagentModelPin("  My Gateway/local-model  ")).toEqual({
+      providerId: "My Gateway",
+      modelId: "local-model",
+    });
+  });
+
+  it("returns null when either half is missing", () => {
+    expect(parseSubagentModelPin("noslash")).toBeNull();
+    expect(parseSubagentModelPin("/claude-haiku-4-5")).toBeNull();
+    expect(parseSubagentModelPin("anthropic/")).toBeNull();
+    expect(parseSubagentModelPin("")).toBeNull();
   });
 });

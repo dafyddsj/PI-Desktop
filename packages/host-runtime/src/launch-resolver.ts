@@ -162,13 +162,22 @@ export function createHeadlessLaunchResolver(options: HeadlessLaunchResolverOpti
     return documents;
   }
 
-  async function disabledBuiltinSubagents(): Promise<string[]> {
+  async function builtinOverlayOrEmpty(): Promise<{
+    disabled: string[];
+    modelPins: Record<string, string>;
+  }> {
     try {
-      const result = await requireHost().call<{ disabled: string[] }>("agents.disabledBuiltins");
-      return result.disabled ?? [];
+      const result = await requireHost().call<{
+        disabled?: string[];
+        models?: Record<string, string>;
+      }>("agents.builtinOverlay");
+      return {
+        disabled: result.disabled ?? [],
+        modelPins: result.models ?? {},
+      };
     } catch (error) {
       if (!isHostUnavailable(error)) log("warn", "builtin subagent state failed", { error: String(error) });
-      return [];
+      return { disabled: [], modelPins: {} };
     }
   }
 
@@ -306,7 +315,7 @@ export function createHeadlessLaunchResolver(options: HeadlessLaunchResolverOpti
 
     const subagentCatalog = await loadSubagentDefinitions(projectPath, {
       userDocuments: await activeUserSubagentDocuments(projectPath),
-      disabledBuiltins: await disabledBuiltinSubagents(),
+      builtinOverlay: await builtinOverlayOrEmpty(),
     });
     const subagentBindings = await resolveSubagentProviders({
       definitions: subagentCatalog.definitions,

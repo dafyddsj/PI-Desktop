@@ -46,12 +46,12 @@ test("the shared index re-exports the preset catalog", () => {
   assert.match(sharedIndex, /export \* from "\.\/subagent-presets\.js"/);
 });
 
-test("the preset catalog covers the four builtin roles", () => {
-  for (const id of ["explorer", "code-reviewer", "test-runner", "fixer"]) {
+test("the preset catalog covers the builtin roles", () => {
+  for (const id of ["explorer", "code-reviewer", "test-runner", "fixer", "ui-designer"]) {
     assert.match(
       sharedPresets,
-      new RegExp(`id: "${id}"`),
-      `expected preset id ${id} to be defined`,
+      new RegExp(`name: "${id}"`),
+      `expected builtin spec name ${id} to be defined`,
     );
   }
 });
@@ -92,11 +92,13 @@ test("the editor can prefill a create draft from a catalog definition", () => {
   assert.match(editorSource, /copiedPreset && initialPresetId \? initialPresetId/);
 });
 
-test("the model picker uses the configured provider catalog", () => {
-  // The picker uses the shared provider catalog and preserves an existing
-  // orphan pin instead of silently changing it to session inheritance.
-  assert.match(editorSource, /subagentModelChoices\(providers\)/);
-  assert.match(editorSource, /groupSubagentModelChoices\(modelChoices\)/);
+test("the model picker uses the configured provider catalog", async () => {
+  const pageSource = await readFile(
+    new URL("../src/components/settings/AgentSubagentsPage.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(pageSource, /subagentModelChoices\(providers\)/);
+  assert.match(pageSource, /groupSubagentModelChoices\(modelChoices\)/);
   assert.match(editorSource, /subagentModelOrphanPin\(draft\.model, modelChoices\)/);
 });
 
@@ -113,11 +115,15 @@ test("the model picker keeps existing pins visible", async () => {
   assert.match(pickerSource, /orphanPin/);
 });
 
-test("the model picker offers every configured provider model, with no free-text path", () => {
+test("the model picker offers every configured provider model, with no free-text path", async () => {
   // The picker is the only way to set a model: every option comes from the
   // configured provider catalog, so a saved pin is always resolvable.
-  assert.match(editorSource, /subagentModelChoices\(providers\)/);
-  assert.match(editorSource, /groupSubagentModelChoices\(modelChoices\)/);
+  const pageSource = await readFile(
+    new URL("../src/components/settings/AgentSubagentsPage.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(pageSource, /subagentModelChoices\(providers\)/);
+  assert.match(pageSource, /groupSubagentModelChoices\(modelChoices\)/);
   assert.match(editorSource, /subagentModelOrphanPin\(draft\.model, modelChoices\)/);
   assert.doesNotMatch(editorSource, /CUSTOM_SUBAGENT_MODEL_VALUE/);
   assert.doesNotMatch(editorSource, /modelPickCustom/);
@@ -136,17 +142,9 @@ test("the editor styles ship with the picker", () => {
 });
 
 test("hyphenated preset ids map to catalog keys instead of capitalizing the id", () => {
-  // `capitalize("code-reviewer")` produced `presetCode-reviewerName`, which is
-  // not in the catalog and rendered as a raw key. The map is the contract.
-  assert.match(editorSource, /export const SUBAGENT_PRESET_COPY/);
-  assert.match(
-    editorSource,
-    /"code-reviewer": \{ name: "presetReviewerName", desc: "presetReviewerDesc" \}/,
-  );
-  assert.match(
-    editorSource,
-    /"test-runner": \{ name: "presetTestRunnerName", desc: "presetTestRunnerDesc" \}/,
-  );
+  assert.match(editorSource, /BUILTIN_SUBAGENT_SPECS\.find/);
+  assert.match(editorSource, /spec\.titleKey/);
+  assert.match(editorSource, /spec\.descriptionKey/);
   assert.doesNotMatch(editorSource, /capitalize\(preset\.id\)/);
   assert.doesNotMatch(
     editorSource,

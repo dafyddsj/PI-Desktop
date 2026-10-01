@@ -497,11 +497,16 @@ export function parseSubagentDefinition(
   };
 }
 
-/**
- * `model: <provider>/<model>` is the compact spelling; `provider:` plus
- * `model:` is the explicit one. A model id can itself contain slashes
- * (`openrouter` style), so only the first segment is the provider.
- */
+export function parseSubagentModelPin(value: string): SubagentModelPin | null {
+  const trimmed = value.trim();
+  const slash = trimmed.indexOf("/");
+  if (slash <= 0 || slash === trimmed.length - 1) return null;
+  return {
+    providerId: trimmed.slice(0, slash),
+    modelId: trimmed.slice(slash + 1),
+  };
+}
+
 function parseModelPin(
   frontmatter: Frontmatter,
   errors: string[],
@@ -516,17 +521,14 @@ function parseModelPin(
   if (declaredProvider) {
     return { providerId: declaredProvider, modelId: declaredModel };
   }
-  const slash = declaredModel.indexOf("/");
-  if (slash <= 0 || slash === declaredModel.length - 1) {
+  const pin = parseSubagentModelPin(declaredModel);
+  if (!pin) {
     errors.push(
       `\`model\` must be "<provider>/<model>" or paired with \`provider\` (got "${declaredModel}")`,
     );
     return undefined;
   }
-  return {
-    providerId: declaredModel.slice(0, slash),
-    modelId: declaredModel.slice(slash + 1),
-  };
+  return pin;
 }
 
 /**

@@ -4729,9 +4729,12 @@ async fn handle_request(
                 .map_err(subagent_err)?;
             Ok(json!({ "subagent": subagent }))
         }
-        "agents.disabledBuiltins" => {
+        "agents.builtinOverlay" => {
             let st = state.lock().await;
-            Ok(json!({ "disabled": st.user_subagents.disabled_builtins() }))
+            Ok(json!({
+                "disabled": st.user_subagents.disabled_builtins(),
+                "models": st.user_subagents.builtin_model_pins(),
+            }))
         }
         "agents.setBuiltinEnabled" => {
             let id = require_id(&params)?;
@@ -4745,6 +4748,22 @@ async fn handle_request(
                 .set_builtin_enabled(&id, enabled)
                 .map_err(subagent_err)?;
             Ok(json!({ "id": id, "enabled": enabled }))
+        }
+        "agents.setBuiltinModel" => {
+            let id = require_id(&params)?;
+            let model = params.get("model").and_then(Value::as_str);
+            let mut st = state.lock().await;
+            let id = st
+                .user_subagents
+                .set_builtin_model(&id, model)
+                .map_err(subagent_err)?;
+            let stored = st
+                .user_subagents
+                .builtin_model_pins()
+                .get(&id)
+                .cloned()
+                .unwrap_or_default();
+            Ok(json!({ "id": id, "model": stored }))
         }
 
         "market.refresh" => {

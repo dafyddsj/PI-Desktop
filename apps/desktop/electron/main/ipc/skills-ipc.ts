@@ -20,8 +20,10 @@ export type SkillsIpcDependencies = {
   getHost: () => HostProcess | null;
   optionalWorkspaceRoot: () => Promise<string | null>;
   activeUserSubagentDocuments: (projectPath: string | undefined) => Promise<UserSubagentDocument[]>;
-  /** Handles whose shipped definition the user turned off (builtin activation). */
-  disabledBuiltinSubagents: () => Promise<string[]>;
+  builtinOverlayOrEmpty: () => Promise<{
+    disabled: string[];
+    modelPins: Record<string, string>;
+  }>;
   stripWinLongPrefix: (path: string) => string;
   sendToRenderer: (channel: string, payload?: unknown) => void;
   searchSkillMarket: (query: string, sources: { id: string; name: string; url: string }[]) => Promise<SkillMarketSearchResult>;
@@ -35,7 +37,7 @@ export function registerSkillsIpc({
   getHost,
   optionalWorkspaceRoot,
   activeUserSubagentDocuments,
-  disabledBuiltinSubagents,
+  builtinOverlayOrEmpty,
   stripWinLongPrefix,
   sendToRenderer,
   searchSkillMarket,
@@ -316,15 +318,15 @@ export function registerSkillsIpc({
    */
   handle(IPC.invoke.subagentCatalog, async () => {
     const projectPath = (await optionalWorkspaceRoot()) ?? undefined;
-    const disabled = await disabledBuiltinSubagents();
+    const overlay = await builtinOverlayOrEmpty();
     const { definitions, builtins, diagnostics } = await loadSubagentDefinitions(
       projectPath,
       {
         userDocuments: await activeUserSubagentDocuments(projectPath),
-        disabledBuiltins: disabled,
+        builtinOverlay: overlay,
       },
     );
-    const off = new Set(disabled);
+    const off = new Set(overlay.disabled);
     return {
       subagents: definitions,
       builtins: builtins.map((definition) => ({
@@ -386,6 +388,16 @@ export function registerSkillsIpc({
     async (payload: { id: string; enabled: boolean }) => {
       if (!host) throw new Error("host unavailable");
       const res = await host.call("agents.setBuiltinEnabled", payload);
+      sendToRenderer(IPC.event.pluginChanged, { reason: "subagent" });
+      return res;
+    },
+  );
+
+  handle(
+    IPC.invoke.subagentSetBuiltinModel,
+    async (payload: { id: string; model: string }) => {
+      if (!host) throw new Error("host unavailable");
+      const res = await host.call("agents.setBuiltinModel", payload);
       sendToRenderer(IPC.event.pluginChanged, { reason: "subagent" });
       return res;
     },

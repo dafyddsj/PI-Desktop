@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { SubagentDefinition, UserSubagentRecord } from "@pi-desktop/shared";
+import {
+  parseSubagentModelPin,
+  subagentModelKey,
+  type SubagentDefinition,
+  type UserSubagentRecord,
+} from "@pi-desktop/shared";
 import { api } from "../../lib/api";
 import { useAppStore } from "../../stores/app-store";
 import { useHostCollection } from "../../hooks/use-host-collection";
@@ -33,6 +38,13 @@ import {
   type BuiltinSubagentRow,
 } from "./subagent-settings";
 import {
+  groupSubagentModelChoices,
+  subagentModelChoices,
+  subagentModelOrphanPin,
+  subagentModelSelectValue,
+} from "./subagent-models";
+import { SubagentModelPicker } from "./SubagentModelPicker";
+import {
   IconBot,
   IconCopy,
   IconFolderOpen,
@@ -50,6 +62,24 @@ type SubagentEditorState = {
   presetId?: string;
 };
 
+function builtinPinValue(definition: SubagentDefinition): string {
+  return definition.model ? subagentModelKey(definition.model) : "";
+}
+
+function withBuiltinPin(row: BuiltinSubagentRow, pin: string): BuiltinSubagentRow {
+  const parsed = parseSubagentModelPin(pin);
+  if (!parsed) {
+    return { ...row, model: undefined };
+  }
+  return { ...row, model: parsed };
+}
+
+function withOwnedPin(row: UserSubagentRecord, pin: string): UserSubagentRecord {
+  const trimmed = pin.trim();
+  if (!trimmed) return { ...row, model: undefined };
+  return { ...row, model: trimmed };
+}
+
 function builtinDisplayName(
   id: string,
   t: (key: string) => string,
@@ -61,6 +91,12 @@ function builtinDisplayName(
 export function AgentSubagentsPage() {
   const { t } = useTranslation();
   const showToast = useAppStore((state) => state.showToast);
+  const providers = useAppStore((state) => state.providers);
+  const modelChoices = useMemo(() => subagentModelChoices(providers), [providers]);
+  const modelGroups = useMemo(
+    () => groupSubagentModelChoices(modelChoices),
+    [modelChoices],
+  );
   const {
     data: { owned, builtins },
     setData: setSubagents,
@@ -142,6 +178,68 @@ export function AgentSubagentsPage() {
         ...current,
         builtins: current.builtins.map((row) =>
           row.name === handle ? { ...row, enabled: builtin.enabled } : row,
+        ),
+      }));
+      showToast(error instanceof Error ? error.message : String(error), { variant: "error" });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const modelPicker = (
+    pin: string,
+    busy: boolean,
+    onChange: (next: string) => void,
+  ) => (
+    <SubagentModelPicker
+      value={subagentModelSelectValue(pin, modelChoices)}
+      groups={modelGroups}
+      orphanPin={subagentModelOrphanPin(pin, modelChoices)}
+      label={t("extensions.subagents.model")}
+      disabled={busy}
+      onChange={onChange}
+    />
+  );
+
+  const setOwnedModel = async (subagent: UserSubagentRecord, pin: string) => {
+    if (busyId === subagent.id) return;
+    setBusyId(subagent.id);
+    setSubagents((current) => ({
+      ...current,
+      owned: current.owned.map((row) =>
+        row.id === subagent.id ? withOwnedPin(row, pin) : row,
+      ),
+    }));
+    try {
+      await api.updateUserSubagent(subagent.id, { model: pin });
+    } catch (error) {
+      setSubagents((current) => ({
+        ...current,
+        owned: current.owned.map((row) => (row.id === subagent.id ? subagent : row)),
+      }));
+      showToast(error instanceof Error ? error.message : String(error), { variant: "error" });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const setBuiltinModel = async (builtin: BuiltinSubagentRow, pin: string) => {
+    const handle = builtin.name;
+    if (busyId === `builtin:${handle}`) return;
+    setBusyId(`builtin:${handle}`);
+    setSubagents((current) => ({
+      ...current,
+      builtins: current.builtins.map((row) =>
+        row.name === handle ? withBuiltinPin(row, pin) : row,
+      ),
+    }));
+    try {
+      await api.setBuiltinSubagentModel(handle, pin);
+    } catch (error) {
+      setSubagents((current) => ({
+        ...current,
+        builtins: current.builtins.map((row) =>
+          row.name === handle ? builtin : row,
         ),
       }));
       showToast(error instanceof Error ? error.message : String(error), { variant: "error" });
@@ -264,6 +362,7 @@ export function AgentSubagentsPage() {
     const name = builtinDisplayName(handle, t);
     const canCopy = !ownedHandles.has(handle);
     const busy = busyId === `builtin:${handle}`;
+    const pin = builtinPinValue(definition);
     return (
       <CapabilityRow
         key={`builtin:${handle}`}
@@ -286,6 +385,7 @@ export function AgentSubagentsPage() {
         }
         actions={
           <>
+            {modelPicker(pin, busy, (next) => void setBuiltinModel(definition, next))}
             {canCopy ? (
               <TooltipButton
                 type="button"
@@ -312,6 +412,7 @@ export function AgentSubagentsPage() {
     const name = subagent.name || subagent.id;
     const busy = busyId === subagent.id;
     const isArmed = armed === subagent.id;
+    const pin = subagent.model ?? "";
     const items: CapabilityMenuItem[] = [
       {
         key: "reveal",
@@ -359,6 +460,7 @@ export function AgentSubagentsPage() {
         }
         actions={
           <>
+            {modelPicker(pin, busy, (next) => void setOwnedModel(subagent, next))}
             <TooltipButton
               type="button"
               className="settings-icon-button"
@@ -460,6 +562,8 @@ export function AgentSubagentsPage() {
           editing={editor.editing}
           initialPresetId={editor.presetId}
           saving={saving}
+          modelChoices={modelChoices}
+          modelGroups={modelGroups}
           onClose={() => {
             if (!saving) setEditor(null);
           }}

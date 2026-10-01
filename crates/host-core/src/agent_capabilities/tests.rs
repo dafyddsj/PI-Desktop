@@ -374,3 +374,56 @@ fn moving_a_file_never_replaces_an_existing_destination() {
     assert_eq!(fs::read_to_string(&to).unwrap(), "source");
     assert_eq!(fs::read_to_string(&from).unwrap(), "second");
 }
+
+#[test]
+fn pin_set_skips_write_when_unchanged() {
+    let dir = tempdir().unwrap();
+    let mut pins = CapabilityPins::new(dir.path(), "subagent-builtin-models");
+    pins.set("explorer", "anthropic/haiku").unwrap();
+    let path = dir
+        .path()
+        .join("agent-capabilities/subagent-builtin-models.json");
+    let before = fs::read(&path).unwrap();
+    pins.set("explorer", "anthropic/haiku").unwrap();
+    assert_eq!(fs::read(&path).unwrap(), before);
+}
+
+#[test]
+fn pin_clear_of_absent_key_does_not_write() {
+    let dir = tempdir().unwrap();
+    let mut pins = CapabilityPins::new(dir.path(), "subagent-builtin-models");
+    pins.clear("explorer").unwrap();
+    assert!(!dir
+        .path()
+        .join("agent-capabilities/subagent-builtin-models.json")
+        .exists());
+}
+
+#[test]
+fn leftover_temp_file_does_not_hide_the_saved_pins() {
+    let dir = tempdir().unwrap();
+    let mut pins = CapabilityPins::new(dir.path(), "subagent-builtin-models");
+    pins.set("explorer", "anthropic/haiku").unwrap();
+    let path = dir
+        .path()
+        .join("agent-capabilities/subagent-builtin-models.json");
+    let temporary = path.with_extension("json.tmp");
+    fs::write(&temporary, br#"{ "values": { "explorer": "other/x" } }"#).unwrap();
+    let reopened = CapabilityPins::new(dir.path(), "subagent-builtin-models");
+    assert_eq!(
+        reopened.snapshot().get("explorer").map(String::as_str),
+        Some("anthropic/haiku")
+    );
+}
+
+#[test]
+fn failed_pin_save_restores_the_previous_map() {
+    let dir = tempdir().unwrap();
+    let mut pins = CapabilityPins::new(dir.path(), "subagent-builtin-models");
+    let path = dir
+        .path()
+        .join("agent-capabilities/subagent-builtin-models.json");
+    fs::create_dir_all(&path).unwrap();
+    assert!(pins.set("explorer", "anthropic/haiku").is_err());
+    assert!(pins.snapshot().is_empty());
+}

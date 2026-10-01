@@ -3,7 +3,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, HashSet};
-use std::fs;
+use std::fs::{self, File};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
@@ -249,6 +250,88 @@ impl CapabilityState {
             values: self.values.clone(),
         };
         fs::write(&self.path, serde_json::to_string_pretty(&file)?)?;
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct PinFile {
+    #[serde(default)]
+    values: BTreeMap<String, String>,
+}
+
+/// String-valued sibling of [`CapabilityState`]. Absence of a key means inherit.
+pub struct CapabilityPins {
+    path: PathBuf,
+    values: BTreeMap<String, String>,
+}
+
+impl CapabilityPins {
+    pub fn new(data_dir: &Path, kind: &str) -> Self {
+        let path = data_dir
+            .join("agent-capabilities")
+            .join(format!("{kind}.json"));
+        let values = fs::read_to_string(&path)
+            .ok()
+            .and_then(|raw| serde_json::from_str::<PinFile>(&raw).ok())
+            .map(|file| file.values)
+            .unwrap_or_default();
+        Self { path, values }
+    }
+
+    pub fn snapshot(&self) -> BTreeMap<String, String> {
+        self.values.clone()
+    }
+
+    pub fn set(&mut self, id: &str, value: &str) -> Result<()> {
+        if self.values.get(id).map(String::as_str) == Some(value) {
+            return Ok(());
+        }
+        let previous = self.values.insert(id.to_string(), value.to_string());
+        if let Err(error) = self.save_atomic() {
+            match previous {
+                Some(old) => {
+                    self.values.insert(id.to_string(), old);
+                }
+                None => {
+                    self.values.remove(id);
+                }
+            }
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    pub fn clear(&mut self, id: &str) -> Result<()> {
+        let Some(previous) = self.values.remove(id) else {
+            return Ok(());
+        };
+        if let Err(error) = self.save_atomic() {
+            self.values.insert(id.to_string(), previous);
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    fn save_atomic(&self) -> Result<()> {
+        if let Some(parent) = self.path.parent() {
+            fs::create_dir_all(parent)
+                .with_context(|| format!("create pin directory {}", parent.display()))?;
+        }
+        let file = PinFile {
+            values: self.values.clone(),
+        };
+        let bytes = serde_json::to_vec_pretty(&file).context("serialize capability pins")?;
+        let temporary = self.path.with_extension("json.tmp");
+        let mut out =
+            File::create(&temporary).with_context(|| format!("create {}", temporary.display()))?;
+        out.write_all(&bytes)
+            .with_context(|| format!("write {}", temporary.display()))?;
+        out.sync_all()
+            .with_context(|| format!("flush {}", temporary.display()))?;
+        drop(out);
+        fs::rename(&temporary, &self.path)
+            .with_context(|| format!("replace {}", self.path.display()))?;
         Ok(())
     }
 }

@@ -296,7 +296,11 @@ test("the editor model field is a configured-only searchable picker with an empt
   // No hand-typed model id: the field never renders a free-text input.
   assert.doesNotMatch(modelField, /<Input/);
   assert.doesNotMatch(modelField, /modelPickCustom/);
-  assert.match(source, /subagentModelChoices\(providers\)/);
+  const pageSource = await readFile(
+    new URL("../src/components/settings/AgentSubagentsPage.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(pageSource, /subagentModelChoices\(providers\)/);
   assert.match(source, /resetSubagentTemplate\(draft\)/);
 });
 

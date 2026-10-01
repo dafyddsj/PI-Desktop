@@ -584,7 +584,7 @@ system while preserving their different data ownership:
   visually distinct from the track.
 
 - Subagents open one **New subagent / Edit subagent** sheet that
-  pre-fills the same fields the runtime's `BUILTIN_SUBAGENT_DOCUMENTS` ship
+  pre-fills the same fields the shared builtin spec ships
   with. Above the name field the sheet shows a "Start from template" row of
   compact name chips (Explorer, Code reviewer, Test runner, Fixer, UI
   designer, plus a blank option). Chips show the localized name only; the
@@ -610,9 +610,10 @@ system while preserving their different data ownership:
   is a picker over the configured providers' models; the picker groups entries
   by provider and every option comes from the configured catalog, so there is
   no hand-typed pin entry (issue #60). With no providers configured it shows
-  an empty state whose action opens Models. A builtin keeps its Built-in row,
-  which is switched but never edited; the picker is for new and user-owned
-  subagents only.
+  an empty state whose action opens Models. A builtin row is switched and can pin a model;
+  prompt and tools stay unedited. A user-owned row uses the same picker, and that
+  choice writes only the document's `model` field. The create/edit sheet still
+  has the picker for new subagents and for the rest of a user-owned definition.
   The create/edit sheet stays compact at desktop sizes: form controls are
   local filled wells with restrained padding, the prompt editor is the only
   intentionally tall control, and Advanced remains a compact disclosure. Hover

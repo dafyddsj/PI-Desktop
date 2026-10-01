@@ -1,17 +1,13 @@
-/**
- * Tests for `subagent-presets`. The presets drive the Subagent editor's
- * "start from template" affordances (issue #60) and must stay in lockstep with
- * `BUILTIN_SUBAGENT_DOCUMENTS` in `agent-runtime/src/subagent-definitions.ts`
- * so the editor pre-fills the same prompt the runtime will execute.
- */
-
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SUBAGENT_TOOLS } from "./subagent-definition.js";
+import { DEFAULT_SUBAGENT_TOOLS, parseSubagentDefinition } from "./subagent-definition.js";
 import {
+  BUILTIN_SUBAGENT_DOCUMENTS,
+  BUILTIN_SUBAGENT_SPECS,
   SUBAGENT_PRESETS,
   defaultSubagentPresetTools,
   fallbackBuiltinDefinitions,
   findSubagentPreset,
+  renderBuiltinSubagentDocument,
 } from "./subagent-presets.js";
 
 describe("SUBAGENT_PRESETS", () => {
@@ -44,7 +40,6 @@ describe("SUBAGENT_PRESETS", () => {
   });
 
   it("exposes no turn cap on any preset", () => {
-    // ADR 0253 removed the delegate turn limit, so no preset may carry one.
     for (const preset of SUBAGENT_PRESETS) {
       expect("maxTurns" in preset).toBe(false);
     }
@@ -64,6 +59,24 @@ describe("SUBAGENT_PRESETS", () => {
     expect(explorer?.tools ?? []).not.toContain("Edit");
     expect(reviewer?.tools ?? []).not.toContain("Edit");
     expect(runner?.tools ?? []).not.toContain("Edit");
+  });
+
+  it("agrees with the rendered builtin documents", () => {
+    expect(SUBAGENT_PRESETS).toHaveLength(BUILTIN_SUBAGENT_SPECS.length);
+    expect(BUILTIN_SUBAGENT_DOCUMENTS).toHaveLength(BUILTIN_SUBAGENT_SPECS.length);
+    for (const spec of BUILTIN_SUBAGENT_SPECS) {
+      const parsed = parseSubagentDefinition(renderBuiltinSubagentDocument(spec), {
+        source: "builtin",
+      });
+      expect(parsed.ok).toBe(true);
+      if (!parsed.ok) return;
+      const preset = findSubagentPreset(spec.name);
+      expect(preset).toBeDefined();
+      if (!preset) return;
+      expect(preset.description).toBe(parsed.definition.description);
+      expect([...preset.tools]).toEqual(parsed.definition.tools);
+      expect(preset.body.trim()).toBe(parsed.definition.prompt);
+    }
   });
 });
 
@@ -94,7 +107,6 @@ describe("fallbackBuiltinDefinitions", () => {
       expect(definition.source).toBe("builtin");
       expect(definition.prompt.trim().length).toBeGreaterThan(0);
       expect(definition.tools.length).toBeGreaterThan(0);
-      // A preset never exposes a turn cap (ADR 0253).
       expect("maxTurns" in definition).toBe(false);
     }
   });
