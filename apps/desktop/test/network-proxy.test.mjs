@@ -26,6 +26,8 @@ const hostProxy = await readFile(
 test("Electron main applies Chromium proxy and net.fetch", () => {
   assert.match(electronProxy, /ses\.setProxy\(config\)/);
   assert.match(electronProxy, /net\.fetch\.bind\(net\)/);
+  // Chromium's browser User-Agent gets pi-ai's OAuth token requests a 429.
+  assert.match(electronProxy, /withNodeFetchUserAgent\(net\.fetch\.bind\(net\)/);
   assert.match(electronProxy, /session-created/);
   assert.match(electronProxy, /pi-desktop\/network\/testProxy|PROXY_TEST_URL/);
   assert.match(electronProxy, /PI_DESKTOP_PROXY_JSON/);

@@ -26,6 +26,7 @@ import {
   type AuthenticatedProxyRelay,
 } from "@pi-desktop/agent-runtime";
 import { applyUserEndpointPolicyFromAppSettings } from "./endpoint-policy";
+import { withNodeFetchUserAgent } from "./main-fetch";
 
 const originalEnv = snapshotProxyEnv(process.env);
 let applied: NetworkProxySettings = { mode: "system" };
@@ -111,7 +112,7 @@ function chromiumConfigFromApplied(): ChromiumProxyConfig {
 function installMainFetch(): void {
   if (fetchPatched) return;
   fetchPatched = true;
-  globalThis.fetch = net.fetch.bind(net) as typeof fetch;
+  globalThis.fetch = withNodeFetchUserAgent(net.fetch.bind(net) as typeof fetch);
 }
 
 async function applyResolvedConfig(config: ChromiumProxyConfig): Promise<void> {
