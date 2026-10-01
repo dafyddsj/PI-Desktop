@@ -206,9 +206,9 @@ try {
   // (ADR 0270): it must survive the user-document scan, which is what the
   // registry runs on every list, and the loader must drop the handle from the
   // delegation catalog while still reporting the builtin row.
-  const beforeBuiltins = await call("agents.disabledBuiltins");
+  const beforeBuiltins = await call("agents.builtinOverlay");
   const offBuiltin = await call("agents.setBuiltinEnabled", { id: "fixer", enabled: false });
-  const disabledNow = await call("agents.disabledBuiltins");
+  const disabledNow = await call("agents.builtinOverlay");
   check(
     "a builtin handle is switched off without writing a document",
     offBuiltin.result?.id === "fixer" &&
@@ -219,7 +219,7 @@ try {
     JSON.stringify(disabledNow.result?.disabled),
   );
   const fixed = await call("agents.setBuiltinEnabled", { id: "fixer", enabled: true });
-  const restoredBuiltins = await call("agents.disabledBuiltins");
+  const restoredBuiltins = await call("agents.builtinOverlay");
   check(
     "switching it back on clears the stored override",
     fixed.result?.enabled === true &&
@@ -313,7 +313,7 @@ try {
   // a builtin row, which is where Settings keeps its switch (ADR 0270).
   const withDisabledBuiltin = await loadSubagentDefinitions(projectA, {
     userDocuments,
-    disabledBuiltins: ["fixer"],
+    builtinOverlay: { disabled: ["fixer"] },
   });
   check(
     "a switched-off builtin leaves the catalog and keeps its builtin row",

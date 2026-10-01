@@ -3,12 +3,12 @@ mod model_fallbacks;
 use crate::activation::ActivationScope;
 use crate::agent_capabilities::{
     capability_dir, file_timestamp, parse_front_matter, slugify, sorted_files, CapabilityLevel,
-    CapabilityState,
+    CapabilityPins, CapabilityState,
 };
 use anyhow::{bail, Context, Result};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 use std::fs;
 use std::path::Path;
 
@@ -45,6 +45,7 @@ const SUBAGENT_KIND: &str = "subagents";
 /// lazy and sticky: a handle that is off stays off even while it is absent, so
 /// a builtin restored in a later release comes back still disabled.
 const SUBAGENT_BUILTIN_KIND: &str = "subagent-builtins";
+const SUBAGENT_BUILTIN_MODEL_KIND: &str = "subagent-builtin-models";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -95,6 +96,7 @@ pub struct UserSubagentInput {
 pub struct UserSubagentRegistry {
     state: CapabilityState,
     builtins: CapabilityState,
+    pins: CapabilityPins,
 }
 
 fn normalize_name(value: &str) -> String {
@@ -270,6 +272,7 @@ impl UserSubagentRegistry {
         Self {
             state: CapabilityState::new(data_dir, SUBAGENT_KIND),
             builtins: CapabilityState::new(data_dir, SUBAGENT_BUILTIN_KIND),
+            pins: CapabilityPins::new(data_dir, SUBAGENT_BUILTIN_MODEL_KIND),
         }
     }
 
@@ -543,7 +546,28 @@ impl UserSubagentRegistry {
         )?;
         Ok(name)
     }
+
+    /// Stored `provider/model` pins for shipped builtins. Absence means inherit.
+    pub fn builtin_model_pins(&self) -> BTreeMap<String, String> {
+        self.pins.snapshot()
+    }
+
+    /// Pin or clear a builtin model. Empty `model` clears. Unknown handles stay.
+    pub fn set_builtin_model(&mut self, handle: &str, model: Option<&str>) -> Result<String> {
+        let name = normalize_name(handle);
+        if name.is_empty() {
+            bail!("SUBAGENT_INVALID: a builtin handle is required");
+        }
+        match normalize_model(model)? {
+            None => self.pins.clear(&name)?,
+            Some(pin) => self.pins.set(&name, &pin)?,
+        }
+        Ok(name)
+    }
 }
+
+#[cfg(test)]
+mod builtin_pin_tests;
 
 #[cfg(test)]
 mod tests {

@@ -361,6 +361,8 @@ test("Settings lists shipped builtin subagents with a switch of their own", () =
   assert.match(builtinRow, /IconCopy/);
   assert.match(builtinRow, /<CapabilityToggle/);
   assert.match(builtinRow, /checked=\{definition\.enabled\}/);
+  assert.match(builtinRow, /<SubagentModelPicker/);
+  assert.match(builtinRow, /setBuiltinModel\(definition, next\)/);
   assert.doesNotMatch(
     builtinRow,
     /setUserSubagentEnabled|revealSubagent|removeUserSubagent/,
@@ -369,7 +371,7 @@ test("Settings lists shipped builtin subagents with a switch of their own", () =
   // that own a document do.
   const toggle = subagents.slice(
     subagents.indexOf("const toggleBuiltin = async"),
-    subagents.indexOf("const openEdit = async"),
+    subagents.indexOf("const setBuiltinModel = async"),
   );
   assert.notEqual(toggle, "", "builtin toggle should be present");
   assert.match(toggle, /api\.setBuiltinSubagentEnabled\(handle, next\)/);
@@ -377,6 +379,14 @@ test("Settings lists shipped builtin subagents with a switch of their own", () =
   assert.doesNotMatch(toggle.slice(0, toggle.indexOf("catch")), /await load\(\)/);
   assert.match(toggle, /catch[\s\S]*?enabled: builtin\.enabled/);
   assert.match(api, /setBuiltinSubagentEnabled: \(id: string, enabled: boolean\) =>/);
+  const pin = subagents.slice(
+    subagents.indexOf("const setBuiltinModel = async"),
+    subagents.indexOf("const openEdit = async"),
+  );
+  assert.notEqual(pin, "", "builtin model pin should be present");
+  assert.match(pin, /api\.setBuiltinSubagentModel\(handle, pin\)/);
+  assert.doesNotMatch(pin.slice(0, pin.indexOf("catch")), /await load\(\)/);
+  assert.match(api, /setBuiltinSubagentModel: \(id: string, model: string\) =>/);
 });
 
 test("a capability can be moved between the global and a project level", () => {

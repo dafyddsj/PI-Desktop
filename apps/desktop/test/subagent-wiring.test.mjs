@@ -114,12 +114,16 @@ test("a dead host transport degrades quietly instead of warning", () => {
     "refreshUserMcp",
     "activeUserSkills",
     "activeUserSubagentDocuments",
-    "disabledBuiltinSubagents",
+    "builtinOverlayOrEmpty",
   ]) {
     const start = sessionLaunchSource.indexOf(`async function ${fn}(`);
     assert.notEqual(start, -1, fn);
     const body = sessionLaunchSource.slice(start, start + 1800);
-    assert.match(body, /if \(!runtimeState\.host\?\.isAvailable\(\)\) return \[\];/, fn);
+    if (fn === "builtinOverlayOrEmpty") {
+      assert.match(body, /if \(!runtimeState\.host\?\.isAvailable\(\)\) return empty;/, fn);
+    } else {
+      assert.match(body, /if \(!runtimeState\.host\?\.isAvailable\(\)\) return \[\];/, fn);
+    }
     // The guard only stops calls that have not started; one already in flight at
     // dispose is rejected too, so the catch has to classify it as well.
     assert.match(body, /if \(!isHostUnavailable\(error\)\) \{/, fn);
@@ -155,14 +159,17 @@ test("the subagents page recovers when the host comes back", () => {
 test("a switched-off builtin leaves the delegation catalog, not the page", () => {
   // host-core owns the handle; every launch re-reads it, so the switch takes
   // effect on the next prompt and the catalog keeps the row for Settings.
-  assert.match(sessionLaunchSource, /"agents\.disabledBuiltins"/);
+  assert.match(sessionLaunchSource, /"agents\.builtinOverlay"/);
   assert.match(
     sessionLaunchSource,
-    /disabledBuiltins: await disabledBuiltinSubagents\(\),/,
+    /builtinOverlay: await builtinOverlayOrEmpty\(\),/,
   );
   assert.match(
     sessionLaunchSource,
-    /async function disabledBuiltinSubagents\(\): Promise<string\[\]>/,
+    /async function builtinOverlayOrEmpty\(\): Promise<\{/,
   );
   assert.match(pageSource, /api\.setBuiltinSubagentEnabled\(handle, next\)/);
+  assert.match(pageSource, /api\.setBuiltinSubagentModel\(handle, pin\)/);
+  assert.match(pageSource, /api\.updateUserSubagent\(subagent\.id, \{ model: pin \}\)/);
+  assert.equal(pageSource.match(/modelPicker\(/g)?.length, 2);
 });

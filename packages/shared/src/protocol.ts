@@ -314,6 +314,7 @@ export const IPC = {
     subagentSetEnabled: "pi-desktop/subagent/setEnabled",
     subagentSetScope: "pi-desktop/subagent/setScope",
     subagentSetBuiltinEnabled: "pi-desktop/subagent/setBuiltinEnabled",
+    subagentSetBuiltinModel: "pi-desktop/subagent/setBuiltinModel",
     subagentReveal: "pi-desktop/subagent/reveal",
     marketRefresh: "pi-desktop/market/refresh",
     marketSearch: "pi-desktop/market/search",

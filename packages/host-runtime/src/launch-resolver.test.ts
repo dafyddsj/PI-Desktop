@@ -27,8 +27,8 @@ function hostWith(providers: HostProviderRecord[], secrets: Record<string, strin
             return { skills: [{ id: "review", name: "Review", enabled: true, description: "Review code" }] } as T;
           case "agents.active":
             return { subagents: [] } as T;
-          case "agents.disabledBuiltins":
-            return { disabled: [] } as T;
+          case "agents.builtinOverlay":
+            return { disabled: [], models: {} } as T;
           case "project.group.context":
             return { context: null } as T;
           case "project.memory.get":

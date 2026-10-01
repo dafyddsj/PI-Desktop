@@ -3,6 +3,7 @@ import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  BUILTIN_SUBAGENT_DOCUMENTS,
   DEFAULT_SUBAGENT_IDLE_TIMEOUT_SECONDS,
   MAX_SUBAGENT_PROVIDERS,
   findSubagentPreset,
@@ -10,10 +11,10 @@ import {
   type SubagentDefinition,
 } from "@pi-desktop/shared";
 import {
-  BUILTIN_SUBAGENT_DOCUMENTS,
   findSubagentProviderSource,
   loadSubagentDefinitions,
   resolveSubagentProviders,
+  stampBuiltinModelPins,
   subagentDefinitionDir,
   subagentProviderLookupError,
   type SubagentProviderSource,
@@ -113,7 +114,7 @@ describe("loadSubagentDefinitions", () => {
 
   it("drops a switched-off builtin from the catalog and keeps it as a builtin row", async () => {
     const { definitions, builtins, diagnostics } = await loadSubagentDefinitions(null, {
-      disabledBuiltins: ["fixer"],
+      builtinOverlay: { disabled: ["fixer"] },
     });
 
     expect(diagnostics).toEqual([]);
@@ -134,7 +135,7 @@ describe("loadSubagentDefinitions", () => {
           filePath: "/home/.agents/subagents/fixer.md",
         },
       ],
-      disabledBuiltins: ["fixer"],
+      builtinOverlay: { disabled: ["fixer"] },
     });
 
     expect(definitions.find((d) => d.name === "fixer")?.source).toBe("user");
@@ -222,6 +223,109 @@ describe("loadSubagentDefinitions", () => {
     expect(diagnostics.join("\n")).toContain("missing `description`");
     // The builtins are untouched by one bad registry entry.
     expect(definitions.map((d) => d.name)).toContain("explorer");
+  });
+
+  it("stamps a pinned builtin onto both catalog outputs", async () => {
+    const { definitions, builtins, diagnostics } = await loadSubagentDefinitions(null, {
+      builtinOverlay: { modelPins: { explorer: "anthropic/claude-haiku-4-5" } },
+    });
+
+    expect(diagnostics).toEqual([]);
+    const fromCatalog = definitions.find((item) => item.name === "explorer");
+    const fromBuiltin = builtins.find((item) => item.name === "explorer");
+    expect(fromCatalog?.model).toEqual({
+      providerId: "anthropic",
+      modelId: "claude-haiku-4-5",
+    });
+    expect(fromBuiltin?.model).toEqual({
+      providerId: "anthropic",
+      modelId: "claude-haiku-4-5",
+    });
+  });
+
+  it("keeps a pin on a disabled builtin that leaves the catalog", async () => {
+    const { definitions, builtins, diagnostics } = await loadSubagentDefinitions(null, {
+      builtinOverlay: {
+        disabled: ["fixer"],
+        modelPins: { fixer: "anthropic/claude-haiku-4-5" },
+      },
+    });
+
+    expect(diagnostics).toEqual([]);
+    expect(definitions.map((item) => item.name)).not.toContain("fixer");
+    expect(builtins.find((item) => item.name === "fixer")?.model).toEqual({
+      providerId: "anthropic",
+      modelId: "claude-haiku-4-5",
+    });
+  });
+
+  it("reports a malformed pin and leaves the shipped model unset", async () => {
+    const { definitions, builtins, diagnostics } = await loadSubagentDefinitions(null, {
+      builtinOverlay: { modelPins: { explorer: "noslash" } },
+    });
+
+    expect(diagnostics).toEqual([
+      'builtin subagent "explorer": ignoring invalid model pin "noslash"',
+    ]);
+    expect(definitions.find((item) => item.name === "explorer")?.model).toBeUndefined();
+    expect(builtins.find((item) => item.name === "explorer")?.model).toBeUndefined();
+  });
+
+  it("lets a user document of the same name keep its own model", async () => {
+    const { definitions, builtins } = await loadSubagentDefinitions(null, {
+      userDocuments: [
+        {
+          id: "explorer",
+          document:
+            "---\nname: explorer\ndescription: Mine.\ntools: [Read]\nmodel: openai/gpt-4.1\n---\nMine.\n",
+        },
+      ],
+      builtinOverlay: { modelPins: { explorer: "anthropic/claude-haiku-4-5" } },
+    });
+
+    expect(definitions.find((item) => item.name === "explorer")?.source).toBe("user");
+    expect(definitions.find((item) => item.name === "explorer")?.model).toEqual({
+      providerId: "openai",
+      modelId: "gpt-4.1",
+    });
+    expect(builtins.map((item) => item.name)).not.toContain("explorer");
+  });
+
+  it("matches today's catalog when no overlay is passed", async () => {
+    const today = await loadSubagentDefinitions(null);
+    const overlay = await loadSubagentDefinitions(null, { builtinOverlay: {} });
+    expect(overlay.definitions.map((item) => item.model)).toEqual(
+      today.definitions.map((item) => item.model),
+    );
+    expect(overlay.diagnostics).toEqual(today.diagnostics);
+  });
+});
+
+describe("stampBuiltinModelPins", () => {
+  it("lets a stored overlay beat a shipped model and keeps the shipped pin without one", () => {
+    const shipped: SubagentDefinition = {
+      name: "explorer",
+      description: "Fast codebase search and pattern matching for tests.",
+      tools: ["Read"],
+      prompt: "Search the tree and report the files that answer the question.",
+      source: "builtin",
+      model: { providerId: "anthropic", modelId: "shipped" },
+    };
+    const overlayWins = stampBuiltinModelPins(
+      [shipped],
+      { explorer: "openai/gpt-5" },
+    );
+    expect(overlayWins.diagnostics).toEqual([]);
+    expect(overlayWins.definitions[0].model).toEqual({
+      providerId: "openai",
+      modelId: "gpt-5",
+    });
+    expect(overlayWins.definitions[0]).not.toBe(shipped);
+    const noEntry = stampBuiltinModelPins([shipped], {});
+    expect(noEntry.definitions[0].model).toEqual({
+      providerId: "anthropic",
+      modelId: "shipped",
+    });
   });
 });
 

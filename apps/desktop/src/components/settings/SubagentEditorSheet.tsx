@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  BUILTIN_SUBAGENT_SPECS,
   DEFAULT_SUBAGENT_TOOLS,
   GLOBAL_SCOPE,
   MAX_SUBAGENT_MAX_TOKENS,
@@ -107,27 +108,15 @@ Anything you must not do.
 /** A "blank" starter so users who ignore the preset chips are not stuck. */
 export const BLANK_SUBAGENT_PRESET_ID = "" as const;
 
-/**
- * Catalog keys for each built-in preset. Hyphenated ids (`code-reviewer`)
- * cannot be turned into keys by capitalizing the first letter — the hyphen
- * stays in the middle of the key, which is not in the catalog.
- */
-export const SUBAGENT_PRESET_COPY = {
-  explorer: { name: "presetExplorerName", desc: "presetExplorerDesc" },
-  "code-reviewer": { name: "presetReviewerName", desc: "presetReviewerDesc" },
-  "test-runner": { name: "presetTestRunnerName", desc: "presetTestRunnerDesc" },
-  fixer: { name: "presetFixerName", desc: "presetFixerDesc" },
-  "ui-designer": { name: "presetUiDesignerName", desc: "presetUiDesignerDesc" },
-} as const satisfies Record<SubagentPreset["id"], { name: string; desc: string }>;
-
 /** Full i18n path for a preset chip, or null when `id` is blank / unknown. */
 export function subagentPresetCopyKey(
   id: string,
   kind: "name" | "desc",
 ): string | null {
-  if (!Object.hasOwn(SUBAGENT_PRESET_COPY, id)) return null;
-  const entry = SUBAGENT_PRESET_COPY[id as keyof typeof SUBAGENT_PRESET_COPY];
-  return `extensions.subagents.${entry[kind]}`;
+  const spec = BUILTIN_SUBAGENT_SPECS.find((item) => item.name === id);
+  if (!spec) return null;
+  const suffix = kind === "name" ? spec.titleKey : spec.descriptionKey;
+  return `extensions.subagents.${suffix}`;
 }
 
 export function emptySubagentDraft(): SubagentDraft {
@@ -557,6 +546,8 @@ export function SubagentEditorSheet({
   editing,
   saving,
   initialPresetId,
+  modelChoices,
+  modelGroups,
   onClose,
   onSave,
   onReveal,
@@ -567,12 +558,13 @@ export function SubagentEditorSheet({
   saving: boolean;
   /** Template chip to select on create, e.g. after Copy as mine. */
   initialPresetId?: string;
+  modelChoices: ReturnType<typeof subagentModelChoices>;
+  modelGroups: ReturnType<typeof groupSubagentModelChoices>;
   onClose: () => void;
   onSave: () => void;
   onReveal?: () => void;
 }) {
   const { t } = useTranslation();
-  const providers = useAppStore((state) => state.providers);
   const copiedPreset = Boolean(initialPresetId && findSubagentPreset(initialPresetId));
   const [nameTouched, setNameTouched] = useState(!!editing || copiedPreset);
   const [presetId, setPresetId] = useState<string | null>(
@@ -583,11 +575,6 @@ export function SubagentEditorSheet({
   const pristine = !editing && !draft.name.trim() && !draft.description.trim();
   const bytes = new TextEncoder().encode(draft.body).length;
   const slug = draft.id || subagentSlug(draft.name);
-  const modelChoices = useMemo(() => subagentModelChoices(providers), [providers]);
-  const modelGroups = useMemo(
-    () => groupSubagentModelChoices(modelChoices),
-    [modelChoices],
-  );
   const orphanModel = subagentModelOrphanPin(draft.model, modelChoices);
 
   useEffect(() => {

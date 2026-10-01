@@ -184,28 +184,28 @@ export function createSessionLaunchRuntime({
     return documents;
   }
 
-  /**
-   * Handles whose shipped definition the user turned off (D202 activation for
-   * builtins, which are constants and so have no document to scan).
-   *
-   * host-core owns the state. An unavailable host, or a failed read, contributes
-   * no exclusions: losing a delegate the user kept is worse than offering one
-   * they switched off.
-   */
-  async function disabledBuiltinSubagents(): Promise<string[]> {
-    if (!runtimeState.host?.isAvailable()) return [];
+  async function builtinOverlayOrEmpty(): Promise<{
+    disabled: string[];
+    modelPins: Record<string, string>;
+  }> {
+    const empty = { disabled: [] as string[], modelPins: {} as Record<string, string> };
+    if (!runtimeState.host?.isAvailable()) return empty;
     try {
-      const result = await runtimeState.host!.call<{ disabled: string[] }>(
-        "agents.disabledBuiltins",
-      );
-      return result.disabled ?? [];
+      const result = await runtimeState.host!.call<{
+        disabled?: string[];
+        models?: Record<string, string>;
+      }>("agents.builtinOverlay");
+      return {
+        disabled: result.disabled ?? [],
+        modelPins: result.models ?? {},
+      };
     } catch (error) {
       if (!isHostUnavailable(error)) {
         logger.app("plugin", "warn", "builtin subagent state failed", {
           data: String(error),
         });
       }
-      return [];
+      return empty;
     }
   }
 
@@ -470,8 +470,7 @@ export function createSessionLaunchRuntime({
     // skills above; a delegate the model can see is one it will try to call.
     const subagentCatalog = await loadSubagentDefinitions(projectPath, {
       userDocuments: await activeUserSubagentDocuments(projectPath),
-      // A switched-off builtin is dropped from what this prompt may delegate to.
-      disabledBuiltins: await disabledBuiltinSubagents(),
+      builtinOverlay: await builtinOverlayOrEmpty(),
     });
     const subagentBindings = await resolveSubagentProviders({
       definitions: subagentCatalog.definitions,
@@ -692,7 +691,7 @@ export function createSessionLaunchRuntime({
     refreshUserMcp,
     activeUserSkills,
     activeUserSubagentDocuments,
-    disabledBuiltinSubagents,
+    builtinOverlayOrEmpty,
     loadUserSkillBody,
     resolveEffectiveCommandShell,
     resolveAgentRuntimeLaunch,
