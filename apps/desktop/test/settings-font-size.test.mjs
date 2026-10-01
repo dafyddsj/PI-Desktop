@@ -68,7 +68,7 @@ test("font-size control stacks presets and a percentage slider", () => {
   assert.doesNotMatch(styles, /\.settings-font-size-custom\s*\{/);
 });
 
-test("cup-size preset labels stay on one line", () => {
+test("font-size preset labels stay on one line", () => {
   assert.match(
     styles,
     /\.settings-font-size \.settings-segment-item\s*\{[^}]*white-space:\s*nowrap;/s,
