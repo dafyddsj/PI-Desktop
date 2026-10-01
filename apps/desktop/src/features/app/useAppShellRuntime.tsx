@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { installRendererApi } from "../../capture/renderer-api";
 import { StartupSplash } from "../../components/StartupSplash";
 import { api } from "../../lib/api";
+import { skillPackVersionLabel } from "../../lib/skill-pack-version";
 import { playNotificationChime } from "../../lib/notification-sound";
 import {
   clampSidebarWidth,
@@ -576,6 +577,14 @@ export function useAppShellRuntime() {
     // Host-pushed toasts (plugin runtime etc.) are informational.
     const offToast = api.onToast((message) => showToast(message));
     const offNotificationSound = api.onNotificationSound(playNotificationChime);
+    // Built-in skill pack updates are offered, not applied: main announces each
+    // version once, and the user installs it from Settings › Skills.
+    const offSkillPackNotice = api.onSkillPackUpdateNotice(({ available }) => {
+      showToast(t("settings.skillPack.notice", { version: skillPackVersionLabel(available) }), {
+        variant: "info",
+        duration: 12_000,
+      });
+    });
     // The first plaintext hop to an endpoint the user typed. The shell owns the
     // wording, and recording `insecureNoticeAcknowledged` keeps it to once; a
     // failed write only means the notice shows again.
@@ -809,6 +818,7 @@ export function useAppShellRuntime() {
       offToast();
       offNotificationSound();
       offInsecureEndpoint();
+      offSkillPackNotice();
       offBrowserPreview();
       offBrowserState();
       offHostStatus();

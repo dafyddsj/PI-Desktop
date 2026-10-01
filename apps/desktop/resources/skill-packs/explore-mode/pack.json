@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "repo": "dafyddsj/explore-mode",
+  "channel": "beta",
+  "ref": "main",
+  "sha": "1b5c69fe723c6a94fe538c727e1b9e403b932eba",
+  "committedAt": "2026-10-01T14:43:13+13:00",
+  "files": [
+    {
+      "path": ".claude-plugin/plugin.json",
+      "size": 825,
+      "blob": "5949cb5ed8c5d15fc72043a3f4db638d7d804939"
+    },
+    {
+      "path": "playbooks/4e-plus.md",
+      "size": 1537,
+      "blob": "96c08171637520e455f12aaa6ea15ed076f2151d"
+    },
+    {
+      "path": "playbooks/academic-writing.md",
+      "size": 6393,
+      "blob": "1b71fd04b42d609f310b9ea91d3f08579d785377"
+    },
+    {
+      "path": "playbooks/critical-thinking.md",
+      "size": 3948,
+      "blob": "39a0fca7fa746956256309f6e61bedc8019f7ffa"
+    },
+    {
+      "path": "playbooks/design-thinking.md",
+      "size": 4023,
+      "blob": "e5e94acc602994cc9c10ddbe27531f1b730e6af8"
+    },
+    {
+      "path": "playbooks/evidence-synthesis.md",
+      "size": 4868,
+      "blob": "7dd6cbc8451a186a1ecf717116bf3705645a795f"
+    },
+    {
+      "path": "playbooks/five-whys.md",
+      "size": 3649,
+      "blob": "4e51211179deb13e5665189d82c26059656447aa"
+    },
+    {
+      "path": "playbooks/kaupapa-maori.md",
+      "size": 16626,
+      "blob": "bc06cfc2351ec48b4945c9638771bf5a09540ee3"
+    },
+    {
+      "path": "playbooks/question-framing.md",
+      "size": 4771,
+      "blob": "46bb00c2014ba74e96c925759d19e2bd2a719328"
+    },
+    {
+      "path": "playbooks/reflexive-thinking.md",
+      "size": 4067,
+      "blob": "93d2864b8a5bd53f5a3b849702bde075a6cd66c9"
+    },
+    {
+      "path": "playbooks/second-order-thinking.md",
+      "size": 3666,
+      "blob": "04e1f27114e5e5f4acb8b8bb13ed9c68d3d749fe"
+    },
+    {
+      "path": "playbooks/show-me-your-work.md",
+      "size": 9168,
+      "blob": "b44cb2245f1870c2fdc9621eb41e2afc43341a38"
+    },
+    {
+      "path": "playbooks/systems-thinking.md",
+      "size": 4415,
+      "blob": "8a44bb0f800026c3ff9e293889fd955cf0dd0dc6"
+    },
+    {
+      "path": "playbooks/verify-sources.md",
+      "size": 5015,
+      "blob": "f07c592ee293709d81b66d178bdf0336cd9b817c"
+    },
+    {
+      "path": "skills/analyse/SKILL.md",
+      "size": 3619,
+      "blob": "c541c7414c86def10b0ed092d65d814c2f4288d9"
+    },
+    {
+      "path": "skills/challenge/SKILL.md",
+      "size": 3456,
+      "blob": "5709ca7e6655aa325127770d7086fe2f1b728aba"
+    },
+    {
+      "path": "skills/compare/SKILL.md",
+      "size": 3353,
+      "blob": "5553f309643f391f0dc88ac9eaa4368bc3aaed4d"
+    },
+    {
+      "path": "skills/explain/SKILL.md",
+      "size": 3159,
+      "blob": "1032b34b320d2851ac30a8860b9b2a199fa4fd7f"
+    },
+    {
+      "path": "skills/explore-mode/SKILL.md",
+      "size": 17163,
+      "blob": "4523e62b303182efcc3333c9c7508c46edaa8939"
+    },
+    {
+      "path": "skills/interrogate/SKILL.md",
+      "size": 3470,
+      "blob": "4fbfe53690f8aad0f546e66c2db3e5a9bdaa833d"
+    },
+    {
+      "path": "skills/panel/SKILL.md",
+      "size": 5612,
+      "blob": "8db867c4188fadf61a3bb49768df6445e946362e"
+    },
+    {
+      "path": "skills/preflight/SKILL.md",
+      "size": 3715,
+      "blob": "f062dcb6d112ee00228d822dff15fd9c5dd6ce57"
+    },
+    {
+      "path": "skills/principle-ai-is-not-evidence/SKILL.md",
+      "size": 4299,
+      "blob": "6ab76fc25af1e26c8e88104ed49c109fc8e2955f"
+    },
+    {
+      "path": "skills/principle-contextual-adaptation/SKILL.md",
+      "size": 3018,
+      "blob": "824b845b4a3552d85670082acc3ca4511844844c"
+    },
+    {
+      "path": "skills/principle-cultural-awareness/SKILL.md",
+      "size": 9637,
+      "blob": "c55b2dadf7d97c1786382a8b182644541c1a5865"
+    },
+    {
+      "path": "skills/principle-do-no-harm/SKILL.md",
+      "size": 2901,
+      "blob": "a341f6627aa1a584c6990cf6a8b37064faf4b09c"
+    },
+    {
+      "path": "skills/principle-follow-applicable-rules/SKILL.md",
+      "size": 3356,
+      "blob": "b76803fc0b8d07b42b887d1bab9f783c3cc58c24"
+    },
+    {
+      "path": "skills/principle-human-judgement/SKILL.md",
+      "size": 3429,
+      "blob": "c211b81dc2e39fcbd59fa8a44c773ec098838da6"
+    },
+    {
+      "path": "skills/principle-inclusive-use/SKILL.md",
+      "size": 2565,
+      "blob": "a6f118187745d8c40f6fc8247efead60e9ed6081"
+    },
+    {
+      "path": "skills/principle-learner-authorship/SKILL.md",
+      "size": 3317,
+      "blob": "5fd55815588679bd8ea72eb07aecfa188ef18ee5"
+    },
+    {
+      "path": "skills/principle-positionality/SKILL.md",
+      "size": 8996,
+      "blob": "b287f1f17b8e1ddf4f3c993216b9ed94069d1ef7"
+    },
+    {
+      "path": "skills/principle-preserve-disagreement/SKILL.md",
+      "size": 3557,
+      "blob": "6697c662f3109afd478c63913e806a9a0435478d"
+    },
+    {
+      "path": "skills/principle-preserve-uncertainty/SKILL.md",
+      "size": 2840,
+      "blob": "b25796a4d61375a71de52c3e972e20a0e859f775"
+    },
+    {
+      "path": "skills/principle-protect-data/SKILL.md",
+      "size": 3824,
+      "blob": "762737ce4bcce4325a876887695453fc2c003c92"
+    },
+    {
+      "path": "skills/principle-purposeful-use/SKILL.md",
+      "size": 3600,
+      "blob": "cf5a62fa2883646d9bd017276c3e0a5b95483e04"
+    },
+    {
+      "path": "skills/principle-stop-when-unclear/SKILL.md",
+      "size": 2794,
+      "blob": "6e8d297e867b1a39d3ef726e3d2d92126ad85a83"
+    },
+    {
+      "path": "skills/principle-transparency/SKILL.md",
+      "size": 3764,
+      "blob": "60f16de78b239e81ce1f6501f212e46ec3879409"
+    },
+    {
+      "path": "skills/proofread/SKILL.md",
+      "size": 3295,
+      "blob": "109e9b1b9ebcf206694ccb4bbf9d3ff6b424d13d"
+    },
+    {
+      "path": "skills/reflect/SKILL.md",
+      "size": 3058,
+      "blob": "5fe7cf85acfb0b8eb866b4af30644e87ed3f3cd8"
+    },
+    {
+      "path": "skills/research/SKILL.md",
+      "size": 4437,
+      "blob": "42fc01fbde42cf44720108d1799ff8a093e43e03"
+    },
+    {
+      "path": "skills/review/SKILL.md",
+      "size": 3757,
+      "blob": "1743cb653e94849e86b046bcca3350750c96a2e9"
+    },
+    {
+      "path": "skills/search/SKILL.md",
+      "size": 3295,
+      "blob": "52a645859f7ada6cfffe5f5282bb97164190808e"
+    },
+    {
+      "path": "skills/setup/SKILL.md",
+      "size": 5713,
+      "blob": "5e2d987a3614f335918d24eeb82e983f7f7ce067"
+    },
+    {
+      "path": "skills/suggest/SKILL.md",
+      "size": 2829,
+      "blob": "dc882e0e59527e8c847d68c693cff34d5c8fe00c"
+    },
+    {
+      "path": "skills/summarise/SKILL.md",
+      "size": 3141,
+      "blob": "083c638622dcc13db7f58e3a6b8b10836768c057"
+    },
+    {
+      "path": "skills/swarm/SKILL.md",
+      "size": 4104,
+      "blob": "430123d937835f168af6ee7b086da69d51953179"
+    }
+  ]
+}

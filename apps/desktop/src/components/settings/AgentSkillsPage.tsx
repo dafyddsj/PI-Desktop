@@ -43,6 +43,7 @@ import {
   IconTrash,
 } from "../icons";
 import { SkillMarketPanel } from "./SkillMarketPanel";
+import { BuiltinSkillPackSection } from "./BuiltinSkillPackSection";
 
 import { TooltipButton } from "../ui";
 const GLOBAL_SKILLS_PATH = "~/.agents/skills";
@@ -556,6 +557,7 @@ export function AgentSkillsPage() {
         refreshing={refreshing}
         loadingLabel={t("settings.loadingCapabilities")}
       >
+        {showGlobal ? <BuiltinSkillPackSection search={search} /> : null}
         {counts.all === 0 && search.trim() ? (
           <CapabilityEmpty
             message={t("settings.capabilityNoMatches")}

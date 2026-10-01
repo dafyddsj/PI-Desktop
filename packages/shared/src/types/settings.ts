@@ -34,6 +34,10 @@ export type AppSettings = {
   updatePreference?: UpdatePreference;
   /** Last manually announced release; kept local to avoid repeating notices. */
   lastNotifiedUpdateVersion?: string;
+  /** Follow the skill pack's main branch on a release build; off when absent. */
+  skillPackBeta?: boolean;
+  /** Commit of the last skill pack update announced, so each is announced once. */
+  skillPackLastNotifiedSha?: string;
   /** Host speech bindings. Absent means voice actions stay disabled. */
   speech?: SpeechSettings;
   /** App-owned real-time voice bindings; separate from local dictation. */

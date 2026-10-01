@@ -10,6 +10,7 @@ import type { PluginPanelHost } from "../plugin-panel-host";
 import type { PluginRuntime } from "../plugin-runtime";
 import type { PluginViewHost } from "../plugin-view-host";
 import type { AppUpdaterController } from "../updater";
+import type { SkillPackService } from "../skill-pack/service";
 import type { UserMcpRuntime } from "../user-mcp";
 import type { McpControlServer } from "../mcp-control";
 import type { McpOAuthManager } from "../mcp-oauth";
@@ -45,6 +46,7 @@ export type ShutdownDependencies = {
   browserHost: Pick<BrowserHost, "dispose">;
   pluginViews: Pick<PluginViewHost, "dispose">;
   updater: Pick<AppUpdaterController, "dispose" | "isInstallingUpdate">;
+  skillPack?: Pick<SkillPackService, "dispose">;
   logger: Pick<Logger, "app">;
   confirmQuitDialog: () => Promise<boolean>;
   disposePowerSaveBlockers: () => void;
@@ -68,6 +70,7 @@ export function registerShutdownHandlers({
   browserHost,
   pluginViews,
   updater,
+  skillPack,
   logger,
   confirmQuitDialog,
   disposePowerSaveBlockers,
@@ -167,6 +170,7 @@ export function registerShutdownHandlers({
       const hostShutdown = getHost()?.dispose();
       const mcpShutdown = getMcpControl()?.stop();
       updater.dispose();
+      skillPack?.dispose();
       // Plugin hosts are stopped as a shutdown, not left for the process teardown
       // to kill: an unannounced exit is indistinguishable from a crash, and would
       // end every quit in error logs, toasts, and restarts into a closing app.

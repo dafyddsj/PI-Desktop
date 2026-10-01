@@ -1620,6 +1620,24 @@ Desktop-only skill market channels (not host RPC) live on Electron IPC:
   the network directly. Catalog ids are sanitized to host
   `valid_capability_id` (`[a-z0-9][a-z0-9-]{0,63}`).
 
+Built-in skill pack channels (desktop-only; see
+[23-builtin-skill-pack.md](23-builtin-skill-pack.md)):
+
+- `pi-desktop/skill/pack/getState` — `{}` → `SkillPackState` (version in use,
+  offered version, channel, status, last error, and the pack's skills).
+- `pi-desktop/skill/pack/check` — `{}` → `SkillPackState`. Checks the current
+  channel without announcing what it finds.
+- `pi-desktop/skill/pack/install` — `{}` → `SkillPackState`. Downloads, verifies,
+  and activates the offered version, then sends `pluginChanged { reason: "skill" }`.
+- `pi-desktop/skill/pack/revert` — `{}` → `SkillPackState`. Returns to the
+  bundled copy and deletes downloads, then sends `pluginChanged`.
+- `pi-desktop/skill/pack/setBeta` — `boolean` → `SkillPackState`. Stores
+  `skillPackBeta` and checks the new channel.
+- event `pi-desktop/skill/pack/event/state` — `SkillPackState`, after every
+  status change.
+- event `pi-desktop/skill/pack/event/updateNotice` — `{ available }`, once per
+  newly found commit.
+
 Desktop-only MCP market channels (not host RPC) live on Electron IPC:
 
 - `pi-desktop/mcp/market/search` — `{ query?, sources[], more? }` →

@@ -1,0 +1,22 @@
+{
+  "name": "explore-mode",
+  "displayName": "EXplore",
+  "version": "0.1.0",
+  "description": "EXplore: an open methodology for AI-supported inquiry and learning. A router, research workflows, thinking-method playbooks, and principles that keep evidence traceable, preserve uncertainty and disagreement, encourage independent views across models, protect data and cultural authority, and keep the learner as the author and decision-maker.",
+  "author": {
+    "name": "Dafydd Jones",
+    "url": "https://github.com/dafyddsj"
+  },
+  "homepage": "https://github.com/dafyddsj/explore-plugin",
+  "repository": "https://github.com/dafyddsj/explore-plugin",
+  "keywords": [
+    "research",
+    "inquiry",
+    "education",
+    "academic-integrity",
+    "critical-thinking",
+    "provenance",
+    "multi-model",
+    "learning"
+  ]
+}

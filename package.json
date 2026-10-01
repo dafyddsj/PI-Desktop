@@ -17,6 +17,7 @@
     "build": "pnpm -r --if-present build && cargo build --release -p host-core",
     "build:js": "pnpm -r --if-present build",
     "build:host": "cargo build --release -p host-core",
+    "skill-pack:vendor": "node scripts/vendor-skill-pack.mjs",
     "typecheck": "pnpm -r --if-present build && pnpm -r --if-present typecheck",
     "test": "pnpm build:js && pnpm -r --if-present test && cargo test -p host-core",
     "test:host": "cargo test -p host-core",

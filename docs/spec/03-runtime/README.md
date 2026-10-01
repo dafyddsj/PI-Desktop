@@ -26,3 +26,4 @@
 
 - [Image generation and editing](21-image-generation.md)
 - [Portable configuration sync](22-config-sync.md)
+- [Built-in skill pack](23-builtin-skill-pack.md)

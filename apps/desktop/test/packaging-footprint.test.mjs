@@ -203,6 +203,12 @@ test("packaging keeps only shipped locales and excludes non-runtime artifacts", 
       from: "resources/skills",
       to: "skills",
     },
+    // The vendored skill pack snapshot: the first-launch copy the in-app
+    // updater moves on from, read as plain files like the built-in skills.
+    {
+      from: "resources/skill-packs",
+      to: "skill-packs",
+    },
     // Bundled first-party plugins, for the same reason: host-core reads their
     // manifests from disk and the views are loaded as file:// pages (ADR 0105).
     {
