@@ -14,6 +14,7 @@ import type { ProviderPublic } from "@pi-desktop/shared";
 import { Badge, Button, Field, Input, SettingsToggle, cx } from "../ui";
 import { CapabilityRowMenu, type CapabilityMenuItem } from "./AgentCapabilityLayout";
 import { ServiceMonogram } from "./ServiceMonogram";
+import { providerLogoKey } from "./service-logo-keys";
 import {
   serviceRowBadges,
   serviceRowKind,
@@ -123,7 +124,7 @@ export function ServiceRow({
         onOpen();
       }}
     >
-      <ServiceMonogram name={title.name} />
+      <ServiceMonogram name={title.name} logo={providerLogoKey(provider)} />
       <div className="model-provider-row-copy">
         <div className="model-provider-row-title">
           <span className="model-provider-row-name">{title.name}</span>

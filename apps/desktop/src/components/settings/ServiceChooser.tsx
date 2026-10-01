@@ -20,6 +20,7 @@ import type { EndpointRegion, OAuthVendor } from "@pi-desktop/shared";
 import { cx, Input, SegmentedControl } from "../ui";
 import { IconChevronRight, IconPlus, IconSearch } from "../icons";
 import { ServiceMonogram } from "./ServiceMonogram";
+import { serviceLogoKey } from "./service-logo-keys";
 import { readEndpointRegion, rememberEndpointRegion } from "./endpoint-region";
 import {
   CUSTOM_SERVICE,
@@ -231,7 +232,7 @@ export function ServiceChooser({
                     onKeyDown={onTileKeyDown}
                     onClick={() => pickSubscription(vendor)}
                   >
-                    <ServiceMonogram name={vendor.name} />
+                    <ServiceMonogram name={vendor.name} logo={serviceLogoKey(vendor.vendorId)} />
                     <span className="service-chooser-tile-copy">
                       <span className="service-chooser-tile-name">{vendor.name}</span>
                       {detail || existing ? (
@@ -307,7 +308,7 @@ export function ServiceChooser({
                           <IconPlus size={14} />
                         </span>
                       ) : (
-                        <ServiceMonogram name={option.label} />
+                        <ServiceMonogram name={option.label} logo={serviceLogoKey(option.id)} />
                       )}
                       <span className="service-chooser-tile-copy">
                         <span className="service-chooser-tile-name">{option.label}</span>

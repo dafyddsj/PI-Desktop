@@ -1729,7 +1729,7 @@
   opacity: 0.55;
 }
 
-/* A quiet letter tile stands in for a logo; services carry no brand colour. */
+/* A quiet tile with the vendor's mark or first letter; services carry no brand colour. */
 .service-monogram {
   display: inline-flex;
   width: 28px;
@@ -1744,6 +1744,20 @@
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-tight);
+}
+
+/* The mark is a mask, so it takes the tile's text colour in either theme. */
+.service-monogram.has-logo {
+  color: var(--ds-text-primary);
+}
+
+.service-logo {
+  width: 58%;
+  height: 58%;
+  background-color: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
 }
 
 .model-provider-row-copy {

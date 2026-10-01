@@ -27,6 +27,7 @@ import { useProviderModels } from "./useProviderModels";
 import { ModelSelectionPanes, useModelSelection } from "./ModelSelectionPanes";
 import { ConnectionStatus, ProviderConnectionFields } from "./ProviderConnectionFields";
 import { ServiceChooser } from "./ServiceChooser";
+import { serviceLogoKey } from "./service-logo-keys";
 import { CUSTOM_SERVICE } from "./service-catalog";
 import { useRecommendedModelSelection } from "./useRecommendedModelSelection";
 import type { ProviderCopyDraft } from "./provider-copy";
@@ -427,6 +428,7 @@ export function ProviderSetupDialog({
             saving={saving}
             serviceLabel={namedPreset ? t(namedPreset.labelKey) : t("settings.presetCustomEndpoint")}
             serviceBaseUrl={namedPreset?.baseUrl ?? ""}
+            serviceLogo={serviceLogoKey(namedPreset?.id)}
             onChangeService={() => setChoosing(true)}
             apiKeyRef={apiKeyRef}
             nameRef={nameRef}
