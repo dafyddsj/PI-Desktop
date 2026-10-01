@@ -145,15 +145,15 @@ test("removed explanatory copy stays removed", () => {
   }
 });
 
-test("font size presets use Starbucks-style cup names", () => {
-  assert.equal(english["settings.fontSizeSmall"], "Tall");
-  assert.equal(english["settings.fontSizeDefault"], "Grande");
-  assert.equal(english["settings.fontSizeLarge"], "Venti");
-  assert.equal(english["settings.fontSizeXl"], "Trenta");
-  assert.equal(chinese["settings.fontSizeSmall"], "中杯");
-  assert.equal(chinese["settings.fontSizeDefault"], "大杯");
-  assert.equal(chinese["settings.fontSizeLarge"], "超大杯");
-  assert.equal(chinese["settings.fontSizeXl"], "超超大杯");
+test("font size presets use standard size names", () => {
+  assert.equal(english["settings.fontSizeSmall"], "Small");
+  assert.equal(english["settings.fontSizeDefault"], "Medium");
+  assert.equal(english["settings.fontSizeLarge"], "Large");
+  assert.equal(english["settings.fontSizeXl"], "Extra large");
+  assert.equal(chinese["settings.fontSizeSmall"], "小");
+  assert.equal(chinese["settings.fontSizeDefault"], "中");
+  assert.equal(chinese["settings.fontSizeLarge"], "大");
+  assert.equal(chinese["settings.fontSizeXl"], "特大");
 });
 
 test("chat context-menu copy stays user-facing", () => {
