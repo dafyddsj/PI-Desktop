@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   parseVendorModelIds,
+  parseVendorModelLimits,
   pinnedSiblingId,
   vendorModelListRequest,
   wireForLiveModel,
@@ -107,4 +108,24 @@ test("Copilot only keeps a new id when its family has one wire API", () => {
     wireForLiveModel("openai-codex", "gpt-6-luna", pinned, "https://chatgpt.com/backend-api")?.api,
     "openai-codex-responses",
   );
+});
+
+test("the Codex list states each model's default and maximum window", () => {
+  const limits = parseVendorModelLimits("openai-codex", {
+    models: [
+      { slug: "gpt-5.6-sol", context_window: 272_000, max_context_window: 872_000 },
+      { slug: "gpt-5.5", context_window: 272_000, max_context_window: 272_000 },
+      // Codex resolves `context_window` first, then `max_context_window`.
+      { slug: "gpt-6-luna", max_context_window: 400_000 },
+      { slug: "gpt-unknown" },
+      { slug: "gpt-bad", context_window: -1 },
+    ],
+  });
+  assert.deepEqual([...limits], [
+    ["gpt-5.6-sol", { contextWindow: 272_000, maxContextWindow: 872_000 }],
+    ["gpt-5.5", { contextWindow: 272_000, maxContextWindow: 272_000 }],
+    ["gpt-6-luna", { contextWindow: 400_000, maxContextWindow: 400_000 }],
+  ]);
+  assert.equal(parseVendorModelLimits("xai", { data: [{ id: "grok-4.7" }] }).size, 0);
+  assert.equal(parseVendorModelLimits("openai-codex", { data: [] }).size, 0);
 });

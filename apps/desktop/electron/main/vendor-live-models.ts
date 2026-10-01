@@ -230,6 +230,57 @@ function parseCodexIds(body: unknown): string[] | null {
   );
 }
 
+/**
+ * Context limits one account's deployment serves for a model.
+ *
+ * `contextWindow` is the window the vendor runs by default; `maxContextWindow`
+ * is the most it accepts when a user raises the window explicitly.
+ */
+export type VendorModelLimit = {
+  contextWindow: number;
+  maxContextWindow?: number;
+};
+
+function positiveTokenCount(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0
+    ? value
+    : undefined;
+}
+
+/**
+ * Codex publishes each model's window on its own list. A ChatGPT account runs
+ * a smaller window than the public API record states (272K by default against
+ * 1.05M), so these figures, not models.dev, describe the account. Codex
+ * resolves `context_window` first and falls back to `max_context_window`.
+ */
+function parseCodexLimits(body: unknown): Map<string, VendorModelLimit> {
+  const limits = new Map<string, VendorModelLimit>();
+  const models = asRecord(body)?.models;
+  if (!Array.isArray(models)) return limits;
+  for (const entry of models) {
+    const item = asRecord(entry);
+    const slug = item?.slug ?? item?.id;
+    if (!item || typeof slug !== "string" || !slug.trim()) continue;
+    const max = positiveTokenCount(item.max_context_window);
+    const contextWindow = positiveTokenCount(item.context_window) ?? max;
+    if (contextWindow === undefined) continue;
+    limits.set(slug.trim(), {
+      contextWindow,
+      ...(max !== undefined && max >= contextWindow ? { maxContextWindow: max } : {}),
+    });
+  }
+  return limits;
+}
+
+/** Per-model limits a vendor's list states; empty when it states none. */
+export function parseVendorModelLimits(
+  vendorId: string,
+  body: unknown,
+): Map<string, VendorModelLimit> {
+  if (vendorId === "openai-codex") return parseCodexLimits(body);
+  return new Map();
+}
+
 function parseCopilotIds(body: unknown, allowPolicyFallback: boolean): string[] | null {
   const data = asRecord(body)?.data;
   if (!Array.isArray(data)) return null;

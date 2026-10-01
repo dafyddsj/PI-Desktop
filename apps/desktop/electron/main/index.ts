@@ -325,6 +325,8 @@ const vendorOAuth = new VendorOAuth({
       modelId: option.modelId,
     });
   },
+  rememberModelLimits: (vendorKey, limits) =>
+    modelsDevCatalog.rememberVendorLimits(vendorKey, limits),
 });
 
 let sessionLaunchRuntime: ReturnType<typeof createSessionLaunchRuntime> | null = null;

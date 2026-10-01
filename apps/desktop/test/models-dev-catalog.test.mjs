@@ -1754,3 +1754,83 @@ test("a host two publishers share leaves conflicting leaves unmatched", async (t
   assert.equal(alpha?.providerKey, "alpha");
   assert.equal(alpha?.limit.context, 1_000_000);
 });
+
+test("a launch refresh that lands first is not replaced by the bundled snapshot", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "pi-models-dev-order-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const catalogPath = join(dir, "api.json");
+  await writeFile(catalogPath, JSON.stringify(catalogFixture), "utf8");
+  const remote = {
+    ...catalogFixture,
+    anthropic: {
+      ...catalogFixture.anthropic,
+      models: {
+        ...catalogFixture.anthropic.models,
+        "new-model": {
+          id: "new-model",
+          name: "New Model",
+          modalities: { input: ["text"], output: ["text"] },
+          limit: { context: 64_000, output: 4_000 },
+        },
+      },
+    },
+  };
+  const catalog = new ModelsDevCatalog({
+    catalogPath,
+    fetchImpl: async () => responseFor(remote),
+  });
+  assert.equal(await catalog.refresh(), true);
+  assert.equal(await catalog.ensureLoaded(), true);
+  assert.equal(catalog.getStatus().source, "remote");
+  assert.equal(
+    catalog.findModel({ vendorKey: "anthropic", modelId: "new-model" })?.displayName,
+    "New Model",
+  );
+});
+
+test("a Codex account takes its deployment window over the public API record", async (t) => {
+  const catalog = await loadFixtureCatalog(t, {
+    openai: {
+      name: "OpenAI",
+      models: {
+        "gpt-5.6-sol": {
+          id: "gpt-5.6-sol",
+          name: "GPT-5.6 Sol",
+          reasoning: true,
+          modalities: { input: ["text"], output: ["text"] },
+          limit: { context: 1_050_000, output: 128_000 },
+        },
+      },
+    },
+  });
+  const codex = {
+    vendorKey: "openai-codex",
+    baseUrl: "https://chatgpt.com/backend-api",
+    apiStyle: "openai_codex_responses",
+    modelId: "gpt-5.6-sol",
+  };
+  // Before the account list is read, pi-ai's pinned Codex window answers.
+  const pinned = catalogModelConfigFor(catalog, codex);
+  assert.equal(pinned.source, "models.dev");
+  assert.equal(pinned.contextWindow, 272_000);
+  assert.equal(pinned.limit.context, 272_000);
+  assert.equal(pinned.catalogContextWindow, 272_000);
+  assert.equal(pinned.maxTokens, 128_000);
+
+  catalog.rememberVendorLimits("openai-codex", new Map([
+    ["GPT-5.6-Sol", { contextWindow: 300_000, maxContextWindow: 872_000 }],
+  ]));
+  const live = catalogModelConfigFor(catalog, codex);
+  assert.equal(live.contextWindow, 300_000);
+  assert.equal(live.catalogContextWindow, 872_000);
+
+  // An API key row for the same model keeps the published API window.
+  const api = catalogModelConfigFor(catalog, {
+    vendorKey: "openai",
+    baseUrl: "https://api.openai.com/v1",
+    apiStyle: "responses",
+    modelId: "gpt-5.6-sol",
+  });
+  assert.equal(api.contextWindow, 1_050_000);
+  assert.equal(api.catalogContextWindow, undefined);
+});

@@ -221,7 +221,12 @@ EXplore Agent must not permanently restrict users to a short fixed model list.
    `experimental`, and `provider` into the shared model surfaces.
 5. pi-ai remains only the request/OAuth implementation layer. Its bundled model
    catalog and model capability functions are not read for names, limits,
-   pricing, modalities, reasoning, or other model configuration.
+   pricing, modalities, reasoning, or other model configuration, with two
+   vendor-account exceptions: a model models.dev does not publish takes its
+   limits and thinking levels from its own or a same-tier pinned model, and a
+   ChatGPT (Codex) account takes its context window from its own `/codex/models`
+   list, falling back to pi-ai's pinned Codex window, because that deployment
+   serves a smaller window than the public API record.
 6. Input and output modality arrays retain `text`, `image`, `audio`, `video`,
    and `pdf`. The text agent picker exposes models that can handle text while
    preserving all raw records in the file for future surfaces. Image input is

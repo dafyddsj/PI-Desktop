@@ -234,10 +234,24 @@ If user selects model tagged without tools while in Agent mode:
 
 The bundled `apps/desktop/resources/models.dev/api.json` snapshot is the
 startup baseline. It is refreshed by `scripts/release.mjs` before a release tag
-is created; application startup does not fetch or write a catalog. Settings
-invokes the Electron-only `providers.refreshModelCatalog` channel to refetch
-`https://models.dev/api.json`; a successful response replaces only the
-current process's in-memory models.dev catalog and never writes user data.
+is created. Once the snapshot has loaded, application startup refetches
+`https://models.dev/api.json` in the background, without blocking the first
+window, so a model released after the build gets its published limits without
+a manual refresh. Settings invokes the Electron-only
+`providers.refreshModelCatalog` channel for the same refetch on demand. A
+successful response replaces only the current process's in-memory models.dev
+catalog and never writes user data; a failed one keeps the snapshot. A live
+catalog that lands before the snapshot has been read is not replaced by it.
+
+A vendor account's deployment can serve a different window from the public
+API record. A ChatGPT (Codex) account runs a 272K default window, against
+1.05M on the API, and accepts a raised window only up to its stated maximum.
+For such a vendor, the account's own model list (`/codex/models`
+`context_window` / `max_context_window`) sets the model's context window and
+its hard ceiling for every lookup of that vendor; until the list has been read,
+pi-ai's pinned Codex catalog answers. Other published metadata still comes from
+models.dev. A vendor-account login seeds each model's limits as `catalog`
+provenance, so a later refresh or account list reaches the saved row.
 
 Repeated metadata lookups use a bounded process-local cache keyed by the
 configured vendor key, base URL, and case-insensitive, trimmed model ID. Both
@@ -612,7 +626,9 @@ same model to the check mark, the toggle and the duplicate guard.
       published levels seed known models and explicit binding levels clamp the
       same way in Composer, Electron main, and the pi sidecar
 - [ ] models.dev metadata wins for a matching provider/model; an ID absent from
-      it uses the generic shape while pi-ai supplies only transport/OAuth
+      it uses the generic shape while pi-ai supplies only transport/OAuth,
+      except that a vendor account takes a pinned model's own limits, and a
+      Codex account its account-list window, over the public API record
 - [ ] provider settings and cached discovery cannot replace known catalog
       capabilities; explicit binding edits remain persisted configuration
 - [ ] a models.dev limit correction reaches an already saved `catalog` binding

@@ -21,6 +21,8 @@ import type {
   ThinkingProtocol,
 } from "@pi-desktop/shared";
 import { genericModelConfig, type ModelConfig } from "@pi-desktop/agent-runtime";
+import { OPENAI_CODEX_MODELS } from "@earendil-works/pi-ai/providers/openai-codex.models";
+import type { VendorModelLimit } from "./vendor-live-models";
 
 export const MODELS_DEV_API_URL = "https://models.dev/api.json";
 export const MODELS_DEV_TIMEOUT_MS = 10_000;
@@ -827,6 +829,36 @@ export function modelConfigFromModelsDev(
  * stay generic because they describe the deployment (#990).
  */
 export function catalogModelConfigFor(
+  catalog: Pick<ModelsDevCatalog, "findModel" | "anthropicThinkingFor"> &
+    Partial<Pick<ModelsDevCatalog, "vendorLimitFor">>,
+  input: { vendorKey?: string; baseUrl?: string; apiStyle?: string; modelId: string },
+): ModelConfig {
+  const config = publishedModelConfigFor(catalog, input);
+  const limit = catalog.vendorLimitFor?.(input.vendorKey, input.modelId);
+  return limit ? withVendorLimit(config, limit) : config;
+}
+
+/**
+ * Apply the window a vendor account's deployment serves. models.dev describes
+ * the public API, which can accept far more than the same model behind a
+ * subscription; sending the larger figure would let a session grow past what
+ * the account accepts. The deployment's ceiling, when stated, stays the hard
+ * limit a user override may raise the window to.
+ */
+function withVendorLimit(config: ModelConfig, limit: VendorModelLimit): ModelConfig {
+  return {
+    ...config,
+    contextWindow: limit.contextWindow,
+    catalogContextWindow: limit.maxContextWindow ?? limit.contextWindow,
+    limit: {
+      ...config.limit,
+      context: limit.contextWindow,
+      input: limit.contextWindow,
+    },
+  };
+}
+
+function publishedModelConfigFor(
   catalog: Pick<ModelsDevCatalog, "findModel" | "anthropicThinkingFor">,
   input: { vendorKey?: string; baseUrl?: string; apiStyle?: string; modelId: string },
 ): ModelConfig {
@@ -1237,8 +1269,36 @@ function borrowedModel(entries: readonly ModelsDevModel[]): ModelsDevModel | und
   };
 }
 
+/**
+ * Vendors whose subscription deployment runs a different window from the
+ * public API record, mapped to pi-ai's pinned catalog for that deployment.
+ * The pin answers until the account's own model list has been read.
+ */
+const PINNED_DEPLOYMENT_MODELS: Readonly<
+  Record<string, Readonly<Record<string, { contextWindow: number }>>>
+> = {
+  "openai-codex": OPENAI_CODEX_MODELS,
+};
+
+function pinnedVendorLimit(
+  vendorKey: string,
+  modelId: string,
+): VendorModelLimit | undefined {
+  const models = PINNED_DEPLOYMENT_MODELS[vendorKey];
+  if (!models) return undefined;
+  const pinned = Object.entries(models).find(
+    ([id]) => normalizedModelId(id) === modelId,
+  )?.[1];
+  const contextWindow = pinned?.contextWindow;
+  return typeof contextWindow === "number" && contextWindow > 0
+    ? { contextWindow }
+    : undefined;
+}
+
 export class ModelsDevCatalog {
   private providers = new Map<string, ModelsDevProvider>();
+  /** Vendor key → model id → limits its signed-in account's list states. */
+  private readonly vendorLimits = new Map<string, Map<string, VendorModelLimit>>();
   private lookupIndex: ModelsDevLookupIndex | undefined;
   /** Host → publishers, derived from the current provider map. */
   private hostIndex: Map<string, ModelsDevProvider[]> | undefined;
@@ -1272,6 +1332,9 @@ export class ModelsDevCatalog {
         const raw = JSON.parse(await readFile(this.catalogPath, "utf8")) as unknown;
         const parsed = parseModelsDevCatalog(raw);
         if (parsed.length === 0) throw new Error("models.dev snapshot contained no providers");
+        // A live fetch that finished while the file was read is newer than
+        // the release snapshot, so it stays in place.
+        if (this.source === "remote") return this.loaded;
         this.providers = new Map(parsed.map((provider) => [provider.providerKey, provider]));
         // Replacing the provider map invalidates the derived lookup index.
         this.lookupIndex = undefined;
@@ -1281,8 +1344,11 @@ export class ModelsDevCatalog {
         this.source = "bundled";
         this.lastError = undefined;
       } catch (error) {
-        this.loaded = false;
-        this.lastError = error instanceof Error ? error.message : String(error);
+        // A loaded live catalog outranks a snapshot that could not be read.
+        if (this.source !== "remote") {
+          this.loaded = false;
+          this.lastError = error instanceof Error ? error.message : String(error);
+        }
       }
       return this.loaded;
     })();
@@ -1520,6 +1586,39 @@ export class ModelsDevCatalog {
       matches.push({ model, provider });
     }
     return borrowedModel(borrowPool(matches, requested));
+  }
+
+  /**
+   * Record the per-model limits a vendor account's own model list states. The
+   * latest list replaces the previous one for that vendor, so a model the
+   * vendor stopped listing falls back to the pinned figure.
+   */
+  rememberVendorLimits(
+    vendorKey: string,
+    limits: ReadonlyMap<string, VendorModelLimit>,
+  ): void {
+    const key = normalizedProviderKey(vendorKey);
+    if (!key || limits.size === 0) return;
+    this.vendorLimits.set(
+      key,
+      new Map([...limits].map(([id, limit]) => [normalizedModelId(id), limit])),
+    );
+  }
+
+  /**
+   * Limits a vendor account serves for a model: its live list first, then the
+   * pinned deployment catalog. Undefined means the published record applies.
+   * Limits are kept per vendor, not per account; accounts of one vendor are
+   * expected to list the same windows.
+   */
+  vendorLimitFor(
+    vendorKey: string | undefined,
+    modelId: string,
+  ): VendorModelLimit | undefined {
+    const key = normalizedProviderKey(vendorKey);
+    const id = normalizedModelId(modelId);
+    if (!key || !id) return undefined;
+    return this.vendorLimits.get(key)?.get(id) ?? pinnedVendorLimit(key, id);
   }
 
   /**

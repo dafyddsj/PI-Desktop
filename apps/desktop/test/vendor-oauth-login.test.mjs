@@ -1,6 +1,16 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { OPENAI_CODEX_MODELS } from "@earendil-works/pi-ai/providers/openai-codex.models";
+import { resolveBindingLimits } from "@pi-desktop/shared";
+
+import {
+  ModelsDevCatalog,
+  catalogModelConfigFor,
+} from "../electron/main/models-dev-catalog.ts";
 import {
   VendorOAuth,
   apiStyleForWireApi,
@@ -170,6 +180,7 @@ function harness(options = {}) {
       return fakeModels(store, options);
     },
     modelConfigFor: options.modelConfigFor,
+    rememberModelLimits: options.rememberModelLimits,
     newId: () => `id-${++counter}`,
     fetch:
       options.fetch ??
@@ -241,18 +252,25 @@ test("a completed login stores the credential and configures the row", async () 
   assert.equal(row.protocol, "anthropic");
   assert.equal(row.defaultModelId, "claude-opus-5");
   assert.equal(row.oauthAccountLabel, "Anthropic (Claude Pro/Max)");
+  // No models.dev catalog is wired here, so each model takes its limits and
+  // thinking levels from pi-ai's own pin rather than the generic 128k shape.
+  // The seeded limits stay catalog-sourced, so a later lookup still reaches them.
   assert.deepEqual(row.models, [
     {
       id: "claude-opus-5",
-      contextWindow: 128_000,
-      maxTokens: 8_192,
-      thinkingLevels: ["off"],
-      defaultThinkingLevel: "off",
+      contextWindow: 200_000,
+      contextWindowSource: "catalog",
+      maxTokens: 16_384,
+      maxTokensSource: "catalog",
+      thinkingLevels: ["low", "medium", "high"],
+      defaultThinkingLevel: "medium",
     },
     {
       id: "claude-haiku-5",
       contextWindow: 128_000,
+      contextWindowSource: "catalog",
       maxTokens: 8_192,
+      maxTokensSource: "catalog",
       thinkingLevels: ["off"],
       defaultThinkingLevel: "off",
     },
@@ -304,14 +322,18 @@ test("OAuth model configuration comes from the supplied models.dev snapshot", as
     {
       id: "claude-opus-5",
       contextWindow: 250_000,
+      contextWindowSource: "catalog",
       maxTokens: 20_000,
+      maxTokensSource: "catalog",
       thinkingLevels: ["low", "medium", "high"],
       defaultThinkingLevel: "medium",
     },
     {
       id: "claude-haiku-5",
       contextWindow: 150_000,
+      contextWindowSource: "catalog",
       maxTokens: 8_192,
+      maxTokensSource: "catalog",
       thinkingLevels: ["off"],
       defaultThinkingLevel: "off",
     },
@@ -768,4 +790,81 @@ test("a new Grok inherits grok-4.6 even when an older Grok is first in the pin",
   assert.equal(binding.modelConfig.contextWindow, 500_000);
   assert.equal(binding.modelConfig.maxTokens, 500_000);
   assert.deepEqual(binding.supportedThinkingLevels, ["low", "medium", "high", "xhigh"]);
+});
+
+test("a ChatGPT account runs the window its Codex list states, not the API record", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "pi-codex-limits-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const catalogPath = join(dir, "api.json");
+  await writeFile(catalogPath, JSON.stringify({
+    openai: {
+      name: "OpenAI",
+      models: {
+        "gpt-5.6-sol": {
+          id: "gpt-5.6-sol",
+          name: "GPT-5.6 Sol",
+          reasoning: true,
+          modalities: { input: ["text", "image"], output: ["text"] },
+          limit: { context: 1_050_000, output: 128_000 },
+        },
+      },
+    },
+  }), "utf8");
+  const catalog = new ModelsDevCatalog({ catalogPath });
+  const payload = Buffer.from(JSON.stringify({
+    "https://api.openai.com/auth": { chatgpt_account_id: "acct_123" },
+  })).toString("base64url");
+  const seen = [];
+  const fetchModels = async (url) => {
+    seen.push(String(url));
+    return new Response(JSON.stringify({
+      models: [{
+        slug: "gpt-5.6-sol",
+        visibility: "list",
+        context_window: 300_000,
+        max_context_window: 872_000,
+      }],
+    }), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  const { host, events, oauth } = harness({
+    fetch: fetchModels,
+    provider: {
+      id: "openai-codex",
+      name: "ChatGPT",
+      baseUrl: "https://chatgpt.com/backend-api",
+      auth: { oauth: { name: "ChatGPT Plus/Pro (Codex)", isSubscription: true, loginLabel: "Sign in" } },
+    },
+    models: [OPENAI_CODEX_MODELS["gpt-5.6-sol"]],
+    modelConfigFor: async ({ vendorKey, option }) => {
+      await catalog.ensureLoaded();
+      return catalogModelConfigFor(catalog, {
+        vendorKey,
+        baseUrl: option.baseUrl,
+        apiStyle: option.apiStyle,
+        modelId: option.modelId,
+      });
+    },
+    rememberModelLimits: (vendorKey, limits) => catalog.rememberVendorLimits(vendorKey, limits),
+  });
+  const { loginId } = await oauth.start("openai-codex");
+  const prompt = await waitFor(events, "prompt");
+  // The access token is a JWT the Codex list request reads the account id from.
+  oauth.respond({ loginId, promptId: prompt.request.promptId, value: `x.${payload}.sig` });
+  const done = await waitFor(events, "done");
+  assert.equal(seen[0], "https://chatgpt.com/backend-api/codex/models");
+
+  const [stored] = host.providers.get(done.providerId).models;
+  assert.equal(stored.id, "gpt-5.6-sol");
+  assert.equal(stored.contextWindow, 300_000);
+  assert.equal(stored.contextWindowSource, "catalog");
+
+  const binding = await oauth.bindingFor(done.providerId, "gpt-5.6-sol");
+  assert.equal(binding.modelConfig.contextWindow, 300_000);
+  assert.equal(binding.modelConfig.catalogContextWindow, 872_000);
+  // A row saved before the account list was read follows it at launch.
+  const stale = { ...stored, contextWindow: 1_050_000 };
+  assert.equal(
+    resolveBindingLimits(binding.modelConfig, stale).binding.contextWindow,
+    300_000,
+  );
 });

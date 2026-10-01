@@ -44,10 +44,12 @@ import {
 import {
   isConversationModelId,
   parseVendorModelIds,
+  parseVendorModelLimits,
   pinnedSiblingId,
   readVendorModelList,
   vendorModelListRequest,
   wireForLiveModel,
+  type VendorModelLimit,
 } from "./vendor-live-models.ts";
 import {
   OAUTH_AUTH_KIND,
@@ -169,6 +171,14 @@ export type VendorOAuthDeps = {
     vendorKey: string;
     option: OAuthModelOption;
   }) => Promise<ModelConfig | undefined>;
+  /**
+   * Hand the per-model limits an account's own list states to the catalog, so
+   * every model lookup for that vendor runs with the account's window.
+   */
+  rememberModelLimits?: (
+    vendorKey: string,
+    limits: ReadonlyMap<string, VendorModelLimit>,
+  ) => void;
   newId?: () => string;
   /** Test seam. Defaults to the process fetch. */
   fetch?: typeof fetch;
@@ -509,6 +519,10 @@ export class VendorOAuth {
     try {
       const body = await readVendorModelList(request, this.deps.fetch ?? globalThis.fetch);
       const ids = parseVendorModelIds(account.vendorId, body, request.allowPolicyFallback);
+      this.deps.rememberModelLimits?.(
+        account.vendorId,
+        parseVendorModelLimits(account.vendorId, body),
+      );
       if (!ids || ids.length === 0) return this.rememberLiveModels(account.providerId, null);
       const pinned = await account.models.getAvailable(account.vendorId);
       const known = new Map(pinned.map((model) => [model.id, model]));
@@ -558,10 +572,11 @@ export class VendorOAuth {
   }
 
   /**
-   * models.dev is the metadata source when it already knows the id. A model
-   * that exists only on the live list otherwise inherits limits and thinking
-   * levels from a pinned sibling of the same tier. xAI uses an explicit
-   * newest-first order so pin order cannot pick an older Grok.
+   * models.dev is the metadata source when it already knows the id. Otherwise
+   * a model pi-ai pins takes its limits and thinking levels from that pin, and
+   * a model that exists only on the live list inherits them from a pinned
+   * sibling of the same tier. xAI uses an explicit newest-first order so pin
+   * order cannot pick an older Grok.
    */
   private async withPinnedSiblingFallback(
     account: AccountModels,
@@ -571,26 +586,32 @@ export class VendorOAuth {
     const config = published ?? genericModelConfig(option.modelId, option.baseUrl);
     if (config.source !== "generic") return config;
     const pinned = await account.models.getAvailable(account.vendorId);
-    if (pinned.some((model) => model.id === option.modelId)) return config;
-    const siblingId = pinnedSiblingId(
-      account.vendorId,
-      option.modelId,
-      pinned.map((model) => model.id),
-    );
+    const siblingId = pinned.some((model) => model.id === option.modelId)
+      ? option.modelId
+      : pinnedSiblingId(
+          account.vendorId,
+          option.modelId,
+          pinned.map((model) => model.id),
+        );
     const sibling = siblingId ? pinned.find((model) => model.id === siblingId) : undefined;
     if (!sibling) return config;
     const input = (sibling.input ?? []).filter(
       (modality): modality is "text" | "image" => modality === "text" || modality === "image",
     );
+    // A generic shape only carries a catalog ceiling when the account's own
+    // list stated the window, which outranks any pinned figure.
+    const contextWindow = config.catalogContextWindow !== undefined
+      ? config.contextWindow
+      : sibling.contextWindow;
     return {
       ...config,
       reasoning: sibling.reasoning,
       input: input.length > 0 ? input : config.input,
-      contextWindow: sibling.contextWindow,
+      contextWindow,
       maxTokens: sibling.maxTokens,
       limit: {
-        context: sibling.contextWindow,
-        input: sibling.contextWindow,
+        context: contextWindow,
+        input: contextWindow,
         output: sibling.maxTokens,
       },
       supportedThinkingLevels: thinkingLevelsFromPiModel(sibling),
@@ -661,8 +682,12 @@ export class VendorOAuth {
       const levels = binding?.supportedThinkingLevels ?? ["off"];
       modelBindings.push({
         id: option.modelId,
+        // Seeded from the catalog, not chosen by the user: marking them so
+        // keeps later catalog refreshes and account lists reaching the row.
         contextWindow: binding?.modelConfig.contextWindow ?? 128_000,
+        contextWindowSource: "catalog",
         maxTokens: binding?.modelConfig.maxTokens ?? 8_192,
+        maxTokensSource: "catalog",
         thinkingLevels: [...levels],
         defaultThinkingLevel: levels.includes("medium") ? "medium" : levels[0] ?? null,
       });

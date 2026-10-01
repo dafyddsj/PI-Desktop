@@ -276,11 +276,12 @@ export function registerApplicationStartup(deps: StartupDependencies): void {
     });
     state.desktopControl = control;
     plugins.setServices({ desktopControl: control });
-    // Load the bundled model snapshot at startup without blocking the first
-    // window. Startup neither fetches nor rewrites the catalog; the snapshot
-    // is refreshed on demand from Settings (see models-dev-catalog / the
+    // Load the bundled model snapshot, then refetch models.dev in the
+    // background so a model released after this build gets its published
+    // limits without a manual refresh. Neither step blocks the first window or
+    // writes user data; a failed fetch keeps the bundled snapshot (see the
     // 13-model-catalog-and-selection spec).
-    void modelsDevCatalog.ensureLoaded();
+    void modelsDevCatalog.ensureLoaded().then(() => modelsDevCatalog.refresh());
     let bootError: unknown = null;
     try {
       await bootBackends();
